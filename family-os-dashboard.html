@@ -108,6 +108,82 @@
     background:var(--chip-ext);
   }
 
+
+  /* Bienvenida home */
+  .welcome-hero{
+    padding:8px 2px 6px;
+    margin-bottom:18px;
+  }
+  .welcome-hello{
+    font-family:'Fraunces',serif;
+    font-size:28px;
+    line-height:1.15;
+    color:var(--heading);
+    margin:0 0 8px;
+    letter-spacing:-0.02em;
+    font-weight:600;
+  }
+  .welcome-sub{
+    font-size:14.5px;
+    color:var(--text-dim);
+    margin:0;
+    line-height:1.45;
+    max-width:22em;
+  }
+  .welcome-names{
+    color:var(--amber);
+    font-weight:500;
+  }
+  .kpi-strip{
+    display:flex;
+    gap:8px;
+    margin:0 0 22px;
+    overflow-x:auto;
+    padding-bottom:2px;
+  }
+  .kpi-strip::-webkit-scrollbar{display:none}
+  .kpi-chip{
+    flex:1 1 0;
+    min-width:72px;
+    text-align:center;
+    padding:10px 8px;
+    border-radius:var(--radius-md);
+    background:var(--surface);
+    border:1px solid var(--line-soft);
+    box-shadow:var(--elev-1);
+    cursor:pointer;
+  }
+  .kpi-chip .kv{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    color:var(--heading);
+    font-variant-numeric:tabular-nums;
+  }
+  .kpi-chip .kv.jade{color:var(--jade)}
+  .kpi-chip .kv.amber{color:var(--amber)}
+  .kpi-chip .kv.red{color:var(--red)}
+  .kpi-chip .kl{
+    font-size:9.5px;
+    color:var(--text-faint);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    margin-top:3px;
+  }
+  .home-focus-title{
+    font-family:'Fraunces',serif;
+    font-size:15px;
+    color:var(--heading);
+    margin:0 0 10px;
+    font-weight:600;
+  }
+  .dash-section.home-soft .dash-section-head{
+    border-bottom:none;
+    margin-bottom:8px;
+    padding-bottom:0;
+  }
+  #screen-resumen .section-head h2{ font-size:15px; color:var(--text-dim); font-weight:600; }
+  #screen-resumen .balance{ margin-top:8px; }
+
 </style>
 <style>
   :root{
@@ -940,8 +1016,8 @@
 
 
 <header class="hero">
-  <div class="eyebrow">Family OS <span style="color:var(--jade);letter-spacing:0;">· se guarda solo</span></div>
-  <h1>Quién hace qué en casa</h1>
+  <div class="eyebrow">Family OS <span style="color:var(--jade);letter-spacing:0;" id="eyebrowSave">· se guarda solo</span></div>
+  <h1 id="heroTitle">Quién hace qué en casa</h1>
   <p id="heroSub">Dinero, tiempo y carga mental — repartidos y a la vista.</p>
   <div class="save-msg" id="saveMsg"></div>
 </header>
@@ -1120,6 +1196,7 @@
 <div class="fab-wrap" id="fabWrap">
   <div class="fab-menu" id="fabMenu">
     <button type="button" id="themeBtn" title="Cambiar entre modo claro y oscuro"><span class="fab-ico" id="themeBtnIco">☀️</span> <span id="themeBtnLabel">Apariencia: claro</span></button>
+    <button type="button" id="langBtn" title="Idioma / Taal"><span class="fab-ico">🌐</span> <span id="langBtnLabel">Idioma: ES</span></button>
     <button type="button" id="exportBtn"><span class="fab-ico">💾</span> Guardar copia</button>
     <button type="button" id="shareBtn"><span class="fab-ico">📤</span> Compartir</button>
     <button type="button" id="importBtn"><span class="fab-ico">📂</span> Cargar datos</button>
@@ -1486,6 +1563,160 @@
   }, {passive:true});
 
   // ---------- DASHBOARD INTELIGENTE (acción inmediata) ----------
+
+  // ---------- I18N ES / NL ----------
+  const LANG_KEY = "familyOS_lang";
+  let appLang = "es";
+  try {
+    const saved = localStorage.getItem(LANG_KEY);
+    if (saved === "nl" || saved === "es") appLang = saved;
+  } catch(e){}
+
+  const I18N = {
+    es: {
+      heroTitle: "Quién hace qué en casa",
+      heroSubEmpty: "Dinero, tiempo y carga mental — repartidos y a la vista.",
+      heroSubCount: "{n} responsabilidades entre {a} y {b}.",
+      eyebrowSave: "· se guarda solo",
+      tab_resumen: "Resumen", tab_areas: "Áreas", tab_reparto: "Reparto", tab_dinero: "Dinero",
+      tab_metas: "Metas", tab_revision: "Revisión", tab_calendario: "Calendario",
+      themeLight: "Apariencia: claro", themeDark: "Apariencia: oscuro",
+      langLabel: "Idioma: ES",
+      saveCopy: "Guardar copia", share: "Compartir", loadData: "Cargar datos", names: "Nombres",
+      greetMorning: "Buenos días", greetAfternoon: "Buenas tardes", greetEvening: "Buenas noches",
+      welcomeSubCalm: "Hoy la casa está tranquila. Un buen momento para respirar.",
+      welcomeSubFocus: "Hoy hay {n} cosa que merece vuestra atención.",
+      welcomeSubFocusPlural: "Hoy hay {n} cosas que merecen vuestra atención.",
+      forNames: "Para {a} y {b}",
+      focusTitle: "Hoy",
+      allClearTitle: "Todo en calma",
+      allClearBody: "Nada urgente por ahora. Cuando queráis, podéis añadir lo de la semana.",
+      allClearHint: "Ir a Áreas →",
+      kpiIn: "Ingresos", kpiOut: "Gastos", kpiBal: "Balance", kpiTime: "Tiempo",
+      weekAhead: "Próximos días",
+      talkTitle: "Para hablar",
+      talkHint: "Reunión familiar",
+      talkOk: "Todo en orden. ¿Cómo estáis los dos esta semana?",
+      talkUnassigned: "Hay {n} cosas sin asignar. Vale la pena repartirlas juntos.",
+      talkBalance: "{name} lleva más carga ({pct}%). ¿Se puede equilibrar algo?",
+      talkDrain: "{n} tareas agotan. ¿Alguna se puede simplificar?",
+      talkMoney: "Este mes los gastos superan los ingresos. Revisadlo con calma.",
+      talkGoals: "Las metas van al {pct}%. Un hito pequeño esta semana ayuda.",
+      talkEmpty: "Empezad cuando queráis: el catálogo o lo más importante a mano.",
+      pillToday: "HOY", pillRenew: "VENCE", pillAssign: "ASIGNAR", pillGoal: "META", pillCeleb: "🎁",
+      subToday: "Hoy", subDueToday: "Vence hoy", subDueIn: "En {n} días", subNoWho: "Sin persona asignada",
+      subGift: "En {n} días · regalo",
+      open: "Abrir",
+      secLook: "Qué conviene mirar", secTime: "Dónde se va el tiempo",
+      secBalance: "Reparto de horas",
+      toastOpen: "Abriendo {s}",
+      event: "Evento", goal: "Meta", item: "Responsabilidad"
+    },
+    nl: {
+      heroTitle: "Wie doet wat thuis",
+      heroSubEmpty: "Geld, tijd en mentale last — verdeeld en in beeld.",
+      heroSubCount: "{n} verantwoordelijkheden tussen {a} en {b}.",
+      eyebrowSave: "· wordt automatisch opgeslagen",
+      tab_resumen: "Overzicht", tab_areas: "Gebieden", tab_reparto: "Verdeling", tab_dinero: "Geld",
+      tab_metas: "Doelen", tab_revision: "Overleg", tab_calendario: "Agenda",
+      themeLight: "Weergave: licht", themeDark: "Weergave: donker",
+      langLabel: "Taal: NL",
+      saveCopy: "Kopie opslaan", share: "Delen", loadData: "Laden", names: "Namen",
+      greetMorning: "Goedemorgen", greetAfternoon: "Goedemiddag", greetEvening: "Goedenavond",
+      welcomeSubCalm: "Vandaag is het rustig thuis. Een goed moment om even adem te halen.",
+      welcomeSubFocus: "Vandaag vraagt {n} ding jullie aandacht.",
+      welcomeSubFocusPlural: "Vandaag vragen {n} dingen jullie aandacht.",
+      forNames: "Voor {a} en {b}",
+      focusTitle: "Vandaag",
+      allClearTitle: "Alles rustig",
+      allClearBody: "Niets dringends. Als jullie willen, kun je de week hier toevoegen.",
+      allClearHint: "Naar Gebieden →",
+      kpiIn: "Inkomsten", kpiOut: "Uitgaven", kpiBal: "Saldo", kpiTime: "Tijd",
+      weekAhead: "Komende dagen",
+      talkTitle: "Om over te praten",
+      talkHint: "Familie-overleg",
+      talkOk: "Alles in orde. Hoe gaat het met jullie deze week?",
+      talkUnassigned: "Er zijn {n} dingen zonder eigenaar. Handig om samen te verdelen.",
+      talkBalance: "{name} draagt meer last ({pct}%). Kunnen jullie iets in evenwicht brengen?",
+      talkDrain: "{n} taken kosten energie. Kan er iets eenvoudiger?",
+      talkMoney: "Deze maand zijn de uitgaven hoger dan de inkomsten. Even rustig bekijken.",
+      talkGoals: "Doelen staan op {pct}%. Een klein stapje deze week helpt.",
+      talkEmpty: "Begin wanneer jullie willen: catalogus of het belangrijkste met de hand.",
+      pillToday: "VANDAAG", pillRenew: "VERVALT", pillAssign: "TOEWIJZEN", pillGoal: "DOEL", pillCeleb: "🎁",
+      subToday: "Vandaag", subDueToday: "Vervalt vandaag", subDueIn: "Over {n} dagen", subNoWho: "Nog niemand",
+      subGift: "Over {n} dagen · cadeau",
+      open: "Open",
+      secLook: "Even checken", secTime: "Waar de tijd naartoe gaat",
+      secBalance: "Verdeling van uren",
+      toastOpen: "Openen: {s}",
+      event: "Event", goal: "Doel", item: "Taak"
+    }
+  };
+
+  function t(key, vars){
+    const pack = I18N[appLang] || I18N.es;
+    let s = pack[key] != null ? pack[key] : (I18N.es[key] || key);
+    if (vars) Object.keys(vars).forEach(k => { s = s.replace(new RegExp("\\{"+k+"\\}","g"), vars[k]); });
+    return s;
+  }
+
+  function setLang(lang){
+    appLang = lang === "nl" ? "nl" : "es";
+    try { localStorage.setItem(LANG_KEY, appLang); } catch(e){}
+    document.documentElement.lang = appLang === "nl" ? "nl" : "es";
+    applyChromeLang();
+    renderAll();
+    showToast(appLang === "nl" ? "Nederlands" : "Español", { icon:"🌐", duration:1600 });
+  }
+
+  function toggleLang(){
+    setLang(appLang === "es" ? "nl" : "es");
+  }
+
+  function applyChromeLang(){
+    const title = document.getElementById("heroTitle");
+    if (title) title.textContent = t("heroTitle");
+    const eye = document.getElementById("eyebrowSave");
+    if (eye) eye.textContent = t("eyebrowSave");
+    const lab = document.getElementById("langBtnLabel");
+    if (lab) lab.textContent = appLang === "nl" ? "Taal: NL" : "Idioma: ES";
+    // theme labels use theme functions - refresh
+    const th = document.documentElement.getAttribute("data-theme") || "dark";
+    const tLab = document.getElementById("themeBtnLabel");
+    if (tLab) tLab.textContent = th === "light" ? t("themeDark") : t("themeLight");
+    // FAB actions
+    const mapFab = { exportBtn: "saveCopy", shareBtn: "share", importBtn: "loadData", namesBtn: "names" };
+    Object.keys(mapFab).forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const ico = el.querySelector(".fab-ico");
+      const icoTxt = ico ? ico.textContent : "";
+      el.innerHTML = (ico ? `<span class="fab-ico">${icoTxt}</span> ` : "") + t(mapFab[id]);
+    });
+    // Tabs: text after svg
+    document.querySelectorAll("nav.tabbar button[data-screen]").forEach(btn => {
+      const key = "tab_" + btn.dataset.screen;
+      const label = t(key);
+      const svg = btn.querySelector("svg");
+      btn.textContent = "";
+      if (svg) btn.appendChild(svg);
+      btn.appendChild(document.createTextNode(label));
+    });
+    // Resumen section heads
+    const sh = document.querySelectorAll("#screen-resumen .section-head h2");
+    if (sh[0]) sh[0].textContent = t("secLook");
+    if (sh[1]) sh[1].textContent = t("secTime");
+    const balH = document.querySelector("#screen-resumen .balance h3");
+    if (balH) balH.textContent = t("secBalance");
+  }
+
+  function greetingForHour(h){
+    if (h < 12) return t("greetMorning");
+    if (h < 19) return t("greetAfternoon");
+    return t("greetEvening");
+  }
+
+
   function renderSmartDashboard(){
     const box = document.getElementById("smartDashboard");
     if (!box) return;
@@ -1494,6 +1725,7 @@
     const todayIso = now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0")+"-"+String(now.getDate()).padStart(2,"0");
     const end = new Date(now); end.setDate(end.getDate()+7);
     const endIso = end.getFullYear()+"-"+String(end.getMonth()+1).padStart(2,"0")+"-"+String(end.getDate()).padStart(2,"0");
+    const loc = appLang === "nl" ? "nl-NL" : "es-ES";
 
     const todayEvents = (state.events||[]).filter(e => e.date === todayIso)
       .sort((a,b)=>(a.time||"99:99").localeCompare(b.time||"99:99"));
@@ -1524,52 +1756,50 @@
     const incomeMonth = monthIncomes.reduce((s,i)=>s+(Number(i.monto)||0),0);
     const balanceMonth = incomeMonth - totalMoney;
 
-    const t = timeByPerson();
+    const tp = timeByPerson();
     const unassigned = (state.items||[]).filter(i => !i.who || i.who === "");
     const draining = (state.items||[]).filter(i => i.energy === "quita");
 
     const attention = [];
-
     todayEvents.forEach(e => attention.push({
       icon: e.kind === "tarea" ? "✅" : "📅",
-      title: e.name || "Evento",
-      sub: e.time ? "Hoy · " + e.time : "Hoy",
-      pill: "HOY",
+      title: e.name || t("event"),
+      sub: e.time ? t("subToday") + " · " + e.time : t("subToday"),
+      pill: t("pillToday"),
       urgency: "high",
       pillClass: "red",
       action: "event",
       refId: e.id
     }));
-
     renewals.forEach(({item, occ}) => {
       const isCelebra = item.kind === "celebra";
       const high = occ.diffDays <= 3 || (isCelebra && occ.diffDays <= 7);
       const mid = occ.diffDays <= 14;
+      let sub;
+      if (occ.diffDays === 0) sub = isCelebra ? t("subToday") : t("subDueToday");
+      else if (isCelebra) sub = t("subGift", {n: occ.diffDays});
+      else sub = t("subDueIn", {n: occ.diffDays});
       attention.push({
         icon: isCelebra ? "🎁" : "🔔",
-        title: item.name || "Renovación",
-        sub: occ.diffDays === 0
-          ? (isCelebra ? "Es hoy" : "Vence hoy")
-          : (isCelebra ? "En " + occ.diffDays + " días · pensar regalo" : "Vence en " + occ.diffDays + " días"),
-        pill: isCelebra ? "CELEBRACIÓN" : "RENOVACIÓN",
+        title: item.name || t("item"),
+        sub,
+        pill: isCelebra ? t("pillCeleb") : t("pillRenew"),
         urgency: high ? "high" : mid ? "mid" : "low",
         pillClass: high ? "red" : "",
         action: "item",
         refId: item.id
       });
     });
-
     unassigned.slice(0, 3).forEach(i => attention.push({
       icon: "👤",
-      title: i.name || "Responsabilidad",
-      sub: "Sin persona asignada",
-      pill: "ASIGNAR",
+      title: i.name || t("item"),
+      sub: t("subNoWho"),
+      pill: t("pillAssign"),
       urgency: "mid",
       pillClass: "",
       action: "item",
       refId: i.id
     }));
-
     (state.goals||[]).forEach(g => {
       let prog = 0;
       try { prog = goalProgress(g); } catch(e) {}
@@ -1580,9 +1810,9 @@
         const pct = Math.round(prog * 100);
         attention.push({
           icon: "🎯",
-          title: g.name || "Meta",
-          sub: dl.diffDays === 0 ? "Fecha límite hoy · " + pct + "%" : "Límite en " + dl.diffDays + " días · " + pct + "%",
-          pill: "META",
+          title: g.name || t("goal"),
+          sub: (dl.diffDays === 0 ? t("subDueToday") : t("subDueIn", {n: dl.diffDays})) + " · " + pct + "%",
+          pill: t("pillGoal"),
           urgency: dl.diffDays <= 7 ? "high" : "mid",
           pillClass: dl.diffDays <= 7 ? "red" : "",
           action: "goal",
@@ -1590,61 +1820,59 @@
         });
       }
     });
-
     const urgencyOrder = { high: 0, mid: 1, low: 2 };
     attention.sort((a,b) => (urgencyOrder[a.urgency]||2) - (urgencyOrder[b.urgency]||2));
-    const topAttention = attention.slice(0, 5);
+    const topAttention = attention.slice(0, 4);
 
-    const dateText = now.toLocaleDateString("es-ES", { weekday:"long", day:"numeric", month:"long" });
     let avgGoalPct = 0;
     if (openGoals.length) {
-      try {
-        avgGoalPct = Math.round(openGoals.reduce((s,g)=>s+goalProgress(g),0) / openGoals.length * 100);
-      } catch(e) {}
+      try { avgGoalPct = Math.round(openGoals.reduce((s,g)=>s+goalProgress(g),0) / openGoals.length * 100); } catch(e) {}
     }
 
-    let talkMsg = "Todo en orden. Buen momento para preguntaros cómo estáis esta semana.";
-    if (unassigned.length >= 2) {
-      talkMsg = "Hay " + unassigned.length + " responsabilidades sin asignar. Vale la pena repartirlas en la próxima reunión.";
-    } else if (t.totalA + t.totalB > 0) {
-      const shareA = (t.totalA / (t.totalA + t.totalB)) * 100;
+    let talkMsg = t("talkOk");
+    if (unassigned.length >= 2) talkMsg = t("talkUnassigned", {n: unassigned.length});
+    else if (tp.totalA + tp.totalB > 0) {
+      const shareA = (tp.totalA / (tp.totalA + tp.totalB)) * 100;
       const gap = Math.abs(shareA - 50);
       if (gap >= 15) {
         const heavier = shareA > 50 ? state.people.a : state.people.b;
-        talkMsg = heavier + " lleva bastante más carga horaria (" + Math.round(Math.max(shareA, 100-shareA)) + "%). ¿Se puede equilibrar algo?";
-      } else if (draining.length >= 3) {
-        talkMsg = draining.length + " tareas marcadas como agotadoras. ¿Alguna se puede delegar, simplificar o quitar?";
-      } else if (balanceMonth < 0) {
-        talkMsg = "Este mes los gastos superan los ingresos registrados. Revisad el balance juntos.";
-      } else if (openGoals.length && avgGoalPct < 30) {
-        talkMsg = "Las metas activas van al " + avgGoalPct + "%. ¿Hay algún hito pequeño que se pueda avanzar esta semana?";
-      }
-    } else if (!(state.items||[]).length) {
-      talkMsg = "Aún no hay responsabilidades. Empezad por el catálogo o añadid lo más importante a mano.";
-    }
+        talkMsg = t("talkBalance", { name: heavier, pct: Math.round(Math.max(shareA, 100-shareA)) });
+      } else if (draining.length >= 3) talkMsg = t("talkDrain", {n: draining.length});
+      else if (balanceMonth < 0) talkMsg = t("talkMoney");
+      else if (openGoals.length && avgGoalPct < 30) talkMsg = t("talkGoals", {pct: avgGoalPct});
+    } else if (!(state.items||[]).length) talkMsg = t("talkEmpty");
 
     const balanceClass = balanceMonth >= 0 ? "jade" : "red";
     const balanceSign = balanceMonth >= 0 ? "+" : "−";
-    const MES_CORTO_LOCAL = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-    const MESES_LOCAL = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    const MES_CORTO_LOCAL = appLang === "nl"
+      ? ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"]
+      : ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+
+    const greet = greetingForHour(now.getHours());
+    const nameA = (state.people.a || "").split(" ")[0];
+    const nameB = (state.people.b || "").split(" ")[0];
+    const welcomeLine = topAttention.length
+      ? (topAttention.length === 1 ? t("welcomeSubFocus", {n: 1}) : t("welcomeSubFocusPlural", {n: topAttention.length}))
+      : t("welcomeSubCalm");
 
     box.innerHTML = `
-      <div class="dash-hero">
-        <div class="dash-kicker">Family OS · Centro de control</div>
-        <h1>${dateText.charAt(0).toUpperCase() + dateText.slice(1)}</h1>
-        <p>${topAttention.length
-          ? "Prioridades del día y de la semana, a la vista."
-          : "No hay alertas urgentes. Buen momento para revisar la semana."}</p>
-        ${topAttention.length
-          ? `<span class="dash-count">${topAttention.length} cosa${topAttention.length===1?"":"s"} requieren atención</span>`
-          : ""}
+      <div class="welcome-hero">
+        <h1 class="welcome-hello">${escapeHTML(greet)}</h1>
+        <p class="welcome-sub">
+          <span class="welcome-names">${escapeHTML(t("forNames", {a: nameA, b: nameB}))}</span>
+          · ${escapeHTML(welcomeLine)}
+        </p>
       </div>
 
-      <div class="dash-section">
-        <div class="dash-section-head">
-          <h3>Necesita atención</h3>
-          <span>${topAttention.length} pendiente${topAttention.length===1?"":"s"}</span>
-        </div>
+      <div class="kpi-strip">
+        <div class="kpi-chip" data-goto="dinero"><div class="kv jade">${eur(incomeMonth)}</div><div class="kl">${escapeHTML(t("kpiIn"))}</div></div>
+        <div class="kpi-chip" data-goto="dinero"><div class="kv amber">${eur(totalMoney)}</div><div class="kl">${escapeHTML(t("kpiOut"))}</div></div>
+        <div class="kpi-chip" data-goto="dinero"><div class="kv ${balanceClass}">${balanceSign}${eur(Math.abs(balanceMonth))}</div><div class="kl">${escapeHTML(t("kpiBal"))}</div></div>
+        <div class="kpi-chip" data-goto="reparto"><div class="kv">${hrs(totalTime)}</div><div class="kl">${escapeHTML(t("kpiTime"))}</div></div>
+      </div>
+
+      <div class="dash-section home-soft">
+        <div class="home-focus-title">${escapeHTML(t("focusTitle"))}</div>
         <div class="dash-list">
           ${topAttention.length ? topAttention.map(a => `
             <div class="dash-alert is-click urgency-${a.urgency}" data-action="${a.action||""}" data-ref="${a.refId!=null?a.refId:""}">
@@ -1653,167 +1881,57 @@
                 <strong>${escapeHTML(a.title)}</strong>
                 <span>${escapeHTML(a.sub)}</span>
               </div>
-              <div class="dash-pill${a.pillClass ? " " + a.pillClass : ""}">${a.pill}</div>
+              <div class="dash-pill${a.pillClass ? " " + a.pillClass : ""}">${escapeHTML(a.pill)}</div>
             </div>`).join("") : `
             <div class="dash-empty is-click empty-state" data-action="goto" data-ref="areas" style="background:var(--surface-2);box-shadow:none;">
-              <div class="empty-title">Todo despejado</div>
-              <p class="empty-body">No hay vencimientos ni asignaciones pendientes.</p>
-              <span class="empty-hint">Toca para ir a Áreas →</span>
+              <div class="empty-title">${escapeHTML(t("allClearTitle"))}</div>
+              <p class="empty-body">${escapeHTML(t("allClearBody"))}</p>
+              <span class="empty-hint">${escapeHTML(t("allClearHint"))}</span>
             </div>`}
         </div>
       </div>
 
-      <div class="dash-section">
-        <div class="dash-section-head">
-          <h3>Esta semana en números</h3>
-          <span>${MESES_LOCAL[thisMonth]}</span>
-        </div>
-        <div class="dash-grid">
-          <div class="dash-card clickable" data-goto="dinero">
-            <div class="label">Ingresos</div>
-            <div class="value jade">${eur(incomeMonth)}</div>
-            <div class="sub">este mes</div>
-            <div class="sub-link">Ver dinero →</div>
-          </div>
-          <div class="dash-card clickable" data-goto="dinero">
-            <div class="label">Gastos</div>
-            <div class="value amber">${eur(totalMoney)}</div>
-            <div class="sub">coste mensual</div>
-            <div class="sub-link">Ver dinero →</div>
-          </div>
-          <div class="dash-card clickable" data-goto="dinero">
-            <div class="label">Balance</div>
-            <div class="value ${balanceClass}">${balanceSign}${eur(Math.abs(balanceMonth))}</div>
-            <div class="sub">${balanceMonth >= 0 ? "disponible" : "déficit"}</div>
-            <div class="sub-link">Ver balance →</div>
-          </div>
-          <div class="dash-card clickable" data-goto="reparto">
-            <div class="label">Tiempo</div>
-            <div class="value">${hrs(totalTime)}</div>
-            <div class="sub">${escapeHTML(state.people.a.split(" ")[0])} ${hrs(t.totalA)} · ${escapeHTML(state.people.b.split(" ")[0])} ${hrs(t.totalB)}</div>
-            <div class="sub-link">Ver reparto →</div>
-          </div>
-        </div>
-      </div>
-
       ${weekEvents.length ? `
-      <div class="dash-section">
-        <div class="dash-section-head">
-          <h3>Próximos 7 días</h3>
-          <span>${weekEvents.length} evento${weekEvents.length===1?"":"s"}</span>
-        </div>
+      <div class="dash-section home-soft">
+        <div class="home-focus-title">${escapeHTML(t("weekAhead"))}</div>
         <div class="dash-list">
-          ${weekEvents.slice(0,4).map(e => {
+          ${weekEvents.slice(0,3).map(e => {
             const p = (e.date||"").split("-");
-            const label = p.length===3
-              ? (parseInt(p[2],10) + " " + MES_CORTO_LOCAL[parseInt(p[1],10)-1])
-              : e.date;
+            const label = p.length===3 ? (parseInt(p[2],10) + " " + MES_CORTO_LOCAL[parseInt(p[1],10)-1]) : e.date;
             return `<div class="dash-item is-click" data-action="event" data-ref="${e.id}">
               <div class="dash-item-main">
-                <strong>${escapeHTML(e.name||"Evento")}</strong>
+                <strong>${escapeHTML(e.name||t("event"))}</strong>
                 <span>${label}${e.time ? " · " + e.time : ""}</span>
               </div>
-              <div class="dash-pill">ABRIR</div>
+              <div class="dash-pill">${escapeHTML(t("open"))}</div>
             </div>`;
           }).join("")}
         </div>
       </div>` : ""}
 
-      ${openGoals.length ? `
-      <div class="dash-section">
-        <div class="dash-section-head">
-          <h3>Objetivos activos</h3>
-          <span>${avgGoalPct}% media</span>
-        </div>
-        <div class="dash-list">
-          ${openGoals.slice(0,3).map(g => {
-            let p = 0;
-            try { p = Math.round(goalProgress(g) * 100); } catch(e) {}
-            return `<div class="dash-item is-click" style="display:block" data-action="goal" data-ref="${g.id}">
-              <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
-                <strong style="font-size:13px;color:var(--heading)">${escapeHTML(g.name||"Objetivo")}</strong>
-                <span class="dash-pill${p>=80?" jade":""}">${p}%</span>
-              </div>
-              <div class="dash-progress"><div style="width:${p}%"></div></div>
-            </div>`;
-          }).join("")}
-        </div>
-      </div>` : ""}
-
-      <div class="dash-section">
-        <div class="dash-section-head">
-          <h3>Una cosa para hablar</h3>
-        </div>
+      <div class="dash-section home-soft">
+        <div class="home-focus-title">${escapeHTML(t("talkTitle"))}</div>
         <div class="dash-talk is-click" data-action="goto" data-ref="revision">
-          <div class="talk-label">Para la reunión familiar · tocar para abrir</div>
+          <div class="talk-label">${escapeHTML(t("talkHint"))}</div>
           <p>${escapeHTML(talkMsg)}</p>
         </div>
       </div>
     `;
 
-    // KPIs accionables
-    box.querySelectorAll('.dash-card.clickable[data-goto]').forEach(card => {
+    box.querySelectorAll(".kpi-chip[data-goto]").forEach(card => {
       card.onclick = () => {
         const screen = card.dataset.goto;
         goToScreen(screen);
-        const labels = { dinero:"Dinero", reparto:"Reparto", metas:"Metas", areas:"Áreas", calendario:"Calendario", revision:"Revisión" };
-        showToast("Abriendo " + (labels[screen]||screen), { icon:"→", duration:1600 });
+        const labels = { dinero: t("tab_dinero"), reparto: t("tab_reparto"), metas: t("tab_metas"), areas: t("tab_areas"), calendario: t("tab_calendario"), revision: t("tab_revision") };
+        showToast(t("toastOpen", {s: labels[screen]||screen}), { icon:"→", duration:1600 });
       };
     });
-
-    // Cualquier elemento con data-action en el dashboard
     box.querySelectorAll("[data-action]").forEach(el => {
       el.onclick = (e) => {
         e.stopPropagation();
         runDashAction(el.dataset.action, el.dataset.ref);
       };
     });
-  }
-
-  function runDashAction(action, ref){
-    if (!action) return;
-    if (action === "goto") {
-      goToScreen(ref || "resumen");
-      const labels = { dinero:"Dinero", reparto:"Reparto", metas:"Metas", areas:"Áreas", calendario:"Calendario", revision:"Revisión" };
-      showToast("Abriendo " + (labels[ref]||ref||"sección"), { icon:"→", duration:1600 });
-      return;
-    }
-    if (action === "event") {
-      const id = parseFloat(ref);
-      if (!isNaN(id) && state.events.some(x => x.id === id)) {
-        goToScreen("calendario");
-        setTimeout(() => openEditEvent(id), 60);
-        showToast("Abriendo evento", { icon:"📅", duration:1600 });
-      } else {
-        goToScreen("calendario");
-      }
-      return;
-    }
-    if (action === "item") {
-      const id = parseFloat(ref);
-      if (!isNaN(id) && state.items.some(x => x.id === id)) {
-        const it = state.items.find(x => x.id === id);
-        if (it && it.area) openAreas.add(it.area);
-        openItem(id);
-        showToast("Abriendo responsabilidad", { icon:"✏️", duration:1600 });
-      } else {
-        goToScreen("areas");
-      }
-      return;
-    }
-    if (action === "goal") {
-      goToScreen("metas");
-      showToast("Abriendo metas", { icon:"🎯", duration:1600 });
-      return;
-    }
-    if (action === "income") {
-      const id = parseFloat(ref);
-      if (!isNaN(id) && typeof openIncome === "function") {
-        goToScreen("dinero");
-        setTimeout(() => openIncome(id), 60);
-      } else goToScreen("dinero");
-      return;
-    }
   }
 
   // ---------- RESUMEN ----------
@@ -3013,8 +3131,10 @@
   document.getElementById('fabScrim').onclick = closeFab;
   const themeBtnEl = document.getElementById('themeBtn');
   if (themeBtnEl) themeBtnEl.addEventListener('click', () => toggleTheme());
+  const langBtnEl = document.getElementById('langBtn');
+  if (langBtnEl) langBtnEl.addEventListener('click', () => toggleLang());
   // Cerrar el menú al elegir una acción
-  ['themeBtn','exportBtn','shareBtn','importBtn','namesBtn'].forEach(id => {
+  ['themeBtn','langBtn','exportBtn','shareBtn','importBtn','namesBtn'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('click', () => setTimeout(closeFab, 80));
   });
@@ -3033,9 +3153,10 @@
   function renderAll(){
     document.getElementById('heroSub').textContent =
       state.items.length
-        ? `${state.items.length} responsabilidades entre ${state.people.a} y ${state.people.b}.`
-        : "Dinero, tiempo y carga mental — repartidos y a la vista.";
+        ? t("heroSubCount", { n: state.items.length, a: state.people.a, b: state.people.b })
+        : t("heroSubEmpty");
     renderResumen(); renderAreas(); renderReparto(); renderDinero(); renderGoals(); renderRevision(); renderRenewals(); renderCalendar();
+    applyChromeLang();
     saveSoon();
   }
 
@@ -3325,6 +3446,7 @@
   };
 
   loadLocal();
+  document.documentElement.lang = appLang === "nl" ? "nl" : "es";
   document.getElementById('weekNotes').value = state.notes || "";
   document.getElementById('weekNotes').addEventListener('input', (e) => {
     state.notes = e.target.value;
