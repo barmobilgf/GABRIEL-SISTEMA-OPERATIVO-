@@ -35,9 +35,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="color-scheme" content="dark">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" id="metaThemeColor" content="#0C1512">
 <meta name="description" content="Sistema operativo familiar — organiza dinero, tiempo, responsabilidades y calendario">
-<meta name="theme-color" content="#0C1512">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Family OS">
@@ -64,6 +64,50 @@
     font-family: 'IBM Plex Mono-fallback';
     src: local('Menlo'), local('Monaco'), local('monospace');
   }
+
+  /* Pack 9–12: iconos, movimiento, tema */
+  .screen.active{
+    animation:screenIn var(--motion) ease;
+  }
+  @keyframes screenIn{
+    from{ opacity:0; transform:translateY(4px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .screen.active{ animation:none; }
+  }
+  .ico, .fab-ico, .toast-icon{
+    font-size:17px;
+    line-height:1;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .dash-alert .ico{ font-size:18px; }
+  html[data-theme="light"] .fab-btn:not(.open){
+    color:#0C1512;
+  }
+  html[data-theme="light"] .btn-save,
+  html[data-theme="light"] .add-row button{
+    color:#fff;
+  }
+  html[data-theme="light"] nav.tabbar{
+    border-top-color:var(--line);
+    box-shadow:0 -4px 20px rgba(20,30,26,.06);
+  }
+  html[data-theme="light"] .modal-bg{
+    background:rgba(20,30,26,.4);
+  }
+  html[data-theme="light"] header.hero{
+    background:
+      radial-gradient(circle at 15% 0%, rgba(31,107,74,0.08), transparent 55%),
+      radial-gradient(circle at 90% 10%, rgba(139,94,31,0.08), transparent 50%),
+      var(--bg);
+  }
+  html[data-theme="light"] .who-ext{
+    background:var(--chip-ext);
+  }
+
 </style>
 <style>
   :root{
@@ -72,7 +116,9 @@
     --surface:#131F1A;
     --surface-2:#1A2A23;
     --line:#28382F;
+    --line-soft:rgba(40,56,47,.55);
     --text:#EDE7DA;
+    --heading:#FFFFFF;
     --text-dim:#9FAEA3;
     --text-faint:#6E8177;
     --amber:#C89B5C;
@@ -82,30 +128,81 @@
     --red:#C86C5C;
     --violet:#8B7BA8;
     --sky:#6FA3C7;
-    --radius:14px;
+    --on-accent:#0C1512;
+    --tab-bg:rgba(19,31,26,.92);
+    --scrim:rgba(0,0,0,.35);
+    --hero-rad1:rgba(200,155,92,.18);
+    --hero-rad2:rgba(91,155,124,.12);
+    --chip-ext:rgba(255,255,255,0.04);
+    --pill-bg:rgba(255,255,255,.04);
+    /* Escala de radios unificada */
+    --radius-sm:8px;
+    --radius-md:12px;
+    --radius-lg:16px;
+    --radius-xl:20px;
+    --radius:16px;
+    /* Elevación */
+    --elev-1: 0 1px 0 rgba(255,255,255,.03), 0 2px 8px rgba(0,0,0,.18);
+    --elev-2: 0 4px 16px rgba(0,0,0,.22), 0 1px 0 rgba(255,255,255,.04);
+    --elev-3: 0 12px 40px rgba(0,0,0,.35), 0 2px 0 rgba(255,255,255,.03);
+    /* Ritmo vertical */
+    --space-section:26px;
+    --space-card:16px;
+    --motion: .2s ease;
+  }
+
+  /* —— Modo claro: contraste alto, texto oscuro sobre fondos claros —— */
+  html[data-theme="light"]{
+    color-scheme: light;
+    --bg:#F3F0E8;
+    --surface:#FFFFFF;
+    --surface-2:#E9EDE8;
+    --line:#D0D7D1;
+    --line-soft:rgba(26,36,32,.1);
+    --text:#1A2420;
+    --heading:#121A17;
+    --text-dim:#3D4F47;
+    --text-faint:#5C6E65;
+    --amber:#8B5E1F;
+    --amber-dim:#C4A06A;
+    --jade:#1F6B4A;
+    --jade-dim:#5B9B7C;
+    --red:#A63D32;
+    --violet:#5C4D7A;
+    --sky:#3D7A9C;
+    --on-accent:#FFFFFF;
+    --tab-bg:rgba(255,255,255,.92);
+    --scrim:rgba(20,30,26,.28);
+    --hero-rad1:rgba(139,94,31,.1);
+    --hero-rad2:rgba(31,107,74,.08);
+    --chip-ext:rgba(26,36,32,0.06);
+    --pill-bg:rgba(26,36,32,.06);
+    --elev-1: 0 1px 2px rgba(20,30,26,.04), 0 2px 10px rgba(20,30,26,.06);
+    --elev-2: 0 4px 18px rgba(20,30,26,.08), 0 1px 0 rgba(255,255,255,.8);
+    --elev-3: 0 16px 40px rgba(20,30,26,.12);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html{ background:#0C1512; }
+  html{ background:var(--bg); }
   body{
     margin:0;
-    background:#0C1512 !important;
+    background:var(--bg) !important;
     color:var(--text);
     font-family:'Inter',sans-serif;
     font-size:16px;
     line-height:1.5;
-    padding-bottom:100px;
+    padding-bottom:110px;
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
   }
-  main, .screen{ background:#0C1512; }
-  ::selection{background:var(--amber); color:#0C1512;}
+  main, .screen{ background:var(--bg); }
+  ::selection{background:var(--amber); color:var(--on-accent);}
   h1,h2,h3,.display{ font-family:'Fraunces', serif; font-weight:600; letter-spacing:-0.01em; }
   .mono{ font-family:'IBM Plex Mono', monospace; }
-  input, button, select, textarea{ color-scheme: dark; }
+  input, button, select, textarea{ color-scheme: inherit; }
   button:focus-visible, input:focus-visible, select:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; }
 
   header.hero{
-    padding:18px 20px 18px;
+    padding:22px 20px 20px;
     background:
       radial-gradient(circle at 15% 0%, rgba(91,155,124,0.16), transparent 55%),
       radial-gradient(circle at 90% 10%, rgba(200,155,92,0.12), transparent 50%),
@@ -160,7 +257,7 @@
     width:56px; height:56px; border-radius:50%;
     border:none; cursor:pointer;
     background:linear-gradient(135deg, var(--amber), #a67c45);
-    color:#0C1512;
+    color:var(--on-accent);
     font-size:24px; font-weight:600;
     box-shadow:0 6px 20px rgba(200,155,92,.35), 0 2px 8px rgba(0,0,0,.25);
     display:flex; align-items:center; justify-content:center;
@@ -178,7 +275,7 @@
   .fab-scrim{
     display:none;
     position:fixed; inset:0; z-index:34;
-    background:rgba(0,0,0,.35);
+    background:var(--scrim);
     backdrop-filter:blur(2px);
     -webkit-backdrop-filter:blur(2px);
   }
@@ -195,11 +292,11 @@
     color:var(--amber); display:flex; align-items:center; gap:8px; margin-bottom:8px;
   }
   .eyebrow::before{ content:""; width:7px; height:7px; background:var(--jade); border-radius:50%; box-shadow:0 0 0 3px rgba(91,155,124,0.18); }
-  header.hero h1{ font-size:23px; margin:0 0 4px; color:#fff; }
+  header.hero h1{ font-size:23px; margin:0 0 4px; color:var(--heading); }
   header.hero p{ color:var(--text-dim); font-size:13px; margin:0; }
 
   main{
-    padding:16px 16px 10px;
+    padding:20px 18px 28px;
     max-width:560px;
     margin:0 auto;
   }
@@ -250,26 +347,53 @@
     header.hero{ padding:28px 40px; }
   }
 
-  .section-head{ display:flex; align-items:center; gap:10px; margin:22px 0 12px; padding-bottom:8px; border-bottom:1px dashed var(--line); }
-  .section-head:first-child{ margin-top:0; }
-  .section-head h2{ font-size:16px; margin:0; color:#fff; flex:1; }
+  .section-head{ display:flex; align-items:center; gap:10px; margin:var(--space-section) 0 14px; padding-bottom:10px; border-bottom:1px solid var(--line-soft); }
+  .section-head:first-child{ margin-top:4px; }
+  .section-head h2{ font-size:17px; margin:0; color:var(--heading); flex:1; letter-spacing:-0.015em; }
   .edit-inline{
     font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint);
     background:none; border:1px solid var(--line); border-radius:20px; padding:4px 10px; cursor:pointer;
   }
 
-  .card{ background-color:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px; margin-bottom:10px; }
-  .card h3{ font-size:14.5px; margin:0 0 6px; color:#fff; }
+  .card{
+    background-color:var(--surface);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius-lg);
+    padding:var(--space-card);
+    margin-bottom:12px;
+    box-shadow:var(--elev-1);
+  }
+  .elev-1{ box-shadow:var(--elev-1); border-color:var(--line-soft); }
+  .elev-2{ box-shadow:var(--elev-2); border-color:var(--line); }
+  .elev-0{
+    box-shadow:none;
+    border-color:transparent;
+    background:var(--surface-2);
+  }
+  .card h3{ font-size:14.5px; margin:0 0 6px; color:var(--heading); }
   .card p{ margin:0 0 6px; font-size:13.5px; color:var(--text-dim); }
   .card p:last-child{ margin-bottom:0; }
 
-  .stat-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-  .stat{ background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:12px 14px; }
-  .stat .num{ font-family:'IBM Plex Mono', monospace; font-size:19px; color:var(--amber); display:block; }
+  .stat-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+  .stat{
+    background:var(--surface);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius-lg);
+    padding:14px 16px;
+    box-shadow:var(--elev-1);
+  }
+  .stat .num{ font-family:'IBM Plex Mono', monospace; font-size:19px; color:var(--text); display:block; font-variant-numeric:tabular-nums; }
   .stat .lbl{ font-size:11px; color:var(--text-faint); margin-top:2px; display:block; }
 
   /* La balanza: el elemento característico del sistema */
-  .balance{ background-color:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
+  .balance{
+    background-color:var(--surface);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius-lg);
+    padding:18px 16px;
+    margin-bottom:16px;
+    box-shadow:var(--elev-1);
+  }
   .balance-bar{ display:flex; height:34px; border-radius:10px; overflow:hidden; border:1px solid var(--line); margin:10px 0 8px; }
   .balance-seg{ display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono', monospace; font-size:11px; color:#0C1512; font-weight:600; transition:width .35s ease; min-width:0; overflow:hidden; }
   .seg-a{ background:var(--jade); }
@@ -284,9 +408,16 @@
   .verdict.warn{ color:var(--amber); }
   .verdict.bad{ color:var(--red); }
 
-  .area-card{ background-color:var(--surface); border:1px solid var(--line); border-radius:var(--radius); margin-bottom:8px; overflow:hidden; }
+  .area-card{
+    background-color:var(--surface);
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius-lg);
+    margin-bottom:10px;
+    overflow:hidden;
+    box-shadow:var(--elev-1);
+  }
   .area-head{ display:flex; align-items:center; gap:10px; padding:13px 14px; cursor:pointer; }
-  .area-head .a-name{ flex:1; font-size:14.5px; color:#fff; }
+  .area-head .a-name{ flex:1; font-size:14.5px; color:var(--heading); }
   .area-head .a-meta{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); text-align:right; line-height:1.4; }
   .area-body{ padding:0 14px 12px; border-top:1px dashed var(--line); }
   .area-body.collapsed{ display:none; }
@@ -297,13 +428,14 @@
   .item-name{ font-size:13.5px; color:var(--text); }
   .item-sub{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); margin-top:2px; }
   .who-chip{
-    font-family:'IBM Plex Mono', monospace; font-size:9.5px; padding:3px 8px; border-radius:20px;
-    flex:0 0 auto; border:1px solid var(--line); cursor:pointer;
+    font-family:'IBM Plex Mono', monospace; font-size:9.5px; padding:4px 9px; border-radius:20px;
+    flex:0 0 auto; border:none; cursor:pointer;
+    letter-spacing:0.02em;
   }
-  .who-a{ background:rgba(91,155,124,0.14); color:var(--jade); border-color:var(--jade-dim); }
-  .who-b{ background:rgba(200,155,92,0.14); color:var(--amber); border-color:var(--amber-dim); }
-  .who-both{ background:rgba(139,123,168,0.16); color:#B3A6C9; border-color:#5D5175; }
-  .who-ext{ background:var(--surface-2); color:var(--text-faint); }
+  .who-a{ background:rgba(91,155,124,0.14); color:var(--jade); }
+  .who-b{ background:rgba(200,155,92,0.14); color:var(--amber); }
+  .who-both{ background:rgba(139,123,168,0.16); color:#B3A6C9; }
+  .who-ext{ background:var(--chip-ext); color:var(--text-faint); }
   .del-x{ color:var(--text-faint); cursor:pointer; padding:0 2px; font-size:13px; flex:0 0 auto; }
 
   .add-row{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
@@ -314,7 +446,7 @@
   .add-row .f-name{ flex:1; min-width:110px; }
   .add-row .f-num{ width:64px; }
   .add-row button{
-    background:var(--jade); color:#0C1512; border:none; border-radius:8px; width:36px; font-size:18px; cursor:pointer; flex:0 0 auto;
+    background:var(--jade); color:var(--on-accent); border:none; border-radius:8px; width:36px; font-size:18px; cursor:pointer; flex:0 0 auto;
   }
 
   .hist-row{ display:flex; justify-content:space-between; gap:10px; font-size:13px; padding:6px 0; border-bottom:1px dashed var(--line); }
@@ -326,7 +458,7 @@
   .bar-fill.amber{ background:var(--amber); }
   .bar-fill.violet{ background:var(--violet); }
 
-  .alert{ border-radius:var(--radius); padding:12px 14px; font-size:13px; margin-bottom:10px; border:1px solid; }
+  .alert{ border-radius:var(--radius-md); padding:13px 14px; font-size:13px; margin-bottom:10px; border:1px solid; box-shadow:var(--elev-1); }
   .alert.red{ border-color:#7A3E36; background:rgba(200,108,92,0.08); color:#E3A99E; }
   .alert.amber{ border-color:var(--amber-dim); background:rgba(200,155,92,0.08); color:var(--amber); }
   .alert.jade{ border-color:var(--jade-dim); background:rgba(91,155,124,0.08); color:var(--jade); }
@@ -335,19 +467,43 @@
   .check-row:last-child{ border-bottom:none; }
   .box{ width:18px; height:18px; border-radius:5px; border:1.5px solid var(--text-faint); flex:0 0 auto; display:flex; align-items:center; justify-content:center; }
   .check-row.done .box{ background:var(--jade); border-color:var(--jade); }
-  .check-row.done .box::after{ content:"✓"; color:#fff; font-size:12px; }
+  .check-row.done .box::after{ content:"✓"; color:var(--heading); font-size:12px; }
   .check-row.done .c-label{ color:var(--text-faint); text-decoration:line-through; }
 
   nav.tabbar{
-    position:fixed; bottom:0; left:0; right:0; display:flex; background:var(--surface);
-    border-top:1px solid var(--line); padding:8px 4px calc(8px + env(safe-area-inset-bottom)); z-index:30;
+    position:fixed; bottom:0; left:0; right:0; display:flex;
+    background:var(--tab-bg);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-top:1px solid var(--line-soft);
+    padding:6px 4px calc(8px + env(safe-area-inset-bottom));
+    z-index:30;
+    box-shadow:0 -8px 28px rgba(0,0,0,.2);
   }
   nav.tabbar button{
-    flex:1; background:none; border:none; display:flex; flex-direction:column; align-items:center; gap:3px;
-    color:var(--text-faint); font-family:'IBM Plex Mono', monospace; font-size:9.5px; padding:4px 0; cursor:pointer;
+    flex:1; background:none; border:none;
+    display:flex; flex-direction:column; align-items:center; gap:4px;
+    color:var(--text-faint);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:0.02em;
+    padding:8px 0 6px;
+    cursor:pointer;
+    position:relative;
+    transition:color .15s ease;
   }
   nav.tabbar button.active{ color:var(--amber); }
-  nav.tabbar svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; }
+  nav.tabbar button.active::before{
+    content:"";
+    position:absolute;
+    top:0; left:50%;
+    transform:translateX(-50%);
+    width:18px; height:2px;
+    border-radius:2px;
+    background:var(--amber);
+    box-shadow:0 0 8px rgba(200,155,92,.45);
+  }
+  nav.tabbar svg{ width:22px; height:22px; fill:none; stroke:currentColor; stroke-width:1.7; }
 
   .modal-bg{
     position:fixed;
@@ -364,7 +520,7 @@
   .modal{
     background:var(--surface);
     border-top:1px solid var(--line);
-    border-radius:18px 18px 0 0;
+    border-radius:var(--radius-xl) var(--radius-xl) 0 0;
     padding:20px;
     width:100%;
     max-height:88vh;
@@ -392,7 +548,7 @@
     }
   }
   
-  .modal h3{ margin:0 0 14px; color:#fff; }
+  .modal h3{ margin:0 0 14px; color:var(--heading); }
   .modal label{ display:block; margin-bottom:6px; font-size:12px; color:var(--text-faint); }
   .modal input, .modal select, .modal textarea{
     -webkit-appearance:none;
@@ -426,7 +582,7 @@
     cursor:pointer;
   }
   .btn-cancel{ background:var(--surface-2); color:var(--text-dim); }
-  .btn-save{ background:var(--jade); color:#0C1512; font-weight:600; }
+  .btn-save{ background:var(--jade); color:var(--on-accent); font-weight:600; }
 
   /* Desktop: modales como tarjetas centradas */
   @media (min-width:641px) {
@@ -448,7 +604,40 @@
     }
   }
 
-  .empty{ color:var(--text-faint); font-size:13px; margin:0; }
+  .empty{ color:var(--text-dim); font-size:13.5px; margin:0; line-height:1.5; }
+  .empty-state{
+    text-align:center;
+    padding:28px 18px 24px;
+    border-radius:var(--radius-lg);
+    background:var(--surface);
+    border:1px solid var(--line-soft);
+    box-shadow:var(--elev-1);
+  }
+  .empty-state .empty-title{
+    font-family:'Fraunces',serif;
+    font-size:17px;
+    font-weight:600;
+    color:var(--heading);
+    margin:0 0 8px;
+    letter-spacing:-0.015em;
+  }
+  .empty-state .empty-body{
+    font-size:13.5px;
+    color:var(--text-dim);
+    margin:0;
+    line-height:1.5;
+    max-width:280px;
+    margin-left:auto;
+    margin-right:auto;
+  }
+  .empty-state .empty-hint{
+    display:inline-block;
+    margin-top:14px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--amber);
+    letter-spacing:0.04em;
+  }
 
 
 
@@ -459,7 +648,7 @@
     display:flex;align-items:center;gap:9px;max-width:calc(100vw - 28px);
     padding:10px 13px;border:1px solid var(--line);border-radius:12px;
     background:rgba(20,27,25,.96);box-shadow:0 12px 35px rgba(0,0,0,.32);
-    color:#fff;font-size:12px;backdrop-filter:blur(10px);
+    color:var(--heading);font-size:12px;backdrop-filter:blur(10px);
     transition:opacity .18s ease,transform .18s ease;
   }
   #appToast.show{opacity:1;transform:translate(-50%,0)}
@@ -475,14 +664,14 @@
   /* ---------- DASHBOARD INTELIGENTE (acción inmediata + jerarquía visual) ---------- */
   .dash-hero{
     background:
-      radial-gradient(ellipse at 20% 0%, rgba(200,155,92,.18), transparent 55%),
-      radial-gradient(ellipse at 90% 30%, rgba(91,155,124,.12), transparent 50%),
-      linear-gradient(160deg, rgba(26,42,35,.9), var(--surface));
-    border:1px solid var(--line);
-    border-radius:18px;
-    padding:20px 18px 18px;
-    margin-bottom:18px;
-    box-shadow:0 8px 28px rgba(0,0,0,.22);
+      radial-gradient(ellipse at 20% 0%, var(--hero-rad1), transparent 55%),
+      radial-gradient(ellipse at 90% 30%, var(--hero-rad2), transparent 50%),
+      linear-gradient(160deg, var(--surface-2), var(--surface));
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius-xl);
+    padding:22px 18px 20px;
+    margin-bottom:22px;
+    box-shadow:var(--elev-2);
   }
   .dash-kicker{
     font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);
@@ -494,7 +683,7 @@
     box-shadow:0 0 0 3px rgba(91,155,124,.2);
   }
   .dash-hero h1{
-    font-family:'Fraunces',serif;font-size:28px;line-height:1.12;color:#fff;
+    font-family:'Fraunces',serif;font-size:28px;line-height:1.12;color:var(--heading);
     margin:0 0 8px;letter-spacing:-0.02em;
   }
   .dash-hero p{font-size:13px;color:var(--text-dim);margin:0;line-height:1.45}
@@ -517,11 +706,28 @@
     transition:transform .12s ease, border-color .15s ease;
   }
   .dash-alert:active{transform:scale(.985)}
+  .dash-alert.is-click,
+  .dash-item.is-click,
+  .dash-talk.is-click,
+  .dash-empty.is-click,
+  .hist-row.is-click,
+  .card.is-click,
+  .stat.is-click{
+    cursor:pointer;
+  }
+  .hist-row.is-click:active,
+  .dash-item.is-click:active{
+    opacity:.85;
+  }
+  .hist-row.is-click:hover,
+  .dash-alert.is-click:hover{
+    filter:brightness(1.06);
+  }
   .dash-alert.urgency-high{border-left-color:var(--red);background:rgba(200,108,92,.06)}
   .dash-alert.urgency-mid{border-left-color:var(--amber);background:rgba(200,155,92,.05)}
   .dash-alert.urgency-low{border-left-color:var(--jade)}
   .dash-alert .ico{font-size:18px;width:26px;text-align:center;flex:0 0 auto}
-  .dash-alert strong{display:block;color:#fff;font-size:13.5px;margin-bottom:3px;line-height:1.25}
+  .dash-alert strong{display:block;color:var(--heading);font-size:13.5px;margin-bottom:3px;line-height:1.25}
   .dash-alert span{display:block;color:var(--text-dim);font-size:11.5px;line-height:1.35}
 
   .dash-grid{
@@ -530,11 +736,11 @@
   }
   .dash-card{
     background:var(--surface);
-    border:1px solid var(--line);
-    border-radius:14px;
+    border:1px solid var(--line-soft);
+    border-radius:var(--radius-lg);
     padding:14px 14px 12px;
     min-height:84px;
-    box-shadow:0 2px 10px rgba(0,0,0,.1);
+    box-shadow:var(--elev-1);
   }
   .dash-card.clickable{
     cursor:pointer;
@@ -575,10 +781,15 @@
   }
   .dash-card .value{
     font-family:'IBM Plex Mono',monospace;font-size:20px;
-    color:var(--amber);margin-top:6px;letter-spacing:-0.02em;
+    color:var(--text);margin-top:6px;letter-spacing:-0.02em;
+    font-variant-numeric:tabular-nums;
   }
+  .dash-card .value.amber{color:var(--amber)}
   .dash-card .value.jade{color:var(--jade)}
   .dash-card .value.red{color:var(--red)}
+  .stat .num{ color:var(--text); font-variant-numeric:tabular-nums; }
+  .stat .num.amber{ color:var(--amber); }
+  .stat .num.jade{ color:var(--jade); }
   .dash-card .sub{font-size:11px;color:var(--text-dim);margin-top:4px}
 
   .dash-list{display:flex;flex-direction:column;gap:8px}
@@ -589,29 +800,32 @@
   }
   .dash-item-main{min-width:0}
   .dash-item-main strong{
-    display:block;font-size:13px;color:#fff;
+    display:block;font-size:13px;color:var(--heading);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   .dash-item-main span{display:block;font-size:11px;color:var(--text-faint);margin-top:2px}
 
   .dash-pill{
     font-family:'IBM Plex Mono',monospace;font-size:9.5px;
-    color:var(--amber);border:1px solid var(--amber-dim);
-    background:rgba(200,155,92,.08);
-    border-radius:20px;padding:5px 9px;white-space:nowrap;flex:0 0 auto;
+    color:var(--text-dim);
+    border:none;
+    background:var(--pill-bg);
+    border-radius:20px;padding:5px 10px;white-space:nowrap;flex:0 0 auto;
+    letter-spacing:0.04em;
   }
-  .dash-pill.red{color:var(--red);border-color:#7A3E36;background:rgba(200,108,92,.1)}
-  .dash-pill.jade{color:var(--jade);border-color:var(--jade-dim);background:rgba(91,155,124,.1)}
+  .dash-pill.red{color:var(--red);background:rgba(200,108,92,.12);border:none}
+  .dash-pill.jade{color:var(--jade);background:rgba(91,155,124,.12);border:none}
+  .dash-pill.amber{color:var(--amber);background:rgba(200,155,92,.12);border:none}
 
   .dash-empty{
     font-size:12.5px;color:var(--text-dim);
-    padding:16px 14px;text-align:center;
-    background:var(--surface-2);border-radius:12px;
-    border:1px dashed var(--line);
+    padding:20px 16px;text-align:center;
+    background:var(--surface-2);border-radius:var(--radius-lg);
+    border:1px solid var(--line-soft);
   }
   .dash-empty strong{color:var(--jade);display:block;margin-bottom:4px;font-size:13px}
 
-  .dash-section{margin:0 0 20px}
+  .dash-section{margin:0 0 24px}
   .dash-section:last-child{margin-bottom:8px}
   .dash-section-head{
     display:flex;justify-content:space-between;align-items:baseline;
@@ -620,7 +834,7 @@
   }
   .dash-section-head h3{
     font-family:'Fraunces',serif;font-size:15px;font-weight:600;
-    color:#fff;margin:0;letter-spacing:-0.01em;
+    color:var(--heading);margin:0;letter-spacing:-0.01em;
   }
   .dash-section-head span{font-size:11px;color:var(--text-faint);font-family:'IBM Plex Mono',monospace}
 
@@ -647,10 +861,31 @@
     .dash-grid{grid-template-columns:repeat(4,1fr);gap:12px}
   }
 
+
+  /* Pack 8: menos caja-dentro-de-caja */
+  #topAreasTime.card,
+  #areaSplit.card,
+  #moneyByArea.card,
+  #moneyTop.card,
+  #thisMonthPay.card{
+    background:transparent;
+    border:none;
+    box-shadow:none;
+    padding:4px 0 0;
+    margin-bottom:4px;
+  }
+  .item-row{ padding:11px 0; }
+  .area-body{ padding:0 16px 14px; }
+  .dash-section-head{
+    border-bottom-color: var(--line-soft);
+  }
+  .sub-link{ opacity:0.85; }
+  .mono{ font-variant-numeric:tabular-nums; }
+
   /* CALENDARIO */
   .cal-nav{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
   .cal-nav button{ background:var(--surface-2); border:1px solid var(--line); color:var(--text); width:32px; height:32px; border-radius:9px; font-size:15px; cursor:pointer; }
-  .cal-nav .cal-title{ font-family:'Fraunces',serif; font-weight:600; font-size:15px; color:#fff; text-transform:capitalize; }
+  .cal-nav .cal-title{ font-family:'Fraunces',serif; font-weight:600; font-size:15px; color:var(--heading); text-transform:capitalize; }
   .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
   .cal-dow{ font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:var(--text-faint); text-align:center; padding-bottom:4px; }
   .cal-day{ aspect-ratio:1; border-radius:9px; background:var(--surface-2); border:1px solid var(--line); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; position:relative; }
@@ -681,19 +916,19 @@
   .year-lbl{ font-family:'IBM Plex Mono',monospace; font-size:8px; color:var(--text-faint); margin-top:4px; text-transform:uppercase; }
 
   /* INGRESOS Y BALANCE */
-  .balance-card{ background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 14px; margin-bottom:10px; }
+  .balance-card{ background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg); padding:16px; margin-bottom:12px; box-shadow:var(--elev-1); }
   .balance-row{ display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px dashed var(--line); }
   .balance-row:last-child{ border-bottom:none; }
   .balance-row .label{ font-size:13px; color:var(--text-dim); }
   .balance-row .amount{ font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; }
   .balance-row.positive .amount{ color:var(--jade); }
   .balance-row.negative .amount{ color:var(--red); }
-  .balance-row.total .label{ color:#fff; font-weight:600; }
+  .balance-row.total .label{ color:var(--heading); font-weight:600; }
   .balance-row.total .amount{ font-size:16px; }
   .income-item{ display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid var(--line); cursor:pointer; }
   .income-item:last-child{ border-bottom:none; }
   .income-item .income-main{ flex:1; }
-  .income-source{ font-size:13px; color:#fff; }
+  .income-source{ font-size:13px; color:var(--heading); }
   .income-meta{ font-size:11px; color:var(--text-faint); margin-top:2px; }
   .income-amount{ font-family:'IBM Plex Mono',monospace; font-size:14px; font-weight:600; color:var(--jade); }
   .income-del{ color:var(--text-faint); cursor:pointer; margin-left:12px; }
@@ -718,12 +953,11 @@
 
     <div id="smartDashboard"></div>
 
-    <div class="stat-row">
-      <div class="stat"><span class="num" id="kpiMoney">€0</span><span class="lbl">Coste al mes</span></div>
-      <div class="stat"><span class="num" id="kpiTime">0h</span><span class="lbl">Horas por semana</span></div>
-    </div>
+    <!-- KPIs del resumen viven en el smart dashboard; ids ocultos por compatibilidad JS -->
+    <span id="kpiMoney" hidden>€0</span>
+    <span id="kpiTime" hidden>0h</span>
 
-    <div class="balance">
+    <div class="balance elev-1">
       <h3 style="margin:0;">Reparto de horas</h3>
       <div class="balance-bar" id="balanceBar"></div>
       <div class="balance-legend" id="balanceLegend"></div>
@@ -885,6 +1119,7 @@
 <div class="fab-scrim" id="fabScrim"></div>
 <div class="fab-wrap" id="fabWrap">
   <div class="fab-menu" id="fabMenu">
+    <button type="button" id="themeBtn" title="Cambiar entre modo claro y oscuro"><span class="fab-ico" id="themeBtnIco">☀️</span> <span id="themeBtnLabel">Apariencia: claro</span></button>
     <button type="button" id="exportBtn"><span class="fab-ico">💾</span> Guardar copia</button>
     <button type="button" id="shareBtn"><span class="fab-ico">📤</span> Compartir</button>
     <button type="button" id="importBtn"><span class="fab-ico">📂</span> Cargar datos</button>
@@ -1048,6 +1283,40 @@
     clearTimeout(saveTimer);
     saveTimer = setTimeout(saveLocal, 300);
   }
+
+  // ---------- TEMA CLARO / OSCURO ----------
+  const THEME_KEY = "familyOS_theme";
+  function getPreferredTheme(){
+    try {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === "light" || saved === "dark") return saved;
+    } catch(e){}
+    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) return "light";
+    return "dark";
+  }
+  function applyTheme(theme){
+    const t = theme === "light" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.style.colorScheme = t;
+    const meta = document.getElementById("metaThemeColor") || document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", t === "light" ? "#F3F0E8" : "#0C1512");
+    const ico = document.getElementById("themeBtnIco");
+    const lab = document.getElementById("themeBtnLabel");
+    if (ico) ico.textContent = t === "light" ? "🌙" : "☀️";
+    if (lab) lab.textContent = t === "light" ? "Apariencia: oscuro" : "Apariencia: claro";
+    try { localStorage.setItem(THEME_KEY, t); } catch(e){}
+  }
+  function toggleTheme(){
+    const cur = document.documentElement.getAttribute("data-theme") || "dark";
+    applyTheme(cur === "light" ? "dark" : "light");
+    showToast(document.documentElement.getAttribute("data-theme") === "light" ? "Modo claro" : "Modo oscuro", { icon: document.documentElement.getAttribute("data-theme") === "light" ? "☀️" : "🌙", duration:1600 });
+  }
+  applyTheme(getPreferredTheme());
+  // Reaplicar cuando el FAB ya está en el DOM (etiquetas del botón)
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => applyTheme(document.documentElement.getAttribute("data-theme") || getPreferredTheme()));
+  }
+
   function loadLocal(){
     try {
       const raw = localStorage.getItem(LOCAL_KEY);
@@ -1267,7 +1536,9 @@
       sub: e.time ? "Hoy · " + e.time : "Hoy",
       pill: "HOY",
       urgency: "high",
-      pillClass: "red"
+      pillClass: "red",
+      action: "event",
+      refId: e.id
     }));
 
     renewals.forEach(({item, occ}) => {
@@ -1282,7 +1553,9 @@
           : (isCelebra ? "En " + occ.diffDays + " días · pensar regalo" : "Vence en " + occ.diffDays + " días"),
         pill: isCelebra ? "CELEBRACIÓN" : "RENOVACIÓN",
         urgency: high ? "high" : mid ? "mid" : "low",
-        pillClass: high ? "red" : ""
+        pillClass: high ? "red" : "",
+        action: "item",
+        refId: item.id
       });
     });
 
@@ -1292,7 +1565,9 @@
       sub: "Sin persona asignada",
       pill: "ASIGNAR",
       urgency: "mid",
-      pillClass: ""
+      pillClass: "",
+      action: "item",
+      refId: i.id
     }));
 
     (state.goals||[]).forEach(g => {
@@ -1309,7 +1584,9 @@
           sub: dl.diffDays === 0 ? "Fecha límite hoy · " + pct + "%" : "Límite en " + dl.diffDays + " días · " + pct + "%",
           pill: "META",
           urgency: dl.diffDays <= 7 ? "high" : "mid",
-          pillClass: dl.diffDays <= 7 ? "red" : ""
+          pillClass: dl.diffDays <= 7 ? "red" : "",
+          action: "goal",
+          refId: g.id
         });
       }
     });
@@ -1370,7 +1647,7 @@
         </div>
         <div class="dash-list">
           ${topAttention.length ? topAttention.map(a => `
-            <div class="dash-alert urgency-${a.urgency}">
+            <div class="dash-alert is-click urgency-${a.urgency}" data-action="${a.action||""}" data-ref="${a.refId!=null?a.refId:""}">
               <div class="ico">${a.icon}</div>
               <div style="flex:1;min-width:0">
                 <strong>${escapeHTML(a.title)}</strong>
@@ -1378,9 +1655,10 @@
               </div>
               <div class="dash-pill${a.pillClass ? " " + a.pillClass : ""}">${a.pill}</div>
             </div>`).join("") : `
-            <div class="dash-empty">
-              <strong>✓ Todo despejado</strong>
-              No hay vencimientos, eventos ni asignaciones pendientes por ahora.
+            <div class="dash-empty is-click empty-state" data-action="goto" data-ref="areas" style="background:var(--surface-2);box-shadow:none;">
+              <div class="empty-title">Todo despejado</div>
+              <p class="empty-body">No hay vencimientos ni asignaciones pendientes.</p>
+              <span class="empty-hint">Toca para ir a Áreas →</span>
             </div>`}
         </div>
       </div>
@@ -1399,7 +1677,7 @@
           </div>
           <div class="dash-card clickable" data-goto="dinero">
             <div class="label">Gastos</div>
-            <div class="value">${eur(totalMoney)}</div>
+            <div class="value amber">${eur(totalMoney)}</div>
             <div class="sub">coste mensual</div>
             <div class="sub-link">Ver dinero →</div>
           </div>
@@ -1430,12 +1708,12 @@
             const label = p.length===3
               ? (parseInt(p[2],10) + " " + MES_CORTO_LOCAL[parseInt(p[1],10)-1])
               : e.date;
-            return `<div class="dash-item">
+            return `<div class="dash-item is-click" data-action="event" data-ref="${e.id}">
               <div class="dash-item-main">
                 <strong>${escapeHTML(e.name||"Evento")}</strong>
                 <span>${label}${e.time ? " · " + e.time : ""}</span>
               </div>
-              <div class="dash-pill">VER</div>
+              <div class="dash-pill">ABRIR</div>
             </div>`;
           }).join("")}
         </div>
@@ -1451,9 +1729,9 @@
           ${openGoals.slice(0,3).map(g => {
             let p = 0;
             try { p = Math.round(goalProgress(g) * 100); } catch(e) {}
-            return `<div class="dash-item" style="display:block">
+            return `<div class="dash-item is-click" style="display:block" data-action="goal" data-ref="${g.id}">
               <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
-                <strong style="font-size:13px;color:#fff">${escapeHTML(g.name||"Objetivo")}</strong>
+                <strong style="font-size:13px;color:var(--heading)">${escapeHTML(g.name||"Objetivo")}</strong>
                 <span class="dash-pill${p>=80?" jade":""}">${p}%</span>
               </div>
               <div class="dash-progress"><div style="width:${p}%"></div></div>
@@ -1466,34 +1744,76 @@
         <div class="dash-section-head">
           <h3>Una cosa para hablar</h3>
         </div>
-        <div class="dash-talk">
-          <div class="talk-label">Para la reunión familiar</div>
+        <div class="dash-talk is-click" data-action="goto" data-ref="revision">
+          <div class="talk-label">Para la reunión familiar · tocar para abrir</div>
           <p>${escapeHTML(talkMsg)}</p>
         </div>
       </div>
     `;
 
-    // KPIs accionables → navegar a la sección
+    // KPIs accionables
     box.querySelectorAll('.dash-card.clickable[data-goto]').forEach(card => {
       card.onclick = () => {
         const screen = card.dataset.goto;
         goToScreen(screen);
-        showToast("Abriendo " + (screen === "dinero" ? "Dinero" : screen === "reparto" ? "Reparto" : screen), { icon:"→", duration:1600 });
+        const labels = { dinero:"Dinero", reparto:"Reparto", metas:"Metas", areas:"Áreas", calendario:"Calendario", revision:"Revisión" };
+        showToast("Abriendo " + (labels[screen]||screen), { icon:"→", duration:1600 });
       };
     });
-    // Objetivos → Metas
-    box.querySelectorAll('.dash-section').forEach(sec => {
-      const h = sec.querySelector('.dash-section-head h3');
-      if (h && h.textContent.includes('Objetivos')) {
-        sec.querySelectorAll('.dash-item').forEach(item => {
-          item.style.cursor = "pointer";
-          item.onclick = () => {
-            goToScreen("metas");
-            showToast("Abriendo Metas", { icon:"🎯", duration:1600 });
-          };
-        });
-      }
+
+    // Cualquier elemento con data-action en el dashboard
+    box.querySelectorAll("[data-action]").forEach(el => {
+      el.onclick = (e) => {
+        e.stopPropagation();
+        runDashAction(el.dataset.action, el.dataset.ref);
+      };
     });
+  }
+
+  function runDashAction(action, ref){
+    if (!action) return;
+    if (action === "goto") {
+      goToScreen(ref || "resumen");
+      const labels = { dinero:"Dinero", reparto:"Reparto", metas:"Metas", areas:"Áreas", calendario:"Calendario", revision:"Revisión" };
+      showToast("Abriendo " + (labels[ref]||ref||"sección"), { icon:"→", duration:1600 });
+      return;
+    }
+    if (action === "event") {
+      const id = parseFloat(ref);
+      if (!isNaN(id) && state.events.some(x => x.id === id)) {
+        goToScreen("calendario");
+        setTimeout(() => openEditEvent(id), 60);
+        showToast("Abriendo evento", { icon:"📅", duration:1600 });
+      } else {
+        goToScreen("calendario");
+      }
+      return;
+    }
+    if (action === "item") {
+      const id = parseFloat(ref);
+      if (!isNaN(id) && state.items.some(x => x.id === id)) {
+        const it = state.items.find(x => x.id === id);
+        if (it && it.area) openAreas.add(it.area);
+        openItem(id);
+        showToast("Abriendo responsabilidad", { icon:"✏️", duration:1600 });
+      } else {
+        goToScreen("areas");
+      }
+      return;
+    }
+    if (action === "goal") {
+      goToScreen("metas");
+      showToast("Abriendo metas", { icon:"🎯", duration:1600 });
+      return;
+    }
+    if (action === "income") {
+      const id = parseFloat(ref);
+      if (!isNaN(id) && typeof openIncome === "function") {
+        goToScreen("dinero");
+        setTimeout(() => openIncome(id), 60);
+      } else goToScreen("dinero");
+      return;
+    }
   }
 
   // ---------- RESUMEN ----------
@@ -1586,7 +1906,7 @@
 
     document.getElementById('alertsBox').innerHTML = state.items.length
       ? (alerts.map(([c,txt]) => `<div class="alert ${c}">${txt}</div>`).join("") || `<div class="alert jade">Todo asignado y en orden.</div>`)
-      : `<div class="card"><p class="empty">Aún no hay nada aquí. Ve a <strong>Áreas</strong> y toca “Cargar mapa base” para empezar con la estructura completa, o añade lo tuyo a mano.</p></div>`;
+      : `<div class="empty-state is-click" data-action="goto" data-ref="areas" style="cursor:pointer;"><div class="empty-title">Empezad cuando queráis</div><p class="empty-body">Ve a Áreas y usa el catálogo, o añade lo vuestro a mano.</p><span class="empty-hint">Ir a Áreas →</span></div>`;
 
     // Dónde se va el tiempo
     const byArea = {};
@@ -1596,13 +1916,55 @@
     });
     const ordered = Object.entries(byArea).sort((a,b) => b[1]-a[1]).slice(0,6);
     const maxV = ordered.length ? ordered[0][1] : 1;
-    document.getElementById('topAreasTime').innerHTML = ordered.length
+    const topBox = document.getElementById('topAreasTime');
+    topBox.innerHTML = ordered.length
       ? ordered.map(([k,v]) => `
-          <div style="margin-bottom:11px;">
-            <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${AREA_LABEL[k]||k}</span><span class="mono">${hrs(v)}</span></div>
+          <div class="is-click" data-action="area" data-ref="${k}" style="margin-bottom:11px;cursor:pointer;">
+            <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${escapeHTML(AREA_LABEL[k]||k)}</span><span class="mono">${hrs(v)}</span></div>
             <div class="bar-wrap"><div class="bar-fill" style="width:${(v/maxV)*100}%"></div></div>
           </div>`).join("")
-      : `<p class="empty">Sin horas registradas todavía.</p>`;
+      : `<p class="empty is-click" data-action="goto" data-ref="areas" style="cursor:pointer;">Sin horas registradas todavía. Toca para ir a Áreas.</p>`;
+    topBox.querySelectorAll('[data-action]').forEach(el => {
+      el.onclick = () => {
+        if (el.dataset.action === "area") {
+          openAreas.add(el.dataset.ref);
+          goToScreen("areas");
+          renderAreas();
+          showToast(AREA_LABEL[el.dataset.ref]||el.dataset.ref, { icon:"📁", duration:1600 });
+        } else runDashAction(el.dataset.action, el.dataset.ref);
+      };
+    });
+
+
+    // Alertas del resumen → acciones
+    const alertsEl = document.getElementById('alertsBox');
+    if (alertsEl) {
+      alertsEl.querySelectorAll('[data-action]').forEach(el => {
+        el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
+      });
+      alertsEl.querySelectorAll('.alert').forEach((al, idx) => {
+        al.style.cursor = 'pointer';
+        al.classList.add('is-click');
+        const txt = al.textContent || '';
+        al.onclick = () => {
+          if (txt.includes('sin nadie') || txt.includes('sin asignar') || txt.includes('Áreas')) {
+            goToScreen('areas'); showToast('Revisa asignaciones', {icon:'👤', duration:1600});
+          } else if (txt.includes('pareja')) {
+            openAreas.add('pareja'); goToScreen('areas'); renderAreas();
+          } else if (txt.includes('agotadoras') || txt.includes('agota')) {
+            goToScreen('reparto');
+          } else if (txt.includes('celebración') || txt.includes('calendario') || txt.includes('Renov')) {
+            goToScreen('calendario');
+          } else if (txt.includes('meta')) {
+            goToScreen('metas');
+          } else if (txt.includes('anual') || txt.includes('gasto')) {
+            goToScreen('dinero');
+          } else {
+            goToScreen('areas');
+          }
+        };
+      });
+    }
   }
 
   // Función auxiliar para agregar balance al resumen
@@ -1648,7 +2010,7 @@
       const body = card.querySelector('.area-body');
       if (isOpen) {
         if (!items.length) {
-          body.innerHTML = `<p class="empty" style="padding-top:10px;">Nada aquí todavía.</p>`;
+          body.innerHTML = `<p class="empty" style="padding:14px 0 6px;text-align:center;">Nada en esta área todavía.</p>`;
         }
         items.forEach(it => {
           const row = document.createElement('div');
@@ -1737,15 +2099,21 @@
       const own = state.items.filter(i => i.who === p.key);
       const drena = own.filter(i => i.energy === "quita").length;
       const money = own.reduce((s,i) => s + monthlyCost(i), 0);
-      return `<div class="card">
-        <h3>${p.name}</h3>
+      return `<div class="card is-click" data-who="${p.key}" style="cursor:pointer;">
+        <h3>${escapeHTML(p.name)}</h3>
         <div class="bar-wrap"><div class="${p.cls}" style="width:${(p.time/maxT)*100}%"></div></div>
         <div class="hist-row" style="border:none;padding:4px 0 0;"><span>Horas por semana</span><span class="mono">${hrs(p.time)}</span></div>
         <div class="hist-row" style="border:none;padding:2px 0 0;"><span>Cosas a su cargo</span><span class="mono">${own.length}</span></div>
         <div class="hist-row" style="border:none;padding:2px 0 0;"><span>Gasto que gestiona</span><span class="mono">${eur(money)}/mes</span></div>
         <div class="hist-row" style="border:none;padding:2px 0 0;"><span>Tareas que agotan</span><span class="mono" style="color:${drena>2?'var(--red)':'var(--text-dim)'};">${drena}</span></div>
       </div>`;
-    }).join("") + `<p style="font-size:11.5px;color:var(--text-faint);margin:2px 0 0;">Lo marcado como “Los dos” (${hrs(t.both)}) se reparte a medias entre ambos.</p>`;
+    }).join("") + `<p style="font-size:11.5px;color:var(--text-faint);margin:2px 0 0;">Lo marcado como “Los dos” (${hrs(t.both)}) se reparte a medias entre ambos. Toca una tarjeta para ir a Áreas.</p>`;
+    box.querySelectorAll('.card[data-who]').forEach(card => {
+      card.onclick = () => {
+        goToScreen('areas');
+        showToast('Carga de ' + (card.dataset.who === 'a' ? state.people.a : state.people.b), { icon:'👤', duration:1600 });
+      };
+    });
 
     // Reparto por área
     const split = document.getElementById('areaSplit');
@@ -1755,14 +2123,24 @@
       const suma = k => items.filter(i => i.who === k).reduce((s,i) => s + (Number(i.time)||0), 0);
       const a = suma("a"), b = suma("b"), both = suma("both"), ext = suma("ext");
       const tot = a + b + both + ext;
-      if (tot <= 0) return `<div class="hist-row"><span>${area.label}</span><span class="mono">sin horas</span></div>`;
+      if (tot <= 0) return `<div class="hist-row is-click" data-area="${area.key}" style="cursor:pointer;"><span>${escapeHTML(area.label)}</span><span class="mono">sin horas</span></div>`;
       const seg = (v, cls) => v > 0 ? `<div class="balance-seg ${cls}" style="width:${(v/tot)*100}%"></div>` : "";
-      return `<div style="margin-bottom:12px;">
-        <div class="hist-row" style="border:none;padding:0 0 4px;"><span>${area.label}</span><span class="mono">${hrs(tot)}</span></div>
+      return `<div class="is-click" data-area="${area.key}" style="margin-bottom:12px;cursor:pointer;">
+        <div class="hist-row" style="border:none;padding:0 0 4px;"><span>${escapeHTML(area.label)}</span><span class="mono">${hrs(tot)}</span></div>
         <div class="balance-bar" style="height:12px;margin:0;">${seg(a,"seg-a")}${seg(both,"seg-both")}${seg(b,"seg-b")}${seg(ext,"seg-ext")}</div>
       </div>`;
     }).join("");
-    split.innerHTML = rows || `<p class="empty">Todavía no hay responsabilidades que repartir.</p>`;
+    split.innerHTML = rows || `<p class="empty is-click" style="cursor:pointer;" id="areaSplitEmpty">Todavía no hay responsabilidades que repartir. Toca para ir a Áreas.</p>`;
+    split.querySelectorAll('[data-area]').forEach(el => {
+      el.onclick = () => {
+        openAreas.add(el.dataset.area);
+        goToScreen('areas');
+        renderAreas();
+        showToast(AREA_LABEL[el.dataset.area]||el.dataset.area, { icon:'📁', duration:1600 });
+      };
+    });
+    const empty = document.getElementById('areaSplitEmpty');
+    if (empty) empty.onclick = () => goToScreen('areas');
   }
 
   // ---------- DINERO ----------
@@ -1804,9 +2182,13 @@
     const thisMonth = perMonthItems[nowMonth]
       .filter(x => x.it.freq === "ano")
       .sort((a,b) => b.monto - a.monto);
-    document.getElementById('thisMonthPay').innerHTML = thisMonth.length
-      ? thisMonth.map(x => `<div class="hist-row"><span>${x.it.name}${!x.exacto ? ' <span style="color:var(--text-faint);font-size:10px;">(prorrateado, sin fecha)</span>' : ''}<br><span style="font-size:10.5px;color:var(--text-faint);">${AREA_LABEL[x.it.area]||x.it.area} · ${whoLabel(x.it.who)}</span></span><span class="mono">${eur(x.monto)}</span></div>`).join("")
+    const payBox = document.getElementById('thisMonthPay');
+    payBox.innerHTML = thisMonth.length
+      ? thisMonth.map(x => `<div class="hist-row is-click" data-action="item" data-ref="${x.it.id}"><span>${escapeHTML(x.it.name)}${!x.exacto ? ' <span style="color:var(--text-faint);font-size:10px;">(prorrateado, sin fecha)</span>' : ''}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(AREA_LABEL[x.it.area]||x.it.area)} · ${escapeHTML(whoLabel(x.it.who))}</span></span><span class="mono">${eur(x.monto)}</span></div>`).join("")
       : `<p class="empty">Ningún gasto anual cae este mes.</p>`;
+    payBox.querySelectorAll('[data-action]').forEach(el => {
+      el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
+    });
   }
   
   function renderBalance(){
@@ -1853,19 +2235,32 @@
     });
     const ordered = Object.entries(byArea).sort((a,b) => b[1]-a[1]);
     const maxV = ordered.length ? ordered[0][1] : 1;
-    document.getElementById('moneyByArea').innerHTML = ordered.length
+    const mba = document.getElementById('moneyByArea');
+    mba.innerHTML = ordered.length
       ? ordered.map(([k,v]) => `
-          <div style="margin-bottom:11px;">
-            <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${AREA_LABEL[k]||k}</span><span class="mono">${eur(v)} · ${Math.round((v/total)*100)}%</span></div>
+          <div class="is-click" data-action="area" data-ref="${k}" style="margin-bottom:11px;cursor:pointer;">
+            <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${escapeHTML(AREA_LABEL[k]||k)}</span><span class="mono">${eur(v)} · ${Math.round((v/total)*100)}%</span></div>
             <div class="bar-wrap"><div class="bar-fill amber" style="width:${(v/maxV)*100}%"></div></div>
           </div>`).join("")
       : `<p class="empty">Sin gastos registrados todavía.</p>`;
+    mba.querySelectorAll('[data-action]').forEach(el => {
+      el.onclick = () => {
+        openAreas.add(el.dataset.ref);
+        goToScreen("areas");
+        renderAreas();
+        showToast("Área: " + (AREA_LABEL[el.dataset.ref]||el.dataset.ref), { icon:"📁", duration:1600 });
+      };
+    });
 
     const top = state.items.filter(i => monthlyCost(i) > 0)
       .sort((a,b) => monthlyCost(b) - monthlyCost(a)).slice(0,10);
-    document.getElementById('moneyTop').innerHTML = top.length
-      ? top.map(i => `<div class="hist-row"><span>${i.name}<br><span style="font-size:10.5px;color:var(--text-faint);">${AREA_LABEL[i.area]||i.area} · ${whoLabel(i.who)}</span></span><span class="mono">${eur(monthlyCost(i))}${i.freq==='ano'?' <span style="color:var(--text-faint);font-size:10px;">anual</span>':''}</span></div>`).join("")
+    const mtop = document.getElementById('moneyTop');
+    mtop.innerHTML = top.length
+      ? top.map(i => `<div class="hist-row is-click" data-action="item" data-ref="${i.id}"><span>${escapeHTML(i.name)}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(AREA_LABEL[i.area]||i.area)} · ${escapeHTML(whoLabel(i.who))}</span></span><span class="mono">${eur(monthlyCost(i))}${i.freq==='ano'?' <span style="color:var(--text-faint);font-size:10px;">anual</span>':''}</span></div>`).join("")
       : `<p class="empty">Sin gastos registrados todavía.</p>`;
+    mtop.querySelectorAll('[data-action]').forEach(el => {
+      el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
+    });
   }
 
   // ---------- METAS ----------
@@ -1898,7 +2293,7 @@
     const box = document.getElementById('goalsList');
     if (!box) return;
     if (!state.goals.length) {
-      box.innerHTML = `<div class="card"><p class="empty">Aún no hay metas. Crea la primera abajo — ej. "Ahorrar para el coche" o "Aprender neerlandés".</p></div>`;
+      box.innerHTML = `<div class="empty-state"><div class="empty-title">Aún no hay metas</div><p class="empty-body">Crea la primera abajo — por ejemplo ahorrar para el coche o aprender un idioma.</p></div>`;
       return;
     }
     box.innerHTML = "";
@@ -2060,7 +2455,7 @@
     const hist = document.getElementById('notesHistory');
     hist.innerHTML = state.notesHistory.length
       ? state.notesHistory.map(n => `<div class="card"><h3 style="margin-bottom:4px;">${n.fecha}</h3><p style="white-space:pre-wrap;">${n.texto}</p></div>`).join("")
-      : `<div class="card"><p class="empty">Cuando guardes unos acuerdos, quedarán aquí para mirarlos más adelante.</p></div>`;
+      : `<div class="empty-state"><div class="empty-title">Sin historial aún</div><p class="empty-body">Cuando guardéis acuerdos de la reunión, aparecerán aquí.</p></div>`;
   }
 
   document.getElementById('saveNotesBtn').onclick = () => {
@@ -2162,7 +2557,7 @@
     const box = document.getElementById('incomeList');
     const stats = document.getElementById('incomeStats');
     if (state.incomes.length === 0) {
-      stats.innerHTML = `<p class="empty">Sin ingresos registrados todavía. Toca "＋" para añadir uno.</p>`;
+      stats.innerHTML = `<div class="empty-state" style="margin-bottom:8px;"><div class="empty-title">Sin ingresos aún</div><p class="empty-body">Registra el primero con ＋ Nuevo o la fila rápida de abajo.</p></div>`;
       box.innerHTML = '';
       return;
     }
@@ -2434,7 +2829,7 @@
       }
       box.appendChild(card);
     });
-    if (!quedan) box.innerHTML = `<div class="card"><p class="empty">Ya habéis añadido todo el catálogo — vuestro sistema está completo.</p></div>`;
+    if (!quedan) box.innerHTML = `<div class="empty-state"><div class="empty-title">Catálogo completo</div><p class="empty-body">Ya habéis añadido todo. Vuestro sistema está listo.</p></div>`;
   }
   document.getElementById('catalogBtn').onclick = () => {
     renderCatalog();
@@ -2616,8 +3011,10 @@
   }
   document.getElementById('fabBtn').onclick = (e) => { e.stopPropagation(); toggleFab(); };
   document.getElementById('fabScrim').onclick = closeFab;
+  const themeBtnEl = document.getElementById('themeBtn');
+  if (themeBtnEl) themeBtnEl.addEventListener('click', () => toggleTheme());
   // Cerrar el menú al elegir una acción
-  ['exportBtn','shareBtn','importBtn','namesBtn'].forEach(id => {
+  ['themeBtn','exportBtn','shareBtn','importBtn','namesBtn'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('click', () => setTimeout(closeFab, 80));
   });
@@ -2652,7 +3049,7 @@
       .sort((a,b) => a.occ.diffDays - b.occ.diffDays);
 
     if (!withDate.length) {
-      box.innerHTML = `<div class="card"><p class="empty">Todavía no hay fechas de renovación. Abre una responsabilidad (seguros, APK, impuestos…) y ponle fecha.</p></div>`;
+      box.innerHTML = `<div class="empty-state"><div class="empty-title">Sin fechas de renovación</div><p class="empty-body">Abre una responsabilidad (seguros, APK, impuestos…) y asígnale fecha.</p></div>`;
       return;
     }
 
@@ -2660,7 +3057,6 @@
       const esCelebra = item.kind === "celebra";
       let tone = "jade", tag = `en ${occ.diffDays} días`;
       if (esCelebra) {
-        // Para regalos conviene avisar con más antelación
         if (occ.diffDays <= 21) tone = "amber";
         if (occ.diffDays <= 3) tone = "red";
         tag = occ.diffDays === 0 ? "hoy" : `en ${occ.diffDays} día(s)`;
@@ -2670,14 +3066,17 @@
       }
       const fecha = `${occ.date.getDate()} de ${MESES[occ.date.getMonth()]}`;
       const extra = esCelebra && occ.diffDays <= 21 && occ.diffDays > 0 ? " · hora de pensar el regalo" : "";
-      return `<div class="alert ${tone}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+      return `<div class="alert ${tone} is-click" data-action="item" data-ref="${item.id}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;">
         <span>
-          <strong style="display:block;color:${tone==='red'?'var(--red)':tone==='amber'?'var(--amber)':'var(--jade)'};">${esCelebra ? '🎁 ' : ''}${item.name}</strong>
-          <span style="font-size:11.5px;opacity:0.85;">${AREA_LABEL[item.area]||item.area} · ${whoLabel(item.who)} · ${fecha}${extra}</span>
+          <strong style="display:block;color:${tone==='red'?'var(--red)':tone==='amber'?'var(--amber)':'var(--jade)'};">${esCelebra ? '🎁 ' : ''}${escapeHTML(item.name)}</strong>
+          <span style="font-size:11.5px;opacity:0.85;">${escapeHTML(AREA_LABEL[item.area]||item.area)} · ${escapeHTML(whoLabel(item.who))} · ${fecha}${extra}</span>
         </span>
         <span class="mono" style="white-space:nowrap;">${tag}</span>
       </div>`;
     }).join("");
+    box.querySelectorAll('[data-action]').forEach(el => {
+      el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
+    });
   }
 
   // ---------- CALENDARIO: VISTA MENSUAL INTERACTIVA ----------
@@ -2773,7 +3172,7 @@
     const dayEvents = eventsForIso(iso);
 
     if (!recurring.length && !renewals.length && !dayEvents.length) {
-      box.innerHTML = `<div class="card"><p class="empty">Nada programado este día todavía. Toca “＋ Añadir” arriba para crear un evento o una tarea, o abre una responsabilidad y márcale un día de la semana / una fecha de renovación.</p></div>`;
+      box.innerHTML = `<div class="empty-state"><div class="empty-title">Nada este día</div><p class="empty-body">Toca ＋ Añadir para un evento o tarea, o marca días en una responsabilidad.</p><span class="empty-hint">＋ Añadir arriba</span></div>`;
       return;
     }
 
