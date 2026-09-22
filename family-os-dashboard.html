@@ -1049,27 +1049,27 @@
 
   <!-- ÁREAS -->
   <section class="screen" id="screen-areas">
-    <div class="section-head"><h2>Áreas de la vida familiar</h2><button class="edit-inline" id="catalogBtn">📚 Catálogo</button></div>
+    <div class="section-head"><h2 data-i18n="secAreas">Áreas de la vida familiar</h2><button class="edit-inline" id="catalogBtn">📚 Catálogo</button></div>
     <div id="areasList"></div>
   </section>
 
   <!-- REPARTO -->
   <section class="screen" id="screen-reparto">
-    <div class="section-head"><h2>Carga por persona</h2></div>
+    <div class="section-head"><h2 data-i18n="secLoad">Carga por persona</h2></div>
     <div id="personCards"></div>
 
-    <div class="section-head"><h2>Reparto por área</h2></div>
+    <div class="section-head"><h2 data-i18n="secSplit">Reparto por área</h2></div>
     <div class="card" id="areaSplit"></div>
   </section>
 
   <!-- DINERO -->
   <section class="screen" id="screen-dinero">
     <div class="stat-row">
-      <div class="stat"><span class="num" id="dineroMes">€0</span><span class="lbl">Gastos al mes</span></div>
-      <div class="stat"><span class="num" id="dineroAno">€0</span><span class="lbl">Gastos al año</span></div>
+      <div class="stat"><span class="num" id="dineroMes">€0</span><span class="lbl" data-i18n="lblMes">Gastos al mes</span></div>
+      <div class="stat"><span class="num" id="dineroAno">€0</span><span class="lbl" data-i18n="lblAno">Gastos al año</span></div>
     </div>
 
-    <div class="section-head"><h2>💰 Ingresos</h2><button class="edit-inline" id="addIncomeBtn">＋ Nuevo</button></div>
+    <div class="section-head"><h2 data-i18n="secIncomes">💰 Ingresos</h2><button class="edit-inline" id="addIncomeBtn">＋ Nuevo</button></div>
     <div class="card">
       <div id="incomeStats"></div>
       <div id="incomeList"></div>
@@ -1088,39 +1088,39 @@
       </datalist>
     </div>
 
-    <div class="section-head"><h2>Balance</h2></div>
+    <div class="section-head"><h2 data-i18n="secBalanceMoney">Balance</h2></div>
     <div class="balance-card" id="balanceCard"></div>
 
     <div class="card">
       <p style="margin:0;font-size:12px;color:var(--text-faint);">Los gastos anuales (seguros, APK, impuestos) se reparten entre 12 para que veas lo que de verdad cuesta cada mes.</p>
     </div>
 
-    <div class="section-head"><h2>Cuándo cae cada gasto (vista real)</h2></div>
+    <div class="section-head"><h2 data-i18n="secYearChart">Cuándo cae cada gasto (vista real)</h2></div>
     <div class="card">
       <div class="year-chart" id="yearChart"></div>
       <p style="margin:2px 0 0;font-size:11px;color:var(--text-faint);">Lo mensual se reparte en los 12 meses. Lo anual con fecha de renovación cae de golpe en su mes real; sin fecha, se prorratea.</p>
     </div>
 
-    <div class="section-head"><h2>Este mes toca pagar</h2></div>
+    <div class="section-head"><h2 data-i18n="secThisMonth">Este mes toca pagar</h2></div>
     <div class="card" id="thisMonthPay"></div>
 
-    <div class="section-head"><h2>Gasto por área</h2></div>
+    <div class="section-head"><h2 data-i18n="secByArea">Gasto por área</h2></div>
     <div class="card" id="moneyByArea"></div>
 
-    <div class="section-head"><h2>Los diez que más pesan</h2></div>
+    <div class="section-head"><h2 data-i18n="secTop10">Los diez que más pesan</h2></div>
     <div class="card" id="moneyTop"></div>
   </section>
 
   <!-- METAS -->
   <section class="screen" id="screen-metas">
-    <div class="section-head"><h2>🎯 Metas familiares</h2></div>
+    <div class="section-head"><h2 data-i18n="secGoals">🎯 Metas familiares</h2></div>
     <div class="card">
       <p style="margin:0;font-size:12.5px;">Objetivos a 12 meses. Cada meta puede tener hitos simples (✓) o metas numéricas con progreso — ej. "ahorrar €3.000" con una barra que va subiendo.</p>
     </div>
 
     <div id="goalsList"></div>
 
-    <div class="section-head"><h2>Nueva meta</h2></div>
+    <div class="section-head"><h2 data-i18n="secNewGoal">Nueva meta</h2></div>
     <div class="card">
       <div class="add-row" style="flex-wrap:nowrap;">
         <input type="text" id="newGoalName" class="f-name" placeholder="ej. Ahorrar para el coche">
@@ -1212,19 +1212,24 @@
 <div class="modal-bg" id="itemModalBg">
   <div class="modal">
     <h3 id="itemModalTitle">Responsabilidad</h3>
-    <label>Qué es</label>
+    <label data-i18n-label="lblWhat">Qué es</label>
     <input type="text" id="fName" placeholder="ej. Llevar a la niña al colegio">
-    <label>Área</label>
+    <label data-i18n-label="lblArea">Área</label>
     <select id="fArea"></select>
-    <label>Quién se encarga</label>
+    <label data-i18n-label="lblWho">Quién se encarga</label>
     <select id="fWho"></select>
+    <label data-i18n-label="lblFlow">Tipo de dinero</label>
+    <select id="fFlow">
+      <option value="gasto" data-i18n-opt="flowGasto">Gasto</option>
+      <option value="ingreso" data-i18n-opt="flowIngreso">Ingreso</option>
+    </select>
     <div class="two-col">
       <div>
-        <label>Cuesta (€)</label>
+        <label id="lblMoneyAmount" data-i18n-label="lblMoney">Importe (€)</label>
         <input type="number" id="fMoney" min="0" step="0.01" placeholder="0">
       </div>
       <div>
-        <label>Cada</label>
+        <label data-i18n-label="lblFreq">Cada</label>
         <select id="fFreq">
           <option value="mes">mes</option>
           <option value="ano">año</option>
@@ -1233,11 +1238,11 @@
     </div>
     <div class="two-col">
       <div>
-        <label>Horas por semana</label>
+        <label data-i18n-label="lblHours">Horas por semana</label>
         <input type="number" id="fTime" min="0" step="0.25" placeholder="0">
       </div>
       <div>
-        <label>Energía</label>
+        <label data-i18n-label="lblEnergy">Energía</label>
         <select id="fEnergy">
           <option value="neutra">La deja igual</option>
           <option value="da">Le da energía</option>
@@ -1245,16 +1250,16 @@
         </select>
       </div>
     </div>
-    <label>Nota (opcional)</label>
+    <label data-i18n-label="lblNote">Nota (opcional)</label>
     <input type="text" id="fNote" placeholder="ej. renovar cada mayo">
-    <label>Fecha de renovación (opcional, se repite cada año)</label>
+    <label data-i18n-label="lblRenewal">Fecha de renovación (opcional)</label>
     <input type="date" id="fRenewal">
-    <label>Qué tipo de fecha es</label>
+    <label data-i18n-label="lblKind">Qué tipo de fecha es</label>
     <select id="fKind">
       <option value="renov">Renovación o vencimiento</option>
       <option value="celebra">🎁 Cumpleaños o evento</option>
     </select>
-    <label>Qué días de la semana pasa (opcional, para el calendario)</label>
+    <label data-i18n-label="lblDays">Días de la semana (calendario)</label>
     <div class="day-chips" id="fDaysBox"></div>
     <div class="modal-actions">
       <button class="btn-cancel" id="itemDelete" style="color:var(--red);">Eliminar</button>
@@ -1400,6 +1405,10 @@
       if (!raw) return;
       const loaded = JSON.parse(raw);
       Object.keys(loaded).forEach(k => { state[k] = loaded[k]; });
+      // migrar flow en ítems antiguos
+      (state.items||[]).forEach(it => {
+        if (!it.flow) it.flow = "gasto";
+      });
     } catch(e){}
   }
 
@@ -1419,6 +1428,12 @@
     { key:"desarrollo", label:"🚀 Desarrollo personal" }
   ];
   const AREA_LABEL = Object.fromEntries(AREAS.map(a => [a.key, a.label]));
+  function areaLabel(key){
+    const k = "area_" + key;
+    const tr = (typeof t === "function") ? t(k) : null;
+    if (tr && tr !== k) return tr;
+    return AREA_LABEL[key] || key;
+  }
 
   const CHECKLIST = [
     "Dinero: qué se paga esta semana y qué viene el mes que viene",
@@ -1441,6 +1456,43 @@
     notes: "",
     notesHistory: []
   };
+
+
+  // Agenda papel sep-2026 → calendario (ids fijos para no duplicar)
+  const SEED_AGENDA_SEP2026 = [
+    { id:"ag-2026-09-22-a", date:"2026-09-22", name:"Anuschka trabaja · niños con Papá", kind:"evento", who:"a", time:"", note:"Desde agenda papel" },
+    { id:"ag-2026-09-22-b", date:"2026-09-22", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" },
+    { id:"ag-2026-09-23-a", date:"2026-09-23", name:"Anuschka trabaja · niño con Papá", kind:"evento", who:"a", time:"", note:"" },
+    { id:"ag-2026-09-23-b", date:"2026-09-23", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" },
+    { id:"ag-2026-09-24-a", date:"2026-09-24", name:"Ziggy · ole cesto", kind:"evento", who:"ext", time:"", note:"Actividad niño" },
+    { id:"ag-2026-09-24-b", date:"2026-09-24", name:"Zaila colegio (Papá)", kind:"evento", who:"b", time:"", note:"Llevar / colegio" },
+    { id:"ag-2026-09-24-c", date:"2026-09-24", name:"Recojo Zaila (Papá)", kind:"evento", who:"b", time:"", note:"" },
+    { id:"ag-2026-09-24-d", date:"2026-09-24", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" },
+    { id:"ag-2026-09-24-e", date:"2026-09-24", name:"Trabajo Gabriel", kind:"evento", who:"b", time:"", note:"" },
+    { id:"ag-2026-09-25-a", date:"2026-09-25", name:"Trabajo Gabriel", kind:"evento", who:"b", time:"15:00", note:"Turno 15:00 → 03:00" },
+    { id:"ag-2026-09-26-a", date:"2026-09-26", name:"Trabajo Gabriel", kind:"evento", who:"b", time:"15:00", note:"Turno 15:00 → 03:00" },
+    { id:"ag-2026-09-27-a", date:"2026-09-27", name:"Workshop Gabriel · 22 pax", kind:"evento", who:"b", time:"", note:"Desde agenda papel" },
+    { id:"ag-2026-09-28-a", date:"2026-09-28", name:"Anuschka libre · Gabriel libre", kind:"evento", who:"both", time:"", note:"" },
+    { id:"ag-2026-09-28-b", date:"2026-09-28", name:"Zaila colegio · llevar y recoger (Anuschka)", kind:"evento", who:"a", time:"", note:"" },
+    { id:"ag-2026-09-29-a", date:"2026-09-29", name:"Anuschka trabaja · niños con Papá", kind:"evento", who:"a", time:"", note:"" },
+    { id:"ag-2026-09-29-b", date:"2026-09-29", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" },
+    { id:"ag-2026-09-30-a", date:"2026-09-30", name:"Anuschka trabaja · niños con Papá", kind:"evento", who:"a", time:"", note:"" },
+    { id:"ag-2026-09-30-b", date:"2026-09-30", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" }
+  ];
+  function seedAgendaFromPaper(){
+    if (!state.events) state.events = [];
+    let added = 0;
+    SEED_AGENDA_SEP2026.forEach(e => {
+      if (!state.events.some(x => x.id === e.id)) {
+        state.events.push({ ...e, done: false });
+        added++;
+      }
+    });
+    // Nombres de pareja si aún son genéricos
+    if (state.people && (state.people.a === "Persona 1" || !state.people.a)) state.people.a = "Anuschka";
+    if (state.people && (state.people.b === "Persona 2" || !state.people.b)) state.people.b = "Gabriel";
+    return added;
+  }
 
   let editingId = null;
   let modalDays = [];
@@ -1471,6 +1523,29 @@
   function monthlyCost(it){
     const m = Number(it.money) || 0;
     return it.freq === "ano" ? m / 12 : m;
+  }
+  function isItemIncome(it){
+    return it && (it.flow === "ingreso" || it.flow === "income");
+  }
+  function isItemExpense(it){
+    return !isItemIncome(it);
+  }
+  function monthlyExpenses(){
+    return (state.items||[]).filter(isItemExpense).reduce((s,it)=>s+monthlyCost(it),0);
+  }
+  function monthlyAreaIncomes(){
+    return (state.items||[]).filter(isItemIncome).reduce((s,it)=>s+monthlyCost(it),0);
+  }
+  function registeredMonthIncomes(now){
+    now = now || new Date();
+    const m = now.getMonth(), y = now.getFullYear();
+    return (state.incomes||[]).filter(inc => {
+      const d = new Date(inc.date);
+      return d.getMonth() === m && d.getFullYear() === y;
+    }).reduce((s,i)=>s+(Number(i.monto)||0),0);
+  }
+  function totalMonthlyIncome(now){
+    return registeredMonthIncomes(now) + monthlyAreaIncomes();
   }
   function eur(n){
     const r = Math.round(n * 100) / 100;
@@ -1610,6 +1685,74 @@
       secLook: "Qué conviene mirar", secTime: "Dónde se va el tiempo",
       secBalance: "Reparto de horas",
       toastOpen: "Abriendo {s}",
+
+      secAreas: "Áreas de la vida familiar",
+      secLoad: "Carga por persona",
+      secSplit: "Reparto por área",
+      secIncomes: "💰 Ingresos",
+      secBalanceMoney: "Balance",
+      secYearChart: "Cuándo cae cada gasto",
+      secThisMonth: "Este mes toca pagar",
+      secByArea: "Gasto por área",
+      secTop10: "Los diez que más pesan",
+      secGoals: "🎯 Metas familiares",
+      secNewGoal: "Nueva meta",
+      lblMes: "Gastos al mes",
+      lblAno: "Gastos al año",
+      lblFlow: "Tipo de dinero",
+      flowGasto: "Gasto (sale dinero)",
+      flowIngreso: "Ingreso (entra dinero)",
+      lblMoney: "Importe (€)",
+      lblFreq: "Cada",
+      lblWhat: "Qué es",
+      lblArea: "Área",
+      lblWho: "Quién se encarga",
+      lblHours: "Horas por semana",
+      lblEnergy: "Energía",
+      lblNote: "Nota (opcional)",
+      lblRenewal: "Fecha de renovación (opcional)",
+      lblKind: "Qué tipo de fecha es",
+      lblDays: "Días de la semana (calendario)",
+      btnSave: "Guardar",
+      btnCancel: "Cancelar",
+      btnDelete: "Eliminar",
+      itemTitle: "Responsabilidad",
+      addItemPh: "Añadir responsabilidad…",
+      emptyArea: "Nada en esta área todavía.",
+      emptyGoals: "Aún no hay metas",
+      emptyGoalsBody: "Crea la primera abajo — por ejemplo ahorrar para el coche o aprender un idioma.",
+      emptyIncomes: "Sin ingresos aún",
+      emptyIncomesBody: "Registra el primero con ＋ Nuevo o añade un ingreso en Áreas.",
+      emptyExpenses: "Sin gastos registrados todavía.",
+      emptyPay: "Ningún gasto anual cae este mes.",
+      catalogBtn: "📚 Catálogo",
+      addIncome: "＋ Nuevo",
+      area_ninos: "👧 Niños",
+      area_casa: "🏠 Casa y hogar",
+      area_alimentacion: "🍽️ Alimentación",
+      area_dinero: "💰 Dinero y obligaciones",
+      area_coche: "🚗 Transporte",
+      area_salud: "🩺 Salud",
+      area_admin: "🏛️ Administración",
+      area_trabajo: "💼 Trabajo",
+      area_pareja: "❤️ Pareja",
+      area_social: "👥 Familia y amigos",
+      area_ocio: "🎉 Ocio",
+      area_mant: "🧹 Mantenimiento diario",
+      area_desarrollo: "🚀 Desarrollo personal",
+      whoBoth: "Los dos",
+      whoExt: "Fuera de casa",
+      toastSaved: "Guardado",
+      toastDeleted: "Eliminado",
+      balIn: "Ingresos este mes",
+      balOut: "Gastos este mes",
+      balOk: "✓ Balance",
+      balBad: "! Balance",
+      freqMes: "mes",
+      freqAno: "año",
+      energyN: "La deja igual",
+      energyUp: "Le da energía",
+      energyDown: "Le quita energía",
       event: "Evento", goal: "Meta", item: "Responsabilidad"
     },
     nl: {
@@ -1649,6 +1792,74 @@
       secLook: "Even checken", secTime: "Waar de tijd naartoe gaat",
       secBalance: "Verdeling van uren",
       toastOpen: "Openen: {s}",
+
+      secAreas: "Levensgebieden",
+      secLoad: "Last per persoon",
+      secSplit: "Verdeling per gebied",
+      secIncomes: "💰 Inkomsten",
+      secBalanceMoney: "Saldo",
+      secYearChart: "Wanneer vallen de uitgaven",
+      secThisMonth: "Deze maand te betalen",
+      secByArea: "Uitgaven per gebied",
+      secTop10: "De tien zwaarste",
+      secGoals: "🎯 Familiedoelen",
+      secNewGoal: "Nieuw doel",
+      lblMes: "Uitgaven per maand",
+      lblAno: "Uitgaven per jaar",
+      lblFlow: "Soort geld",
+      flowGasto: "Uitgave (geld eruit)",
+      flowIngreso: "Inkomst (geld erin)",
+      lblMoney: "Bedrag (€)",
+      lblFreq: "Elke",
+      lblWhat: "Wat is het",
+      lblArea: "Gebied",
+      lblWho: "Wie doet het",
+      lblHours: "Uren per week",
+      lblEnergy: "Energie",
+      lblNote: "Notitie (optioneel)",
+      lblRenewal: "Verlengingsdatum (optioneel)",
+      lblKind: "Soort datum",
+      lblDays: "Dagen van de week (agenda)",
+      btnSave: "Opslaan",
+      btnCancel: "Annuleren",
+      btnDelete: "Verwijderen",
+      itemTitle: "Verantwoordelijkheid",
+      addItemPh: "Verantwoordelijkheid toevoegen…",
+      emptyArea: "Nog niets in dit gebied.",
+      emptyGoals: "Nog geen doelen",
+      emptyGoalsBody: "Maak hieronder de eerste — bijvoorbeeld sparen voor de auto of een taal leren.",
+      emptyIncomes: "Nog geen inkomsten",
+      emptyIncomesBody: "Voeg de eerste toe met ＋ Nieuw of als inkomst in Gebieden.",
+      emptyExpenses: "Nog geen uitgaven geregistreerd.",
+      emptyPay: "Geen jaarlijkse uitgave valt deze maand.",
+      catalogBtn: "📚 Catalogus",
+      addIncome: "＋ Nieuw",
+      area_ninos: "👧 Kinderen",
+      area_casa: "🏠 Huis en huishouden",
+      area_alimentacion: "🍽️ Voeding",
+      area_dinero: "💰 Geld en verplichtingen",
+      area_coche: "🚗 Vervoer",
+      area_salud: "🩺 Gezondheid",
+      area_admin: "🏛️ Administratie",
+      area_trabajo: "💼 Werk",
+      area_pareja: "❤️ Relatie",
+      area_social: "👥 Familie en vrienden",
+      area_ocio: "🎉 Vrije tijd",
+      area_mant: "🧹 Dagelijks onderhoud",
+      area_desarrollo: "🚀 Persoonlijke groei",
+      whoBoth: "Samen",
+      whoExt: "Buitenshuis",
+      toastSaved: "Opgeslagen",
+      toastDeleted: "Verwijderd",
+      balIn: "Inkomsten deze maand",
+      balOut: "Uitgaven deze maand",
+      balOk: "✓ Saldo",
+      balBad: "! Saldo",
+      freqMes: "maand",
+      freqAno: "jaar",
+      energyN: "Neutraal",
+      energyUp: "Geeft energie",
+      energyDown: "Kost energie",
       event: "Event", goal: "Doel", item: "Taak"
     }
   };
@@ -1680,11 +1891,9 @@
     if (eye) eye.textContent = t("eyebrowSave");
     const lab = document.getElementById("langBtnLabel");
     if (lab) lab.textContent = appLang === "nl" ? "Taal: NL" : "Idioma: ES";
-    // theme labels use theme functions - refresh
     const th = document.documentElement.getAttribute("data-theme") || "dark";
     const tLab = document.getElementById("themeBtnLabel");
     if (tLab) tLab.textContent = th === "light" ? t("themeDark") : t("themeLight");
-    // FAB actions
     const mapFab = { exportBtn: "saveCopy", shareBtn: "share", importBtn: "loadData", namesBtn: "names" };
     Object.keys(mapFab).forEach(id => {
       const el = document.getElementById(id);
@@ -1693,7 +1902,6 @@
       const icoTxt = ico ? ico.textContent : "";
       el.innerHTML = (ico ? `<span class="fab-ico">${icoTxt}</span> ` : "") + t(mapFab[id]);
     });
-    // Tabs: text after svg
     document.querySelectorAll("nav.tabbar button[data-screen]").forEach(btn => {
       const key = "tab_" + btn.dataset.screen;
       const label = t(key);
@@ -1702,12 +1910,49 @@
       if (svg) btn.appendChild(svg);
       btn.appendChild(document.createTextNode(label));
     });
-    // Resumen section heads
     const sh = document.querySelectorAll("#screen-resumen .section-head h2");
     if (sh[0]) sh[0].textContent = t("secLook");
     if (sh[1]) sh[1].textContent = t("secTime");
     const balH = document.querySelector("#screen-resumen .balance h3");
     if (balH) balH.textContent = t("secBalance");
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      const k = el.getAttribute("data-i18n");
+      if (k) el.textContent = t(k);
+    });
+    document.querySelectorAll("[data-i18n-label]").forEach(el => {
+      el.textContent = t(el.getAttribute("data-i18n-label"));
+    });
+    const fFlow = document.getElementById("fFlow");
+    if (fFlow) {
+      const o0 = fFlow.querySelector('option[value="gasto"]');
+      const o1 = fFlow.querySelector('option[value="ingreso"]');
+      if (o0) o0.textContent = t("flowGasto");
+      if (o1) o1.textContent = t("flowIngreso");
+    }
+    const fFreq = document.getElementById("fFreq");
+    if (fFreq) {
+      const om = fFreq.querySelector('option[value="mes"]');
+      const oa = fFreq.querySelector('option[value="ano"]');
+      if (om) om.textContent = t("freqMes");
+      if (oa) oa.textContent = t("freqAno");
+    }
+    const fEnergy = document.getElementById("fEnergy");
+    if (fEnergy) {
+      const mapE = { neutra: "energyN", da: "energyUp", quita: "energyDown" };
+      fEnergy.querySelectorAll("option").forEach(o => {
+        if (mapE[o.value]) o.textContent = t(mapE[o.value]);
+      });
+    }
+    const itemSave = document.getElementById("itemSave");
+    if (itemSave) itemSave.textContent = t("btnSave");
+    const itemCancel = document.getElementById("itemCancel");
+    if (itemCancel) itemCancel.textContent = t("btnCancel");
+    const itemDelete = document.getElementById("itemDelete");
+    if (itemDelete) itemDelete.textContent = t("btnDelete");
+    const catalogBtn = document.getElementById("catalogBtn");
+    if (catalogBtn) catalogBtn.textContent = t("catalogBtn");
+    const addInc = document.getElementById("addIncomeBtn");
+    if (addInc) addInc.textContent = t("addIncome");
   }
 
   function greetingForHour(h){
@@ -1744,16 +1989,12 @@
     const openGoals = (state.goals||[]).filter(g => {
       try { return goalProgress(g) < 1; } catch(e) { return true; }
     });
-    const totalMoney = (state.items||[]).reduce((s,it)=>s+monthlyCost(it),0);
+    const totalMoney = monthlyExpenses();
     const totalTime = (state.items||[]).reduce((s,it)=>s+(Number(it.time)||0),0);
 
     const thisMonth = now.getMonth();
     const thisYear = now.getFullYear();
-    const monthIncomes = (state.incomes||[]).filter(inc => {
-      const d = new Date(inc.date);
-      return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
-    });
-    const incomeMonth = monthIncomes.reduce((s,i)=>s+(Number(i.monto)||0),0);
+    const incomeMonth = totalMonthlyIncome(now);
     const balanceMonth = incomeMonth - totalMoney;
 
     const tp = timeByPerson();
@@ -1938,7 +2179,7 @@
   function renderResumen(){
     renderSmartDashboard();
     markTapFeedback();
-    const totalMoney = state.items.reduce((s,it) => s + monthlyCost(it), 0);
+    const totalMoney = monthlyExpenses();
     const totalTime = state.items.reduce((s,it) => s + (Number(it.time)||0), 0);
     document.getElementById('kpiMoney').textContent = eur(totalMoney);
     document.getElementById('kpiTime').textContent = hrs(totalTime);
@@ -2038,7 +2279,7 @@
     topBox.innerHTML = ordered.length
       ? ordered.map(([k,v]) => `
           <div class="is-click" data-action="area" data-ref="${k}" style="margin-bottom:11px;cursor:pointer;">
-            <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${escapeHTML(AREA_LABEL[k]||k)}</span><span class="mono">${hrs(v)}</span></div>
+            <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${escapeHTML(areaLabel(k))}</span><span class="mono">${hrs(v)}</span></div>
             <div class="bar-wrap"><div class="bar-fill" style="width:${(v/maxV)*100}%"></div></div>
           </div>`).join("")
       : `<p class="empty is-click" data-action="goto" data-ref="areas" style="cursor:pointer;">Sin horas registradas todavía. Toca para ir a Áreas.</p>`;
@@ -2048,7 +2289,7 @@
           openAreas.add(el.dataset.ref);
           goToScreen("areas");
           renderAreas();
-          showToast(AREA_LABEL[el.dataset.ref]||el.dataset.ref, { icon:"📁", duration:1600 });
+          showToast(areaLabel(el.dataset.ref), { icon:"📁", duration:1600 });
         } else runDashAction(el.dataset.action, el.dataset.ref);
       };
     });
@@ -2106,7 +2347,8 @@
     box.innerHTML = "";
     AREAS.forEach(area => {
       const items = state.items.filter(i => i.area === area.key);
-      const money = items.reduce((s,i) => s + monthlyCost(i), 0);
+      const money = items.filter(isItemExpense).reduce((s,i) => s + monthlyCost(i), 0);
+      const income = items.filter(isItemIncome).reduce((s,i) => s + monthlyCost(i), 0);
       const time = items.reduce((s,i) => s + (Number(i.time)||0), 0);
       const isOpen = openAreas.has(area.key);
 
@@ -2114,8 +2356,8 @@
       card.className = "area-card";
       card.innerHTML = `
         <div class="area-head">
-          <span class="a-name">${area.label}</span>
-          <span class="a-meta">${items.length} cosa(s)<br>${eur(money)}/mes · ${hrs(time)}/sem</span>
+          <span class="a-name">${areaLabel(area.key)}</span>
+          <span class="a-meta">${items.length} · ${income?('+'+eur(income)+' '):''}${money?('−'+eur(money)+'/mes'):''}${!money&&!income?eur(0)+'/mes':''} · ${hrs(time)}</span>
           <span style="color:var(--text-faint);font-size:12px;">${isOpen ? '▾' : '▸'}</span>
         </div>
         <div class="area-body ${isOpen ? '' : 'collapsed'}"></div>`;
@@ -2128,20 +2370,24 @@
       const body = card.querySelector('.area-body');
       if (isOpen) {
         if (!items.length) {
-          body.innerHTML = `<p class="empty" style="padding:14px 0 6px;text-align:center;">Nada en esta área todavía.</p>`;
+          body.innerHTML = `<p class="empty" style="padding:14px 0 6px;text-align:center;">${escapeHTML(t("emptyArea"))}</p>`;
         }
         items.forEach(it => {
           const row = document.createElement('div');
           row.className = "item-row";
           const parts = [];
-          if (Number(it.money) > 0) parts.push(`${eur(monthlyCost(it))}/mes${it.freq === 'ano' ? ' (anual)' : ''}`);
+          if (Number(it.money) > 0) {
+            const sign = isItemIncome(it) ? "+" : "−";
+            const tag = isItemIncome(it) ? (appLang==="nl"?"inkomst":"ingreso") : (appLang==="nl"?"uitgave":"gasto");
+            parts.push(`${sign}${eur(monthlyCost(it))}/mes · ${tag}${it.freq === 'ano' ? (appLang==='nl'?' (jaar)':' (anual)') : ''}`);
+          }
           if (Number(it.time) > 0) parts.push(`${hrs(it.time)}/sem`);
-          if (it.energy === "quita") parts.push("agota");
-          if (it.energy === "da") parts.push("recarga");
+          if (it.energy === "quita") parts.push(appLang==="nl"?"kost energie":"agota");
+          if (it.energy === "da") parts.push(appLang==="nl"?"geeft energie":"recarga");
           row.innerHTML = `
             <div class="item-main">
-              <div class="item-name">${it.name}</div>
-              <div class="item-sub">${parts.join(" · ") || "sin cifras"}${it.note ? " · " + it.note : ""}</div>
+              <div class="item-name">${isItemIncome(it)?'<span style="color:var(--jade);margin-right:4px;">＋</span>':''}${escapeHTML(it.name)}</div>
+              <div class="item-sub">${parts.join(" · ") || (appLang==="nl"?"geen cijfers":"sin cifras")}${it.note ? " · " + escapeHTML(it.note) : ""}</div>
             </div>
             <span class="who-chip ${whoClass(it.who)}">${whoLabel(it.who)}</span>
             <span class="del-x">✕</span>`;
@@ -2173,7 +2419,7 @@
         const addRow = document.createElement('div');
         addRow.className = "add-row";
         addRow.innerHTML = `
-          <input type="text" class="f-name" placeholder="Añadir responsabilidad…">
+          <input type="text" class="f-name" placeholder="${escapeHTML(t('addItemPh'))}">
           <input type="number" class="f-num" placeholder="€/mes" min="0" step="0.01">
           <input type="number" class="f-num" placeholder="h/sem" min="0" step="0.25">
           <button>＋</button>`;
@@ -2188,6 +2434,7 @@
             who: "a",
             money: parseFloat(moneyI.value) || 0,
             freq: "mes",
+            flow: "gasto",
             time: parseFloat(timeI.value) || 0,
             energy: "neutra",
             note: ""
@@ -2254,7 +2501,7 @@
         openAreas.add(el.dataset.area);
         goToScreen('areas');
         renderAreas();
-        showToast(AREA_LABEL[el.dataset.area]||el.dataset.area, { icon:'📁', duration:1600 });
+        showToast(areaLabel(el.dataset.area), { icon:'📁', duration:1600 });
       };
     });
     const empty = document.getElementById('areaSplitEmpty');
@@ -2268,6 +2515,7 @@
     const totals = new Array(12).fill(0);
     const perMonthItems = Array.from({length:12}, () => []);
     state.items.forEach(it => {
+      if (isItemIncome(it)) return;
       const m = Number(it.money) || 0;
       if (m <= 0) return;
       if (it.freq === "ano") {
@@ -2302,8 +2550,8 @@
       .sort((a,b) => b.monto - a.monto);
     const payBox = document.getElementById('thisMonthPay');
     payBox.innerHTML = thisMonth.length
-      ? thisMonth.map(x => `<div class="hist-row is-click" data-action="item" data-ref="${x.it.id}"><span>${escapeHTML(x.it.name)}${!x.exacto ? ' <span style="color:var(--text-faint);font-size:10px;">(prorrateado, sin fecha)</span>' : ''}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(AREA_LABEL[x.it.area]||x.it.area)} · ${escapeHTML(whoLabel(x.it.who))}</span></span><span class="mono">${eur(x.monto)}</span></div>`).join("")
-      : `<p class="empty">Ningún gasto anual cae este mes.</p>`;
+      ? thisMonth.map(x => `<div class="hist-row is-click" data-action="item" data-ref="${x.it.id}"><span>${escapeHTML(x.it.name)}${!x.exacto ? ' <span style="color:var(--text-faint);font-size:10px;">(prorrateado, sin fecha)</span>' : ''}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(areaLabel(x.it.area))} · ${escapeHTML(whoLabel(x.it.who))}</span></span><span class="mono">${eur(x.monto)}</span></div>`).join("")
+      : `<p class="empty">${escapeHTML(t("emptyPay"))}</p>`;
     payBox.querySelectorAll('[data-action]').forEach(el => {
       el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
     });
@@ -2318,22 +2566,22 @@
       const d = new Date(inc.date);
       return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
     });
-    const totalIngresos = thisMonthIncomes.reduce((s, i) => s + (Number(i.monto) || 0), 0);
-    const totalGastos = state.items.reduce((s,i) => s + monthlyCost(i), 0);
+    const totalIngresos = thisMonthIncomes.reduce((s, i) => s + (Number(i.monto) || 0), 0) + monthlyAreaIncomes();
+    const totalGastos = monthlyExpenses();
     const balance = totalIngresos - totalGastos;
     
     const isPositive = balance >= 0;
     document.getElementById('balanceCard').innerHTML = `
       <div class="balance-row">
-        <span class="label">Ingresos este mes</span>
+        <span class="label">${escapeHTML(t("balIn"))}</span>
         <span class="amount" style="color:var(--jade);">+${eur(totalIngresos)}</span>
       </div>
       <div class="balance-row">
-        <span class="label">Gastos este mes</span>
+        <span class="label">${escapeHTML(t("balOut"))}</span>
         <span class="amount" style="color:var(--red);">−${eur(totalGastos)}</span>
       </div>
       <div class="balance-row total ${isPositive ? 'positive' : 'negative'}">
-        <span class="label">${isPositive ? '✓ Balance' : '! Balance'}</span>
+        <span class="label">${escapeHTML(isPositive ? t("balOk") : t("balBad"))}</span>
         <span class="amount">${isPositive ? '+' : '−'}${eur(Math.abs(balance))}</span>
       </div>`;
   }
@@ -2342,12 +2590,12 @@
     renderYearSpend();
     renderIncomes();
     renderBalance();
-    const total = state.items.reduce((s,i) => s + monthlyCost(i), 0);
+    const total = monthlyExpenses();
     document.getElementById('dineroMes').textContent = eur(total);
     document.getElementById('dineroAno').textContent = eur(total * 12);
 
     const byArea = {};
-    state.items.forEach(i => {
+    state.items.filter(isItemExpense).forEach(i => {
       const m = monthlyCost(i);
       if (m > 0) byArea[i.area] = (byArea[i.area] || 0) + m;
     });
@@ -2357,25 +2605,25 @@
     mba.innerHTML = ordered.length
       ? ordered.map(([k,v]) => `
           <div class="is-click" data-action="area" data-ref="${k}" style="margin-bottom:11px;cursor:pointer;">
-            <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${escapeHTML(AREA_LABEL[k]||k)}</span><span class="mono">${eur(v)} · ${Math.round((v/total)*100)}%</span></div>
+            <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${escapeHTML(areaLabel(k))}</span><span class="mono">${eur(v)} · ${Math.round((v/total)*100)}%</span></div>
             <div class="bar-wrap"><div class="bar-fill amber" style="width:${(v/maxV)*100}%"></div></div>
           </div>`).join("")
-      : `<p class="empty">Sin gastos registrados todavía.</p>`;
+      : `<p class="empty">${escapeHTML(t("emptyExpenses"))}</p>`;
     mba.querySelectorAll('[data-action]').forEach(el => {
       el.onclick = () => {
         openAreas.add(el.dataset.ref);
         goToScreen("areas");
         renderAreas();
-        showToast("Área: " + (AREA_LABEL[el.dataset.ref]||el.dataset.ref), { icon:"📁", duration:1600 });
+        showToast("Área: " + (areaLabel(el.dataset.ref)), { icon:"📁", duration:1600 });
       };
     });
 
-    const top = state.items.filter(i => monthlyCost(i) > 0)
+    const top = state.items.filter(i => isItemExpense(i) && monthlyCost(i) > 0)
       .sort((a,b) => monthlyCost(b) - monthlyCost(a)).slice(0,10);
     const mtop = document.getElementById('moneyTop');
     mtop.innerHTML = top.length
-      ? top.map(i => `<div class="hist-row is-click" data-action="item" data-ref="${i.id}"><span>${escapeHTML(i.name)}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(AREA_LABEL[i.area]||i.area)} · ${escapeHTML(whoLabel(i.who))}</span></span><span class="mono">${eur(monthlyCost(i))}${i.freq==='ano'?' <span style="color:var(--text-faint);font-size:10px;">anual</span>':''}</span></div>`).join("")
-      : `<p class="empty">Sin gastos registrados todavía.</p>`;
+      ? top.map(i => `<div class="hist-row is-click" data-action="item" data-ref="${i.id}"><span>${escapeHTML(i.name)}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(areaLabel(i.area))} · ${escapeHTML(whoLabel(i.who))}</span></span><span class="mono">${eur(monthlyCost(i))}${i.freq==='ano'?' <span style="color:var(--text-faint);font-size:10px;">anual</span>':''}</span></div>`).join("")
+      : `<p class="empty">${escapeHTML(t("emptyExpenses"))}</p>`;
     mtop.querySelectorAll('[data-action]').forEach(el => {
       el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
     });
@@ -2411,7 +2659,7 @@
     const box = document.getElementById('goalsList');
     if (!box) return;
     if (!state.goals.length) {
-      box.innerHTML = `<div class="empty-state"><div class="empty-title">Aún no hay metas</div><p class="empty-body">Crea la primera abajo — por ejemplo ahorrar para el coche o aprender un idioma.</p></div>`;
+      box.innerHTML = `<div class="empty-state"><div class="empty-title">${escapeHTML(t("emptyGoals"))}</div><p class="empty-body">${escapeHTML(t("emptyGoalsBody"))}</p></div>`;
       return;
     }
     box.innerHTML = "";
@@ -2602,11 +2850,11 @@
   // ---------- MODAL DE RESPONSABILIDAD ----------
   function whoOptionsHtml(){
     return [
-      ["a", state.people.a], ["b", state.people.b], ["both","Los dos"], ["ext","Fuera de casa"]
+      ["a", state.people.a], ["b", state.people.b], ["both", t("whoBoth")], ["ext", t("whoExt")]
     ].map(([v,l]) => `<option value="${v}">${l}</option>`).join("");
   }
   function fillSelects(){
-    document.getElementById('fArea').innerHTML = AREAS.map(a => `<option value="${a.key}">${a.label}</option>`).join("");
+    document.getElementById('fArea').innerHTML = AREAS.map(a => `<option value="${a.key}">${areaLabel(a.key)}</option>`).join("");
     document.getElementById('fWho').innerHTML = whoOptionsHtml();
   }
   function openItem(id){
@@ -2620,6 +2868,8 @@
     document.getElementById('fWho').value = it.who || "a";
     document.getElementById('fMoney').value = it.money || "";
     document.getElementById('fFreq').value = it.freq || "mes";
+    const fl = document.getElementById('fFlow');
+    if (fl) fl.value = isItemIncome(it) ? "ingreso" : "gasto";
     document.getElementById('fTime').value = it.time || "";
     document.getElementById('fEnergy').value = it.energy || "neutra";
     document.getElementById('fNote').value = it.note || "";
@@ -2656,6 +2906,8 @@
     it.who = document.getElementById('fWho').value;
     it.money = parseFloat(document.getElementById('fMoney').value) || 0;
     it.freq = document.getElementById('fFreq').value;
+    const flEl = document.getElementById('fFlow');
+    it.flow = flEl && flEl.value === "ingreso" ? "ingreso" : "gasto";
     it.time = parseFloat(document.getElementById('fTime').value) || 0;
     it.energy = document.getElementById('fEnergy').value;
     it.note = document.getElementById('fNote').value.trim();
@@ -2675,7 +2927,7 @@
     const box = document.getElementById('incomeList');
     const stats = document.getElementById('incomeStats');
     if (state.incomes.length === 0) {
-      stats.innerHTML = `<div class="empty-state" style="margin-bottom:8px;"><div class="empty-title">Sin ingresos aún</div><p class="empty-body">Registra el primero con ＋ Nuevo o la fila rápida de abajo.</p></div>`;
+      stats.innerHTML = `<div class="empty-state" style="margin-bottom:8px;"><div class="empty-title">${escapeHTML(t("emptyIncomes"))}</div><p class="empty-body">${escapeHTML(t("emptyIncomesBody"))}</p></div>`;
       box.innerHTML = '';
       return;
     }
@@ -3017,7 +3269,7 @@
           "DTSTART;VALUE=DATE:"+dateToICS(anchor),
           "RRULE:FREQ=WEEKLY;BYDAY="+byday,
           "SUMMARY:"+escapeICS(it.name),
-          "DESCRIPTION:"+escapeICS((AREA_LABEL[it.area]||it.area)+" · "+whoLabel(it.who)+(it.note?" · "+it.note:"")),
+          "DESCRIPTION:"+escapeICS((areaLabel(it.area))+" · "+whoLabel(it.who)+(it.note?" · "+it.note:"")),
           "END:VEVENT"
         );
         count++;
@@ -3034,7 +3286,7 @@
             "DTSTART;VALUE=DATE:"+dateToICS(occ.date),
             "RRULE:FREQ=YEARLY",
             "SUMMARY:"+escapeICS((esCelebra?"🎁 ":"")+it.name),
-            "DESCRIPTION:"+escapeICS((AREA_LABEL[it.area]||it.area)+" · "+whoLabel(it.who)+(it.note?" · "+it.note:"")),
+            "DESCRIPTION:"+escapeICS((areaLabel(it.area))+" · "+whoLabel(it.who)+(it.note?" · "+it.note:"")),
             "BEGIN:VALARM",
             "ACTION:DISPLAY",
             "DESCRIPTION:"+escapeICS(it.name),
@@ -3325,15 +3577,15 @@
         <div class="item-row js-item-open" data-item="${it.id}">
           <div class="item-main">
             <div class="item-name">${it.name}</div>
-            <div class="item-sub">${AREA_LABEL[it.area]||it.area}${it.note ? " · " + it.note : ""}</div>
+            <div class="item-sub">${areaLabel(it.area)}${it.note ? " · " + it.note : ""}</div>
           </div>
           <span class="who-chip ${whoClass(it.who)}">${whoLabel(it.who)}</span>
         </div>`).join("") + `</div>`;
     }
     if (renewals.length) {
       html += renewals.map(it => it.kind === "celebra"
-        ? `<div class="alert jade js-item-open" data-item="${it.id}" style="border-color:#8A5F74;background:rgba(224,166,194,0.08);color:#E0A6C2;cursor:pointer;">🎁 <strong>${it.name}</strong> es hoy · ${AREA_LABEL[it.area]||it.area} · ${whoLabel(it.who)}</div>`
-        : `<div class="alert amber js-item-open" data-item="${it.id}" style="cursor:pointer;"><strong>${it.name}</strong> se renueva hoy · ${AREA_LABEL[it.area]||it.area} · ${whoLabel(it.who)}</div>`
+        ? `<div class="alert jade js-item-open" data-item="${it.id}" style="border-color:#8A5F74;background:rgba(224,166,194,0.08);color:#E0A6C2;cursor:pointer;">🎁 <strong>${it.name}</strong> es hoy · ${areaLabel(it.area)} · ${whoLabel(it.who)}</div>`
+        : `<div class="alert amber js-item-open" data-item="${it.id}" style="cursor:pointer;"><strong>${it.name}</strong> se renueva hoy · ${areaLabel(it.area)} · ${whoLabel(it.who)}</div>`
       ).join("");
     }
     box.innerHTML = html;
@@ -3446,6 +3698,7 @@
   };
 
   loadLocal();
+  seedAgendaFromPaper();
   document.documentElement.lang = appLang === "nl" ? "nl" : "es";
   document.getElementById('weekNotes').value = state.notes || "";
   document.getElementById('weekNotes').addEventListener('input', (e) => {
