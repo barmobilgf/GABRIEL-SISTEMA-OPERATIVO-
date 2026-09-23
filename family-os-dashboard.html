@@ -514,6 +514,42 @@
   .who-ext{ background:var(--chip-ext); color:var(--text-faint); }
   .del-x{ color:var(--text-faint); cursor:pointer; padding:0 2px; font-size:13px; flex:0 0 auto; }
 
+  /* Menú rápido: quién se encarga */
+  .who-picker{
+    display:none; position:fixed; z-index:50;
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:14px; padding:8px; min-width:160px;
+    box-shadow:var(--elev-3);
+  }
+  .who-picker.open{ display:block; animation:fabMenuIn .18s ease; }
+  .who-picker button{
+    display:flex; align-items:center; gap:8px; width:100%;
+    border:none; background:transparent; color:var(--text);
+    font-family:'IBM Plex Mono',monospace; font-size:12px;
+    padding:10px 12px; border-radius:10px; cursor:pointer; text-align:left;
+  }
+  .who-picker button:active, .who-picker button.active{
+    background:var(--surface-2);
+  }
+  .who-picker button .sw{ width:10px; height:10px; border-radius:3px; flex:0 0 auto; }
+  .who-picker-scrim{
+    display:none; position:fixed; inset:0; z-index:49;
+  }
+  .who-picker-scrim.open{ display:block; }
+
+  /* Leyenda calendario filtrable */
+  .cal-legend span[data-cal-filter]{
+    cursor:pointer; padding:3px 7px; border-radius:8px;
+    border:1px solid transparent; transition:border-color .15s, background .15s;
+  }
+  .cal-legend span[data-cal-filter]:active{ transform:scale(.97); }
+  .cal-legend span[data-cal-filter].on{
+    border-color:var(--amber-dim);
+    background:rgba(200,155,92,.12);
+  }
+  .cal-day.cal-dim{ opacity:0.22; }
+  .cal-day.cal-dim.selected{ opacity:0.55; }
+
   .add-row{ display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
   .add-row input, .add-row select{
     background:var(--surface-2); border:1px solid var(--line); border-radius:8px; color:var(--text);
@@ -1013,6 +1049,8 @@
 </head>
 <body>
   <div id="appToast" role="status" aria-live="polite"></div>
+  <div class="who-picker-scrim" id="whoPickerScrim"></div>
+  <div class="who-picker" id="whoPicker" role="menu" aria-label="Quién se encarga"></div>
 
 
 <header class="hero">
@@ -1162,13 +1200,13 @@
       </div>
       <div class="cal-grid" id="calDow"></div>
       <div class="cal-grid" id="calGrid" style="margin-top:4px;"></div>
-      <div class="cal-legend">
-        <span><span class="cal-dot dot-a"></span> <span id="legA"></span></span>
-        <span><span class="cal-dot dot-b"></span> <span id="legB"></span></span>
-        <span><span class="cal-dot dot-both"></span> <span data-i18n="legBoth">Los dos</span></span>
-        <span><span class="cal-dot dot-r"></span> <span data-i18n="legRenew">Renovación</span></span>
-        <span><span class="cal-dot dot-c"></span> <span data-i18n="legCeleb">🎁 Celebración</span></span>
-        <span><span class="cal-dot dot-evt"></span> <span data-i18n="legEvt">Evento/tarea</span></span>
+      <div class="cal-legend" id="calLegend">
+        <span data-cal-filter="a"><span class="cal-dot dot-a"></span> <span id="legA"></span></span>
+        <span data-cal-filter="b"><span class="cal-dot dot-b"></span> <span id="legB"></span></span>
+        <span data-cal-filter="both"><span class="cal-dot dot-both"></span> <span data-i18n="legBoth">Los dos</span></span>
+        <span data-cal-filter="r"><span class="cal-dot dot-r"></span> <span data-i18n="legRenew">Renovación</span></span>
+        <span data-cal-filter="c"><span class="cal-dot dot-c"></span> <span data-i18n="legCeleb">🎁 Celebración</span></span>
+        <span data-cal-filter="evt"><span class="cal-dot dot-evt"></span> <span data-i18n="legEvt">Evento/tarea</span></span>
       </div>
     </div>
 
@@ -1599,6 +1637,59 @@
   function whoClass(w){
     return w === "a" ? "who-a" : w === "b" ? "who-b" : w === "both" ? "who-both" : "who-ext";
   }
+
+  // Menú rápido: elegir quién (en lugar de ciclar)
+  let whoPickerTarget = null; // { item } o callback
+  function closeWhoPicker(){
+    const p = document.getElementById("whoPicker");
+    const s = document.getElementById("whoPickerScrim");
+    if (p) p.classList.remove("open");
+    if (s) s.classList.remove("open");
+    whoPickerTarget = null;
+  }
+  function openWhoPicker(anchorEl, currentWho, onSelect){
+    const picker = document.getElementById("whoPicker");
+    const scrim = document.getElementById("whoPickerScrim");
+    if (!picker || !scrim) return;
+    whoPickerTarget = { onSelect };
+    const opts = [
+      { v:"a", label: state.people.a, color:"var(--jade)" },
+      { v:"b", label: state.people.b, color:"var(--amber)" },
+      { v:"both", label: t("whoBoth"), color:"var(--violet)" },
+      { v:"ext", label: t("whoExt"), color:"var(--text-faint)" }
+    ];
+    picker.innerHTML = opts.map(o =>
+      `<button type="button" data-who="${o.v}" class="${o.v===currentWho?'active':''}" role="menuitem">
+        <span class="sw" style="background:${o.color}"></span>${escapeHTML(o.label)}
+      </button>`
+    ).join("");
+    picker.querySelectorAll("button").forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const w = btn.dataset.who;
+        closeWhoPicker();
+        if (onSelect) onSelect(w);
+      };
+    });
+    // Posicionar cerca del chip
+    const rect = anchorEl.getBoundingClientRect();
+    picker.classList.add("open");
+    scrim.classList.add("open");
+    const pw = picker.offsetWidth || 160;
+    const ph = picker.offsetHeight || 180;
+    let left = rect.right - pw;
+    let top = rect.bottom + 6;
+    if (left < 8) left = 8;
+    if (left + pw > window.innerWidth - 8) left = window.innerWidth - pw - 8;
+    if (top + ph > window.innerHeight - 8) top = Math.max(8, rect.top - ph - 6);
+    picker.style.left = left + "px";
+    picker.style.top = top + "px";
+  }
+  document.getElementById("whoPickerScrim").onclick = closeWhoPicker;
+
+  // Filtro de leyenda del calendario
+  let calFilter = null; // a | b | both | r | c | evt | null
+
   // Las tareas compartidas cuentan mitad y mitad para cada persona
   function timeByPerson(){
     let a = 0, b = 0, both = 0, ext = 0;
@@ -2428,15 +2519,47 @@
       ].filter(s => s.v > 0);
       bar.innerHTML = segs.map(s => {
         const p = pct(s.v);
-        return `<div class="balance-seg ${s.cls}" style="width:${p}%;" title="${escapeHTML(s.txt)}: ${hrs(s.v)}">${p >= 14 ? Math.round(p)+'%' : ''}</div>`;
+        const whoKey = s.cls === "seg-a" ? "a" : s.cls === "seg-b" ? "b" : s.cls === "seg-both" ? "both" : "ext";
+        return `<div class="balance-seg ${s.cls}" data-who-seg="${whoKey}" style="width:${p}%;cursor:pointer;" title="${escapeHTML(s.txt)}: ${hrs(s.v)}">${p >= 14 ? Math.round(p)+'%' : ''}</div>`;
       }).join("");
+      bar.querySelectorAll("[data-who-seg]").forEach(seg => {
+        seg.onclick = (e) => {
+          e.stopPropagation();
+          const w = seg.dataset.whoSeg;
+          if (w === "a" || w === "b") {
+            filterWho = w;
+            state.items.filter(i => i.who === w || i.who === "both").forEach(i => openAreas.add(i.area));
+            goToScreen("areas");
+            renderAreas();
+            showToast((appLang==="nl"?"Taken van ":"Carga de ") + whoLabel(w), { icon:"👤", duration:1600 });
+          } else {
+            goToScreen("reparto");
+            showToast(t("toastOpen", { s: t("tab_reparto") }), { icon:"→", duration:1600 });
+          }
+        };
+      });
       legend.innerHTML = [
-        { c:"var(--jade)", n:state.people.a, v:tp.totalA },
-        { c:"var(--violet)", n:t("balBoth"), v:tp.both },
-        { c:"var(--amber)", n:state.people.b, v:tp.totalB },
-        { c:"var(--surface-2)", n:t("balOutHome"), v:tp.ext }
+        { c:"var(--jade)", n:state.people.a, v:tp.totalA, w:"a" },
+        { c:"var(--violet)", n:t("balBoth"), v:tp.both, w:"both" },
+        { c:"var(--amber)", n:state.people.b, v:tp.totalB, w:"b" },
+        { c:"var(--surface-2)", n:t("balOutHome"), v:tp.ext, w:"ext" }
       ].filter(x => x.v > 0)
-       .map(x => `<span><span class="swatch" style="background:${x.c};"></span>${escapeHTML(x.n)} · ${hrs(x.v)}</span>`).join("");
+       .map(x => `<span class="is-click" data-who-leg="${x.w}" style="cursor:pointer;"><span class="swatch" style="background:${x.c};"></span>${escapeHTML(x.n)} · ${hrs(x.v)}</span>`).join("");
+      legend.querySelectorAll("[data-who-leg]").forEach(el => {
+        el.onclick = (e) => {
+          e.stopPropagation();
+          const w = el.dataset.whoLeg;
+          if (w === "a" || w === "b") {
+            filterWho = w;
+            state.items.filter(i => i.who === w || i.who === "both").forEach(i => openAreas.add(i.area));
+            goToScreen("areas");
+            renderAreas();
+            showToast((appLang==="nl"?"Taken van ":"Carga de ") + whoLabel(w), { icon:"👤", duration:1600 });
+          } else {
+            goToScreen("reparto");
+          }
+        };
+      });
 
       const suma = tp.totalA + tp.totalB;
       if (suma <= 0) {
@@ -2645,10 +2768,11 @@
           row.querySelector('.item-main').onclick = () => openItem(it.id);
           row.querySelector('.who-chip').onclick = (e) => {
             e.stopPropagation();
-            const cycle = ["a","both","b","ext"];
-            const idx = cycle.indexOf(it.who);
-            it.who = cycle[(idx + 1) % cycle.length];
-            renderAll();
+            openWhoPicker(e.currentTarget, it.who || "a", (w) => {
+              it.who = w;
+              renderAll();
+              showToast(whoLabel(w), { icon: "👤", duration: 1400 });
+            });
           };
           row.querySelector('.del-x').onclick = (e) => {
             e.stopPropagation();
@@ -3314,34 +3438,49 @@
     thisMonthIncomes.forEach(i => { byPerson[i.who||'a'] += Number(i.monto) || 0; });
     
     stats.innerHTML = `
-      <div class="balance-row total">
+      <div class="balance-row total is-click" data-income-filter="" style="cursor:pointer;">
         <span class="label">Este mes</span>
         <span class="amount" style="color:var(--jade);">+${eur(totalThisMonth)}</span>
       </div>
-      <div class="balance-row">
-        <span class="label">${state.people.a}</span>
+      <div class="balance-row is-click" data-income-filter="a" style="cursor:pointer;">
+        <span class="label">${escapeHTML(state.people.a)}</span>
         <span class="amount" style="color:var(--jade);">${eur(byPerson.a)}</span>
       </div>
-      <div class="balance-row">
-        <span class="label">${state.people.b}</span>
+      <div class="balance-row is-click" data-income-filter="b" style="cursor:pointer;">
+        <span class="label">${escapeHTML(state.people.b)}</span>
         <span class="amount" style="color:var(--jade);">${eur(byPerson.b)}</span>
       </div>
-      <div class="balance-row">
-        <span class="label">Compartido</span>
+      <div class="balance-row is-click" data-income-filter="both" style="cursor:pointer;">
+        <span class="label">${escapeHTML(t("whoBoth"))}</span>
         <span class="amount" style="color:var(--jade);">${eur(byPerson.both)}</span>
       </div>`;
     
-    box.innerHTML = state.incomes.map(inc => `
-      <div class="income-item" data-id="${inc.id}">
-        <div class="income-main">
-          <div class="income-source">${inc.source}</div>
-          <div class="income-meta">${new Date(inc.date).toLocaleDateString('es-ES')} · ${state.people[inc.who] || inc.who}</div>
-        </div>
-        <span class="income-amount">${eur(Number(inc.monto) || 0)}</span>
-      </div>`).join("");
-    
-    box.querySelectorAll('.income-item').forEach(el => {
-      el.onclick = () => openIncome(parseFloat(el.dataset.id));
+    const renderIncomeList = (whoFilter) => {
+      let list = state.incomes.slice().sort((a,b) => (b.date||"").localeCompare(a.date||""));
+      if (whoFilter) list = list.filter(inc => (inc.who||"a") === whoFilter);
+      box.innerHTML = list.length
+        ? list.map(inc => `
+          <div class="income-item" data-id="${inc.id}">
+            <div class="income-main">
+              <div class="income-source">${escapeHTML(inc.source)}</div>
+              <div class="income-meta">${new Date(inc.date).toLocaleDateString(appLang==="nl"?"nl-NL":"es-ES")} · ${escapeHTML(whoLabel(inc.who||"a"))}</div>
+            </div>
+            <span class="income-amount">${eur(Number(inc.monto) || 0)}</span>
+          </div>`).join("")
+        : `<p class="empty">${escapeHTML(t("emptyIncomes"))}</p>`;
+      box.querySelectorAll('.income-item').forEach(el => {
+        el.onclick = () => openIncome(parseFloat(el.dataset.id));
+      });
+    };
+    renderIncomeList(null);
+    stats.querySelectorAll("[data-income-filter]").forEach(row => {
+      row.onclick = () => {
+        const f = row.dataset.incomeFilter || null;
+        renderIncomeList(f || null);
+        const label = !f ? (appLang==="nl"?"Alle inkomsten":"Todos los ingresos")
+          : f === "both" ? t("whoBoth") : whoLabel(f);
+        showToast(label, { icon: "💰", duration: 1400 });
+      };
     });
   }
   
@@ -3847,6 +3986,17 @@
       .sort((a,b) => (a.time||"99:99").localeCompare(b.time||"99:99"));
   }
 
+  function dayMatchesCalFilter(filter, dots, dayEvents, fechados, wd){
+    if (!filter) return true;
+    if (filter === "a") return dots.includes("dot-a") || (dayEvents||[]).some(e => e.who === "a");
+    if (filter === "b") return dots.includes("dot-b") || (dayEvents||[]).some(e => e.who === "b");
+    if (filter === "both") return dots.includes("dot-both") || (dayEvents||[]).some(e => e.who === "both");
+    if (filter === "r") return dots.includes("dot-r");
+    if (filter === "c") return dots.includes("dot-c");
+    if (filter === "evt") return dots.includes("dot-evt");
+    return true;
+  }
+
   function renderCalendar(){
     if (!calState) calState = { year: selectedDate.getFullYear(), month: selectedDate.getMonth() };
     const { year, month } = calState;
@@ -3854,6 +4004,22 @@
     document.getElementById('calTitle').textContent = `${meses[month]} ${year}`;
     document.getElementById('legA').textContent = state.people.a;
     document.getElementById('legB').textContent = state.people.b;
+
+    // Leyenda: estado activo del filtro
+    document.querySelectorAll("#calLegend [data-cal-filter]").forEach(el => {
+      el.classList.toggle("on", el.dataset.calFilter === calFilter);
+      el.onclick = () => {
+        const f = el.dataset.calFilter;
+        calFilter = calFilter === f ? null : f;
+        renderCalendar();
+        if (calFilter) {
+          const labels = { a: state.people.a, b: state.people.b, both: t("legBoth"), r: t("legRenew"), c: t("legCeleb"), evt: t("legEvt") };
+          showToast((appLang==="nl"?"Filter: ":"Filtro: ") + (labels[calFilter]||calFilter), { icon:"📅", duration:1600 });
+        } else {
+          showToast(appLang==="nl"?"Filter gewist":"Filtro quitado", { icon:"✕", duration:1400 });
+        }
+      };
+    });
 
     document.getElementById('calDow').innerHTML = getDowLabels()
       .map(d => `<div class="cal-dow">${d}</div>`).join("");
@@ -3884,9 +4050,18 @@
       if (hayCelebra) cls.push("celebra");
       if (sameDate(date, todayD)) cls.push("today");
       if (sameDate(date, selectedDate)) cls.push("selected");
+      if (calFilter && !dayMatchesCalFilter(calFilter, dots, dayEvents, fechados, wd)) cls.push("cal-dim");
+      // Si hay filtro, mostrar solo puntos del filtro
+      let showDots = dots;
+      if (calFilter === "a") showDots = dots.filter(x => x === "dot-a");
+      else if (calFilter === "b") showDots = dots.filter(x => x === "dot-b");
+      else if (calFilter === "both") showDots = dots.filter(x => x === "dot-both");
+      else if (calFilter === "r") showDots = dots.filter(x => x === "dot-r");
+      else if (calFilter === "c") showDots = dots.filter(x => x === "dot-c");
+      else if (calFilter === "evt") showDots = dots.filter(x => x === "dot-evt");
       cells += `<div class="${cls.join(' ')}" data-iso="${iso}">
         <span class="cal-daynum">${d}</span>
-        <span class="cal-dots">${dots.slice(0,4).map(c => `<span class="cal-dot ${c}"></span>`).join("")}</span>
+        <span class="cal-dots">${showDots.slice(0,4).map(c => `<span class="cal-dot ${c}"></span>`).join("")}</span>
       </div>`;
     }
     const rem = (startBlanks + daysInMonth) % 7;
