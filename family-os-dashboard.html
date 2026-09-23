@@ -1034,16 +1034,16 @@
     <span id="kpiTime" hidden>0h</span>
 
     <div class="balance elev-1">
-      <h3 style="margin:0;">Reparto de horas</h3>
+      <h3 style="margin:0;" data-i18n="secBalance">Reparto de horas</h3>
       <div class="balance-bar" id="balanceBar"></div>
       <div class="balance-legend" id="balanceLegend"></div>
       <div class="verdict" id="balanceVerdict"></div>
     </div>
 
-    <div class="section-head"><h2>Qué conviene mirar</h2></div>
+    <div class="section-head"><h2 data-i18n="secLook">Qué conviene mirar</h2></div>
     <div id="alertsBox"></div>
 
-    <div class="section-head"><h2>Dónde se va el tiempo</h2></div>
+    <div class="section-head"><h2 data-i18n="secTime">Dónde se va el tiempo</h2></div>
     <div class="card" id="topAreasTime"></div>
   </section>
 
@@ -1153,7 +1153,7 @@
 
   <!-- CALENDARIO -->
   <section class="screen" id="screen-calendario">
-    <div class="section-head"><h2>Calendario</h2><button class="edit-inline" id="exportIcsBtn">📅 Exportar .ics</button></div>
+    <div class="section-head"><h2 data-i18n="secCal">Calendario</h2><button class="edit-inline" id="exportIcsBtn" data-i18n="btnExportIcs">📅 Exportar .ics</button></div>
     <div class="card">
       <div class="cal-nav">
         <button id="calPrev">‹</button>
@@ -1165,17 +1165,17 @@
       <div class="cal-legend">
         <span><span class="cal-dot dot-a"></span> <span id="legA"></span></span>
         <span><span class="cal-dot dot-b"></span> <span id="legB"></span></span>
-        <span><span class="cal-dot dot-both"></span> Los dos</span>
-        <span><span class="cal-dot dot-r"></span> Renovación</span>
-        <span><span class="cal-dot dot-c"></span> 🎁 Celebración</span>
-        <span><span class="cal-dot dot-evt"></span> Evento/tarea</span>
+        <span><span class="cal-dot dot-both"></span> <span data-i18n="legBoth">Los dos</span></span>
+        <span><span class="cal-dot dot-r"></span> <span data-i18n="legRenew">Renovación</span></span>
+        <span><span class="cal-dot dot-c"></span> <span data-i18n="legCeleb">🎁 Celebración</span></span>
+        <span><span class="cal-dot dot-evt"></span> <span data-i18n="legEvt">Evento/tarea</span></span>
       </div>
     </div>
 
-    <div class="section-head"><h2 id="dayDetailTitle">Hoy</h2><button class="edit-inline" id="dayAddBtn">＋ Añadir</button></div>
+    <div class="section-head"><h2 id="dayDetailTitle">Hoy</h2><button class="edit-inline" id="dayAddBtn" data-i18n="btnDayAdd">＋ Añadir</button></div>
     <div id="dayDetailBox"></div>
 
-    <div class="section-head"><h2>Vencimientos próximos</h2></div>
+    <div class="section-head"><h2 data-i18n="secRenewals">Vencimientos próximos</h2></div>
     <div id="renewalsBox"></div>
   </section>
 
@@ -1315,35 +1315,50 @@
   </div>
 </div>
 
+<div class="modal-bg" id="goalModalBg">
+  <div class="modal">
+    <h3 id="goalModalTitle">Editar meta</h3>
+    <label>Nombre</label>
+    <input type="text" id="gName" placeholder="ej. Ahorrar para el coche">
+    <label>Fecha límite (opcional)</label>
+    <input type="date" id="gDate">
+    <div class="modal-actions">
+      <button class="btn-cancel" id="goalDelete" style="color:var(--red);">Eliminar</button>
+      <button class="btn-cancel" id="goalCancel">Cancelar</button>
+      <button class="btn-save" id="goalSave">Guardar</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg" id="eventModalBg">
   <div class="modal">
-    <h3 id="eventModalTitle">Nuevo evento</h3>
-    <label>Qué es</label>
+    <h3 id="eventModalTitle" data-i18n="eventNew">Nuevo evento</h3>
+    <label data-i18n-label="lblWhat">Qué es</label>
     <input type="text" id="eName" placeholder="ej. Cita con el pediatra">
     <div class="two-col">
       <div>
-        <label>Tipo</label>
+        <label data-i18n-label="lblType">Tipo</label>
         <select id="eKind">
           <option value="evento">📌 Evento</option>
           <option value="tarea">✅ Tarea</option>
         </select>
       </div>
       <div>
-        <label>Quién</label>
+        <label data-i18n-label="lblWhoShort">Quién</label>
         <select id="eWho"></select>
       </div>
     </div>
     <div class="two-col">
       <div>
-        <label>Fecha</label>
+        <label data-i18n-label="lblDate">Fecha</label>
         <input type="date" id="eDate">
       </div>
       <div>
-        <label>Hora (opcional)</label>
+        <label data-i18n-label="lblTimeOpt">Hora (opcional)</label>
         <input type="time" id="eTime">
       </div>
     </div>
-    <label>Nota (opcional)</label>
+    <label data-i18n-label="lblNote">Nota (opcional)</label>
     <input type="text" id="eNote" placeholder="ej. llevar la cartilla de vacunas">
     <div class="modal-actions">
       <button class="btn-cancel" id="eventDelete" style="color:var(--red);">Eliminar</button>
@@ -1556,6 +1571,12 @@
     return (Number.isInteger(r) ? r : r.toFixed(1)) + "h";
   }
   const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+  function getMeses(){
+    return [0,1,2,3,4,5,6,7,8,9,10,11].map(i => t("mes_"+i));
+  }
+  function getDowLabels(){
+    return [0,1,2,3,4,5,6].map(i => t("dow_"+i));
+  }
   // A partir de una fecha guardada (YYYY-MM-DD) calcula la próxima ocurrencia anual (mismo día y mes)
   function nextOccurrence(dateStr){
     if (!dateStr) return null;
@@ -1624,6 +1645,58 @@
       window.scrollTo({ top:0 });
     }
   }
+
+  // Acciones del dashboard y listas (event / item / goal / goto / area)
+  function runDashAction(action, ref){
+    if (!action) return;
+    if (action === "goto") {
+      goToScreen(ref);
+      const labels = { dinero: t("tab_dinero"), reparto: t("tab_reparto"), metas: t("tab_metas"), areas: t("tab_areas"), calendario: t("tab_calendario"), revision: t("tab_revision") };
+      showToast(t("toastOpen", { s: labels[ref] || ref }), { icon: "→", duration: 1600 });
+      return;
+    }
+    if (action === "event") {
+      const id = parseFloat(ref);
+      const ev = (state.events || []).find(e => e.id === id);
+      if (!ev) return;
+      goToScreen("calendario");
+      if (ev.date) {
+        const p = String(ev.date).split("-").map(Number);
+        if (p.length === 3) {
+          selectedDate = new Date(p[0], p[1] - 1, p[2]);
+          calState = { year: selectedDate.getFullYear(), month: selectedDate.getMonth() };
+          renderCalendar();
+        }
+      }
+      openEditEvent(id);
+      return;
+    }
+    if (action === "item") {
+      const id = parseFloat(ref);
+      const it = (state.items || []).find(x => x.id === id);
+      if (!it) return;
+      openAreas.add(it.area);
+      goToScreen("areas");
+      renderAreas();
+      openItem(id);
+      return;
+    }
+    if (action === "goal") {
+      goToScreen("metas");
+      const g = (state.goals || []).find(x => String(x.id) === String(ref) || x.id === parseFloat(ref));
+      if (g) openGoalEdit(g.id);
+      else showToast(t("toastOpen", { s: t("tab_metas") }), { icon: "🎯", duration: 1600 });
+      return;
+    }
+    if (action === "area") {
+      openAreas.add(ref);
+      goToScreen("areas");
+      renderAreas();
+      showToast(areaLabel(ref), { icon: "📁", duration: 1600 });
+      return;
+    }
+  }
+
   function markTapFeedback(){
     document.querySelectorAll("button,.btn,.icon-btn,.cal-day,.day-chip").forEach(el=>{
       if (!el.classList.contains("tap-feedback")) el.classList.add("tap-feedback");
@@ -1753,6 +1826,66 @@
       energyN: "La deja igual",
       energyUp: "Le da energía",
       energyDown: "Le quita energía",
+
+      secCal: "Agenda",
+      btnExportIcs: "📅 Exportar .ics",
+      legBoth: "Los dos",
+      legRenew: "Renovación",
+      legCeleb: "🎁 Celebración",
+      legEvt: "Evento/tarea",
+      btnDayAdd: "＋ Añadir",
+      secRenewals: "Vencimientos próximos",
+      calToday: "Hoy",
+      calEmptyTitle: "Nada este día",
+      calEmptyBody: "Toca ＋ Añadir para un evento o tarea, o marca días en una responsabilidad.",
+      calEmptyHint: "＋ Añadir arriba",
+      renewEmptyTitle: "Sin fechas de renovación",
+      renewEmptyBody: "Abre una responsabilidad (seguros, APK, impuestos…) y asígnale fecha.",
+      renewToday: "hoy",
+      renewInDays: "en {n} día(s)",
+      renewGift: " · hora de pensar el regalo",
+      renewIsToday: "es hoy",
+      renewRenewsToday: "se renueva hoy",
+      eventNew: "Nuevo evento",
+      eventEdit: "Editar evento",
+      lblType: "Tipo",
+      lblWhoShort: "Quién",
+      lblDate: "Fecha",
+      lblTimeOpt: "Hora (opcional)",
+      kindEvent: "📌 Evento",
+      kindTask: "✅ Tarea",
+      phEvent: "ej. Cita con el pediatra",
+      toastEventAdd: "Evento añadido",
+      toastEventUpd: "Evento actualizado",
+      toastEventDel: "Evento eliminado",
+      toastIcs: "Calendario exportado",
+      mes_0: "enero", mes_1: "febrero", mes_2: "marzo", mes_3: "abril",
+      mes_4: "mayo", mes_5: "junio", mes_6: "julio", mes_7: "agosto",
+      mes_8: "septiembre", mes_9: "octubre", mes_10: "noviembre", mes_11: "diciembre",
+      dow_0: "L", dow_1: "M", dow_2: "X", dow_3: "J", dow_4: "V", dow_5: "S", dow_6: "D",
+      dateOf: "{d} de {m}",
+
+      balNoHours: "sin horas todavía",
+      balAddHours: "Añade horas a las responsabilidades para ver el reparto.",
+      balBoth: "Los dos",
+      balSegOut: "Fuera",
+      balOutHome: "Fuera de casa",
+      balAllOut: "Todo está fuera de casa.",
+      balOkDetail: "Reparto equilibrado — {a}% / {b}%. Contando las tareas compartidas a medias.",
+      balWarnDetail: "{name} lleva algo más de carga — {a}% / {b}%.",
+      balBadDetail: "{name} lleva bastante más carga — {a}% / {b}%. Vale la pena hablarlo.",
+      alertNoWho: "{n} responsabilidad(es) sin nadie asignado.",
+      alertNoCouple: "No hay ni una hora reservada para la pareja esta semana.",
+      alertDrain: "{n} tareas marcadas como agotadoras — ¿alguna se puede delegar o quitar?",
+      alertAnnual: "{n} gasto(s) anual(es) ya prorrateados al mes — así no sorprenden.",
+      alertCeleb: "🎁 {n} celebración(es) en las próximas tres semanas — mira el calendario.",
+      alertGoals: "🎯 {n} meta(s) con fecha límite dentro de 30 días.",
+      alertAllOk: "Todo asignado y en orden.",
+      alertEmptyTitle: "Empezad cuando queráis",
+      alertEmptyBody: "Ve a Áreas y usa el catálogo, o añade lo vuestro a mano.",
+      alertEmptyHint: "Ir a Áreas →",
+      timeEmpty: "Sin horas registradas todavía. Toca para ir a Áreas.",
+      toastAssign: "Revisa asignaciones",
       event: "Evento", goal: "Meta", item: "Responsabilidad"
     },
     nl: {
@@ -1860,6 +1993,66 @@
       energyN: "Neutraal",
       energyUp: "Geeft energie",
       energyDown: "Kost energie",
+
+      secCal: "Agenda",
+      btnExportIcs: "📅 Exporteren .ics",
+      legBoth: "Samen",
+      legRenew: "Verlenging",
+      legCeleb: "🎁 Viering",
+      legEvt: "Event/taak",
+      btnDayAdd: "＋ Toevoegen",
+      secRenewals: "Komende deadlines",
+      calToday: "Vandaag",
+      calEmptyTitle: "Niets op deze dag",
+      calEmptyBody: "Tik op ＋ Toevoegen voor een event of taak, of markeer dagen bij een verantwoordelijkheid.",
+      calEmptyHint: "＋ Toevoegen hierboven",
+      renewEmptyTitle: "Geen verlengingsdata",
+      renewEmptyBody: "Open een verantwoordelijkheid (verzekering, APK, belastingen…) en geef een datum.",
+      renewToday: "vandaag",
+      renewInDays: "over {n} dag(en)",
+      renewGift: " · tijd om aan een cadeau te denken",
+      renewIsToday: "is vandaag",
+      renewRenewsToday: "wordt vandaag verlengd",
+      eventNew: "Nieuw event",
+      eventEdit: "Event bewerken",
+      lblType: "Type",
+      lblWhoShort: "Wie",
+      lblDate: "Datum",
+      lblTimeOpt: "Tijd (optioneel)",
+      kindEvent: "📌 Event",
+      kindTask: "✅ Taak",
+      phEvent: "bijv. Afspraak met de kinderarts",
+      toastEventAdd: "Event toegevoegd",
+      toastEventUpd: "Event bijgewerkt",
+      toastEventDel: "Event verwijderd",
+      toastIcs: "Agenda geëxporteerd",
+      mes_0: "januari", mes_1: "februari", mes_2: "maart", mes_3: "april",
+      mes_4: "mei", mes_5: "juni", mes_6: "juli", mes_7: "augustus",
+      mes_8: "september", mes_9: "oktober", mes_10: "november", mes_11: "december",
+      dow_0: "ma", dow_1: "di", dow_2: "wo", dow_3: "do", dow_4: "vr", dow_5: "za", dow_6: "zo",
+      dateOf: "{d} {m}",
+
+      balNoHours: "nog geen uren",
+      balAddHours: "Voeg uren toe aan verantwoordelijkheden om de verdeling te zien.",
+      balBoth: "Samen",
+      balSegOut: "Buiten",
+      balOutHome: "Buitenshuis",
+      balAllOut: "Alles is buitenshuis.",
+      balOkDetail: "Evenwichtige verdeling — {a}% / {b}%. Gedeelde taken meetellen voor de helft.",
+      balWarnDetail: "{name} draagt iets meer last — {a}% / {b}%.",
+      balBadDetail: "{name} draagt duidelijk meer last — {a}% / {b}%. Goed om dit te bespreken.",
+      alertNoWho: "{n} verantwoordelijkheid(en) zonder eigenaar.",
+      alertNoCouple: "Geen enkel uur gereserveerd voor jullie als stel deze week.",
+      alertDrain: "{n} taken kosten energie — kan er iets gedelegeerd of geschrapt worden?",
+      alertAnnual: "{n} jaarlijkse uitgave(n) al per maand verdeeld — zo geen verrassingen.",
+      alertCeleb: "🎁 {n} viering(en) in de komende drie weken — check de agenda.",
+      alertGoals: "🎯 {n} doel(en) met deadline binnen 30 dagen.",
+      alertAllOk: "Alles toegewezen en in orde.",
+      alertEmptyTitle: "Begin wanneer jullie willen",
+      alertEmptyBody: "Ga naar Gebieden en gebruik de catalogus, of voeg zelf toe.",
+      alertEmptyHint: "Naar Gebieden →",
+      timeEmpty: "Nog geen uren geregistreerd. Tik om naar Gebieden te gaan.",
+      toastAssign: "Controleer toewijzingen",
       event: "Event", goal: "Doel", item: "Taak"
     }
   };
@@ -1953,6 +2146,21 @@
     if (catalogBtn) catalogBtn.textContent = t("catalogBtn");
     const addInc = document.getElementById("addIncomeBtn");
     if (addInc) addInc.textContent = t("addIncome");
+    const ek = document.getElementById("eKind");
+    if (ek) {
+      const o0 = ek.querySelector('option[value="evento"]');
+      const o1 = ek.querySelector('option[value="tarea"]');
+      if (o0) o0.textContent = t("kindEvent");
+      if (o1) o1.textContent = t("kindTask");
+    }
+    const en = document.getElementById("eName");
+    if (en) en.placeholder = t("phEvent");
+    const eSave = document.getElementById("eventSave");
+    if (eSave) eSave.textContent = t("btnSave");
+    const eCancel = document.getElementById("eventCancel");
+    if (eCancel) eCancel.textContent = t("btnCancel");
+    const eDel = document.getElementById("eventDelete");
+    if (eDel) eDel.textContent = t("btnDelete");
   }
 
   function greetingForHour(h){
@@ -2173,6 +2381,22 @@
         runDashAction(el.dataset.action, el.dataset.ref);
       };
     });
+    // Nombres del saludo → modal de nombres
+    const namesEl = box.querySelector(".welcome-names");
+    if (namesEl) {
+      namesEl.style.cursor = "pointer";
+      namesEl.classList.add("is-click");
+      namesEl.title = appLang === "nl" ? "Namen wijzigen" : "Cambiar nombres";
+      namesEl.onclick = () => {
+        const btn = document.getElementById("namesBtn");
+        if (btn) btn.click();
+        else {
+          document.getElementById("nameA").value = state.people.a;
+          document.getElementById("nameB").value = state.people.b;
+          document.getElementById("namesModalBg").classList.add("open");
+        }
+      };
+    }
   }
 
   // ---------- RESUMEN ----------
@@ -2184,88 +2408,99 @@
     document.getElementById('kpiMoney').textContent = eur(totalMoney);
     document.getElementById('kpiTime').textContent = hrs(totalTime);
 
-    const t = timeByPerson();
+    const tp = timeByPerson();
     const bar = document.getElementById('balanceBar');
     const legend = document.getElementById('balanceLegend');
     const verdict = document.getElementById('balanceVerdict');
 
     if (totalTime <= 0) {
-      bar.innerHTML = `<div class="balance-seg seg-ext" style="width:100%;">sin horas todavía</div>`;
+      bar.innerHTML = `<div class="balance-seg seg-ext" style="width:100%;">${escapeHTML(t("balNoHours"))}</div>`;
       legend.innerHTML = "";
       verdict.className = "verdict";
-      verdict.textContent = "Añade horas a las responsabilidades para ver el reparto.";
+      verdict.textContent = t("balAddHours");
     } else {
       const pct = v => (v / totalTime) * 100;
       const segs = [
-        { v:t.a, cls:"seg-a", txt:state.people.a },
-        { v:t.both, cls:"seg-both", txt:"Los dos" },
-        { v:t.b, cls:"seg-b", txt:state.people.b },
-        { v:t.ext, cls:"seg-ext", txt:"Fuera" }
+        { v:tp.a, cls:"seg-a", txt:state.people.a },
+        { v:tp.both, cls:"seg-both", txt:t("balBoth") },
+        { v:tp.b, cls:"seg-b", txt:state.people.b },
+        { v:tp.ext, cls:"seg-ext", txt:t("balSegOut") }
       ].filter(s => s.v > 0);
       bar.innerHTML = segs.map(s => {
         const p = pct(s.v);
-        return `<div class="balance-seg ${s.cls}" style="width:${p}%;" title="${s.txt}: ${hrs(s.v)}">${p >= 14 ? Math.round(p)+'%' : ''}</div>`;
+        return `<div class="balance-seg ${s.cls}" style="width:${p}%;" title="${escapeHTML(s.txt)}: ${hrs(s.v)}">${p >= 14 ? Math.round(p)+'%' : ''}</div>`;
       }).join("");
       legend.innerHTML = [
-        { c:"var(--jade)", n:state.people.a, v:t.totalA },
-        { c:"var(--violet)", n:"Los dos", v:t.both },
-        { c:"var(--amber)", n:state.people.b, v:t.totalB },
-        { c:"var(--surface-2)", n:"Fuera de casa", v:t.ext }
+        { c:"var(--jade)", n:state.people.a, v:tp.totalA },
+        { c:"var(--violet)", n:t("balBoth"), v:tp.both },
+        { c:"var(--amber)", n:state.people.b, v:tp.totalB },
+        { c:"var(--surface-2)", n:t("balOutHome"), v:tp.ext }
       ].filter(x => x.v > 0)
-       .map(x => `<span><span class="swatch" style="background:${x.c};"></span>${x.n} · ${hrs(x.v)}</span>`).join("");
+       .map(x => `<span><span class="swatch" style="background:${x.c};"></span>${escapeHTML(x.n)} · ${hrs(x.v)}</span>`).join("");
 
-      const suma = t.totalA + t.totalB;
+      const suma = tp.totalA + tp.totalB;
       if (suma <= 0) {
         verdict.className = "verdict";
-        verdict.textContent = "Todo está fuera de casa.";
+        verdict.textContent = t("balAllOut");
       } else {
-        const share = (t.totalA / suma) * 100;
+        const share = (tp.totalA / suma) * 100;
         const gap = Math.abs(share - 50);
         const masCarga = share > 50 ? state.people.a : state.people.b;
         if (gap < 8) {
           verdict.className = "verdict ok";
-          verdict.textContent = `Reparto equilibrado — ${Math.round(share)}% / ${Math.round(100-share)}%. Contando las tareas compartidas a medias.`;
+          verdict.textContent = t("balOkDetail", { a: Math.round(share), b: Math.round(100-share) });
         } else if (gap < 20) {
           verdict.className = "verdict warn";
-          verdict.textContent = `${masCarga} lleva algo más de carga — ${Math.round(share)}% / ${Math.round(100-share)}%.`;
+          verdict.textContent = t("balWarnDetail", { name: masCarga, a: Math.round(share), b: Math.round(100-share) });
         } else {
           verdict.className = "verdict bad";
-          verdict.textContent = `${masCarga} lleva bastante más carga — ${Math.round(share)}% / ${Math.round(100-share)}%. Vale la pena hablarlo.`;
+          verdict.textContent = t("balBadDetail", { name: masCarga, a: Math.round(share), b: Math.round(100-share) });
         }
       }
     }
 
-    // Avisos
+    // Barra de horas del resumen → pantalla Reparto
+    const balBlock = document.querySelector("#screen-resumen .balance");
+    if (balBlock) {
+      balBlock.classList.add("is-click");
+      balBlock.style.cursor = "pointer";
+      balBlock.onclick = () => {
+        goToScreen("reparto");
+        showToast(t("toastOpen", { s: t("tab_reparto") }), { icon: "→", duration: 1600 });
+      };
+    }
+
+    // Avisos (data-alert para navegación sin depender del idioma)
     const alerts = [];
     const sinDuenio = state.items.filter(i => !i.who);
-    if (sinDuenio.length) alerts.push(["amber", `${sinDuenio.length} responsabilidad(es) sin nadie asignado.`]);
+    if (sinDuenio.length) alerts.push(["amber", t("alertNoWho", { n: sinDuenio.length }), "assign"]);
 
     const parejaTime = state.items.filter(i => i.area === "pareja").reduce((s,i) => s + (Number(i.time)||0), 0);
-    if (state.items.length && parejaTime === 0) alerts.push(["red", "No hay ni una hora reservada para la pareja esta semana."]);
+    if (state.items.length && parejaTime === 0) alerts.push(["red", t("alertNoCouple"), "couple"]);
 
     const drena = state.items.filter(i => i.energy === "quita");
-    if (drena.length >= 3) alerts.push(["amber", `${drena.length} tareas marcadas como agotadoras — ¿alguna se puede delegar o quitar?`]);
+    if (drena.length >= 3) alerts.push(["amber", t("alertDrain", { n: drena.length }), "drain"]);
 
-    const anuales = state.items.filter(i => i.freq === "ano" && Number(i.money) > 0);
-    if (anuales.length) alerts.push(["jade", `${anuales.length} gasto(s) anual(es) ya prorrateados al mes — así no sorprenden.`]);
+    const anuales = state.items.filter(i => i.freq === "ano" && Number(i.money) > 0 && !isItemIncome(i));
+    if (anuales.length) alerts.push(["jade", t("alertAnnual", { n: anuales.length }), "money"]);
 
     const celebraPronto = state.items.filter(i => {
       if (i.kind !== "celebra" || !i.renewal) return false;
       const o = nextOccurrence(i.renewal);
       return o && o.diffDays <= 21;
     });
-    if (celebraPronto.length) alerts.push(["amber", `🎁 ${celebraPronto.length} celebración(es) en las próximas tres semanas — mira el calendario.`]);
+    if (celebraPronto.length) alerts.push(["amber", t("alertCeleb", { n: celebraPronto.length }), "cal"]);
 
     const metasPronto = state.goals.filter(g => {
       if (goalProgress(g) >= 1) return false;
       const dl = goalDeadlineInfo(g);
       return dl && dl.diffDays >= 0 && dl.diffDays <= 30;
     });
-    if (metasPronto.length) alerts.push(["amber", `🎯 ${metasPronto.length} meta(s) con fecha límite dentro de 30 días.`]);
+    if (metasPronto.length) alerts.push(["amber", t("alertGoals", { n: metasPronto.length }), "goals"]);
 
     document.getElementById('alertsBox').innerHTML = state.items.length
-      ? (alerts.map(([c,txt]) => `<div class="alert ${c}">${txt}</div>`).join("") || `<div class="alert jade">Todo asignado y en orden.</div>`)
-      : `<div class="empty-state is-click" data-action="goto" data-ref="areas" style="cursor:pointer;"><div class="empty-title">Empezad cuando queráis</div><p class="empty-body">Ve a Áreas y usa el catálogo, o añade lo vuestro a mano.</p><span class="empty-hint">Ir a Áreas →</span></div>`;
+      ? (alerts.map(([c,txt,key]) => `<div class="alert ${c}" data-alert="${key||""}">${escapeHTML(txt)}</div>`).join("") || `<div class="alert jade">${escapeHTML(t("alertAllOk"))}</div>`)
+      : `<div class="empty-state is-click" data-action="goto" data-ref="areas" style="cursor:pointer;"><div class="empty-title">${escapeHTML(t("alertEmptyTitle"))}</div><p class="empty-body">${escapeHTML(t("alertEmptyBody"))}</p><span class="empty-hint">${escapeHTML(t("alertEmptyHint"))}</span></div>`;
 
     // Dónde se va el tiempo
     const byArea = {};
@@ -2282,7 +2517,7 @@
             <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${escapeHTML(areaLabel(k))}</span><span class="mono">${hrs(v)}</span></div>
             <div class="bar-wrap"><div class="bar-fill" style="width:${(v/maxV)*100}%"></div></div>
           </div>`).join("")
-      : `<p class="empty is-click" data-action="goto" data-ref="areas" style="cursor:pointer;">Sin horas registradas todavía. Toca para ir a Áreas.</p>`;
+      : `<p class="empty is-click" data-action="goto" data-ref="areas" style="cursor:pointer;">${escapeHTML(t("timeEmpty"))}</p>`;
     topBox.querySelectorAll('[data-action]').forEach(el => {
       el.onclick = () => {
         if (el.dataset.action === "area") {
@@ -2301,22 +2536,22 @@
       alertsEl.querySelectorAll('[data-action]').forEach(el => {
         el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
       });
-      alertsEl.querySelectorAll('.alert').forEach((al, idx) => {
+      alertsEl.querySelectorAll('.alert').forEach((al) => {
         al.style.cursor = 'pointer';
         al.classList.add('is-click');
-        const txt = al.textContent || '';
         al.onclick = () => {
-          if (txt.includes('sin nadie') || txt.includes('sin asignar') || txt.includes('Áreas')) {
-            goToScreen('areas'); showToast('Revisa asignaciones', {icon:'👤', duration:1600});
-          } else if (txt.includes('pareja')) {
+          const key = al.dataset.alert || '';
+          if (key === 'assign') {
+            goToScreen('areas'); showToast(t('toastAssign'), {icon:'👤', duration:1600});
+          } else if (key === 'couple') {
             openAreas.add('pareja'); goToScreen('areas'); renderAreas();
-          } else if (txt.includes('agotadoras') || txt.includes('agota')) {
+          } else if (key === 'drain') {
             goToScreen('reparto');
-          } else if (txt.includes('celebración') || txt.includes('calendario') || txt.includes('Renov')) {
+          } else if (key === 'cal') {
             goToScreen('calendario');
-          } else if (txt.includes('meta')) {
+          } else if (key === 'goals') {
             goToScreen('metas');
-          } else if (txt.includes('anual') || txt.includes('gasto')) {
+          } else if (key === 'money') {
             goToScreen('dinero');
           } else {
             goToScreen('areas');
@@ -2342,15 +2577,30 @@
 
   // ---------- ÁREAS ----------
   const openAreas = new Set();
+  let filterWho = null; // "a" | "b" | null — filtro desde Reparto
   function renderAreas(){
     const box = document.getElementById('areasList');
     box.innerHTML = "";
+    if (filterWho) {
+      const banner = document.createElement('div');
+      banner.className = "alert jade is-click";
+      banner.style.cursor = "pointer";
+      banner.style.marginBottom = "12px";
+      const pname = filterWho === "a" ? state.people.a : state.people.b;
+      banner.innerHTML = `<strong style="display:block;">${appLang==="nl"?"Filter:":"Filtro:"} ${escapeHTML(pname)}</strong><span style="font-size:11.5px;">${appLang==="nl"?"Alleen taken van deze persoon. Tik om te wissen.":"Solo tareas de esta persona. Toca para quitar el filtro."}</span>`;
+      banner.onclick = () => { filterWho = null; renderAreas(); showToast(appLang==="nl"?"Filter gewist":"Filtro quitado", { icon:"✕", duration:1400 }); };
+      box.appendChild(banner);
+    }
     AREAS.forEach(area => {
-      const items = state.items.filter(i => i.area === area.key);
+      let items = state.items.filter(i => i.area === area.key);
+      if (filterWho) {
+        items = items.filter(i => i.who === filterWho || i.who === "both");
+        if (!items.length) return;
+      }
       const money = items.filter(isItemExpense).reduce((s,i) => s + monthlyCost(i), 0);
       const income = items.filter(isItemIncome).reduce((s,i) => s + monthlyCost(i), 0);
       const time = items.reduce((s,i) => s + (Number(i.time)||0), 0);
-      const isOpen = openAreas.has(area.key);
+      const isOpen = openAreas.has(area.key) || !!filterWho;
 
       const card = document.createElement('div');
       card.className = "area-card";
@@ -2363,7 +2613,7 @@
         <div class="area-body ${isOpen ? '' : 'collapsed'}"></div>`;
 
       card.querySelector('.area-head').onclick = () => {
-        if (isOpen) openAreas.delete(area.key); else openAreas.add(area.key);
+        if (openAreas.has(area.key)) openAreas.delete(area.key); else openAreas.add(area.key);
         renderAreas();
       };
 
@@ -2375,6 +2625,7 @@
         items.forEach(it => {
           const row = document.createElement('div');
           row.className = "item-row";
+          if (filterWho && it.who === filterWho) row.style.borderLeft = "3px solid var(--amber)";
           const parts = [];
           if (Number(it.money) > 0) {
             const sign = isItemIncome(it) ? "+" : "−";
@@ -2475,8 +2726,13 @@
     }).join("") + `<p style="font-size:11.5px;color:var(--text-faint);margin:2px 0 0;">Lo marcado como “Los dos” (${hrs(t.both)}) se reparte a medias entre ambos. Toca una tarjeta para ir a Áreas.</p>`;
     box.querySelectorAll('.card[data-who]').forEach(card => {
       card.onclick = () => {
+        filterWho = card.dataset.who;
+        // Abrir áreas que tengan tareas de esta persona
+        state.items.filter(i => i.who === filterWho || i.who === "both").forEach(i => openAreas.add(i.area));
         goToScreen('areas');
-        showToast('Carga de ' + (card.dataset.who === 'a' ? state.people.a : state.people.b), { icon:'👤', duration:1600 });
+        renderAreas();
+        const pname = filterWho === 'a' ? state.people.a : state.people.b;
+        showToast((appLang==="nl"?"Taken van ":"Carga de ") + pname, { icon:'👤', duration:1800 });
       };
     });
 
@@ -2539,11 +2795,32 @@
     const { totals, perMonthItems } = spendByRealMonth();
     const maxV = Math.max(...totals, 1);
     const nowMonth = new Date().getMonth();
-    document.getElementById('yearChart').innerHTML = totals.map((v, i) => `
-      <div class="year-col">
-        <div class="year-bar${i===nowMonth?' now':''}" style="height:${Math.max((v/maxV)*100,2)}%;" title="${MESES[i]}: ${eur(v)}"></div>
+    const chart = document.getElementById('yearChart');
+    chart.innerHTML = totals.map((v, i) => `
+      <div class="year-col is-click" data-month="${i}" style="cursor:pointer;" title="${MESES[i]}: ${eur(v)}">
+        <div class="year-bar${i===nowMonth?' now':''}" style="height:${Math.max((v/maxV)*100,2)}%;"></div>
         <div class="year-lbl">${MES_CORTO[i]}</div>
       </div>`).join("");
+    chart.querySelectorAll('.year-col[data-month]').forEach(col => {
+      col.onclick = () => {
+        const mi = parseInt(col.dataset.month, 10);
+        const list = (perMonthItems[mi] || [])
+          .filter(x => x.it.freq === "ano")
+          .sort((a,b) => b.monto - a.monto);
+        const payBox = document.getElementById('thisMonthPay');
+        const mesName = (typeof getMeses === "function" ? getMeses()[mi] : MESES[mi]);
+        if (list.length) {
+          payBox.innerHTML = list.map(x => `<div class="hist-row is-click" data-action="item" data-ref="${x.it.id}"><span>${escapeHTML(x.it.name)}${!x.exacto ? ' <span style="color:var(--text-faint);font-size:10px;">(prorrateado)</span>' : ''}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(areaLabel(x.it.area))} · ${escapeHTML(whoLabel(x.it.who))}</span></span><span class="mono">${eur(x.monto)}</span></div>`).join("");
+          payBox.querySelectorAll('[data-action]').forEach(el => {
+            el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
+          });
+        } else {
+          payBox.innerHTML = `<p class="empty">${escapeHTML(t("emptyPay"))}</p>`;
+        }
+        payBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        showToast(mesName + " · " + eur(totals[mi] || 0), { icon: "📊", duration: 2000 });
+      };
+    });
 
     const thisMonth = perMonthItems[nowMonth]
       .filter(x => x.it.freq === "ano")
@@ -2571,19 +2848,35 @@
     const balance = totalIngresos - totalGastos;
     
     const isPositive = balance >= 0;
-    document.getElementById('balanceCard').innerHTML = `
-      <div class="balance-row">
+    const card = document.getElementById('balanceCard');
+    card.innerHTML = `
+      <div class="balance-row is-click" data-jump="incomes" style="cursor:pointer;">
         <span class="label">${escapeHTML(t("balIn"))}</span>
         <span class="amount" style="color:var(--jade);">+${eur(totalIngresos)}</span>
       </div>
-      <div class="balance-row">
+      <div class="balance-row is-click" data-jump="expenses" style="cursor:pointer;">
         <span class="label">${escapeHTML(t("balOut"))}</span>
         <span class="amount" style="color:var(--red);">−${eur(totalGastos)}</span>
       </div>
-      <div class="balance-row total ${isPositive ? 'positive' : 'negative'}">
+      <div class="balance-row total ${isPositive ? 'positive' : 'negative'} is-click" data-jump="top" style="cursor:pointer;">
         <span class="label">${escapeHTML(isPositive ? t("balOk") : t("balBad"))}</span>
         <span class="amount">${isPositive ? '+' : '−'}${eur(Math.abs(balance))}</span>
       </div>`;
+    card.querySelectorAll('[data-jump]').forEach(row => {
+      row.onclick = () => {
+        const j = row.dataset.jump;
+        if (j === "incomes") {
+          document.getElementById("incomeList")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          showToast(t("secIncomes"), { icon: "💰", duration: 1600 });
+        } else if (j === "expenses") {
+          document.getElementById("moneyByArea")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          showToast(t("secByArea"), { icon: "📉", duration: 1600 });
+        } else {
+          document.getElementById("moneyTop")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          showToast(t("secTop10"), { icon: "📊", duration: 1600 });
+        }
+      };
+    });
   }
   
   function renderDinero(){
@@ -2593,6 +2886,16 @@
     const total = monthlyExpenses();
     document.getElementById('dineroMes').textContent = eur(total);
     document.getElementById('dineroAno').textContent = eur(total * 12);
+
+    document.querySelectorAll("#screen-dinero .stat").forEach((el, idx) => {
+      el.classList.add("is-click");
+      el.style.cursor = "pointer";
+      el.onclick = () => {
+        const target = idx === 0 ? "moneyByArea" : "moneyTop";
+        document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        showToast(idx === 0 ? t("secByArea") : t("secTop10"), { icon: "→", duration: 1600 });
+      };
+    });
 
     const byArea = {};
     state.items.filter(isItemExpense).forEach(i => {
@@ -2678,13 +2981,13 @@
       card.className = "card";
       card.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
-          <div style="flex:1;min-width:0;">
-            <h3 style="margin:0;">${goal.name}</h3>
+          <div style="flex:1;min-width:0;" class="goal-head is-click" style="cursor:pointer;" data-goal-id="${goal.id}">
+            <h3 style="margin:0;">${escapeHTML(goal.name)}</h3>
             ${dlHtml}
           </div>
           <span class="del-x goal-del" style="font-size:15px;">✕</span>
         </div>
-        <div class="bar-wrap" style="margin-top:10px;"><div class="bar-fill${pct>=100?' violet':''}" style="width:${pct}%;"></div></div>
+        <div class="bar-wrap is-click" style="margin-top:10px;cursor:pointer;"><div class="bar-fill${pct>=100?' violet':''}" style="width:${pct}%;"></div></div>
         <div class="hist-row" style="border:none;padding:2px 0 6px;"><span>Progreso general</span><span class="mono">${pct}%</span></div>
         <div class="milestones-box"></div>
         <div class="add-row ms-add-row" style="margin-top:8px;">
@@ -2699,7 +3002,8 @@
         </div>`;
 
       // Eliminar meta
-      card.querySelector('.goal-del').onclick = () => {
+      card.querySelector('.goal-del').onclick = (e) => {
+        e.stopPropagation();
         const removed = goal;
         state.goals = state.goals.filter(g => g.id !== goal.id);
         renderGoals(); renderResumen(); saveSoon();
@@ -2710,6 +3014,13 @@
             renderGoals(); renderResumen(); saveSoon();
           }
         });
+      };
+      // Título → modal editar meta
+      card.querySelector('.goal-head').onclick = () => openGoalEdit(goal.id);
+      // Barra → foco en nuevo hito
+      card.querySelector('.bar-wrap').onclick = () => {
+        const inp = card.querySelector('.ms-name');
+        if (inp) { inp.focus(); inp.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
       };
 
       // Hitos existentes
@@ -2800,6 +3111,46 @@
     renderGoals(); renderResumen(); saveSoon();
   };
 
+  // ---------- MODAL DE META ----------
+  let editingGoalId = null;
+  function openGoalEdit(id){
+    const goal = state.goals.find(g => g.id === id || String(g.id) === String(id));
+    if (!goal) return;
+    editingGoalId = goal.id;
+    document.getElementById('goalModalTitle').textContent = appLang === "nl" ? "Doel bewerken" : "Editar meta";
+    document.getElementById('gName').value = goal.name || "";
+    document.getElementById('gDate').value = goal.targetDate || "";
+    document.getElementById('goalDelete').style.display = "";
+    document.getElementById('goalModalBg').classList.add('open');
+  }
+  document.getElementById('goalCancel').onclick = () => document.getElementById('goalModalBg').classList.remove('open');
+  document.getElementById('goalSave').onclick = () => {
+    const goal = state.goals.find(g => g.id === editingGoalId);
+    if (!goal) return;
+    const n = document.getElementById('gName').value.trim();
+    if (!n) return;
+    goal.name = n;
+    goal.targetDate = document.getElementById('gDate').value || "";
+    document.getElementById('goalModalBg').classList.remove('open');
+    renderGoals(); renderResumen(); saveSoon();
+    showToast(t("toastSaved"), { icon: "✓", duration: 1600 });
+  };
+  document.getElementById('goalDelete').onclick = () => {
+    const removed = state.goals.find(g => g.id === editingGoalId);
+    state.goals = state.goals.filter(g => g.id !== editingGoalId);
+    document.getElementById('goalModalBg').classList.remove('open');
+    renderGoals(); renderResumen(); saveSoon();
+    if (removed) {
+      showToast(appLang === "nl" ? "Doel verwijderd" : "Meta eliminada", {
+        icon: "🗑",
+        undo: () => {
+          state.goals.push(removed);
+          renderGoals(); renderResumen(); saveSoon();
+        }
+      });
+    }
+  };
+
   // ---------- REVISIÓN ----------
   function renderRevision(){
     const box = document.getElementById('checklistBox');
@@ -2819,9 +3170,29 @@
     });
 
     const hist = document.getElementById('notesHistory');
-    hist.innerHTML = state.notesHistory.length
-      ? state.notesHistory.map(n => `<div class="card"><h3 style="margin-bottom:4px;">${n.fecha}</h3><p style="white-space:pre-wrap;">${n.texto}</p></div>`).join("")
-      : `<div class="empty-state"><div class="empty-title">Sin historial aún</div><p class="empty-body">Cuando guardéis acuerdos de la reunión, aparecerán aquí.</p></div>`;
+    if (state.notesHistory.length) {
+      hist.innerHTML = state.notesHistory.map((n, idx) =>
+        `<div class="card is-click" data-note-idx="${idx}" style="cursor:pointer;"><h3 style="margin-bottom:4px;">${escapeHTML(n.fecha)}</h3><p style="white-space:pre-wrap;">${escapeHTML(n.texto)}</p><p style="margin:8px 0 0;font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;">${appLang === "nl" ? "Tik om te hergebruiken" : "Toca para reutilizar"}</p></div>`
+      ).join("");
+      hist.querySelectorAll("[data-note-idx]").forEach(card => {
+        card.onclick = () => {
+          const i = parseInt(card.dataset.noteIdx, 10);
+          const note = state.notesHistory[i];
+          if (!note) return;
+          const ta = document.getElementById("weekNotes");
+          if (ta) {
+            ta.value = note.texto;
+            state.notes = note.texto;
+            ta.focus();
+            ta.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+          showToast(appLang === "nl" ? "Akkoord geladen" : "Acuerdo cargado", { icon: "📝", duration: 1800 });
+          saveSoon();
+        };
+      });
+    } else {
+      hist.innerHTML = `<div class="empty-state"><div class="empty-title">Sin historial aún</div><p class="empty-body">Cuando guardéis acuerdos de la reunión, aparecerán aquí.</p></div>`;
+    }
   }
 
   document.getElementById('saveNotesBtn').onclick = () => {
@@ -3422,29 +3793,31 @@
       .sort((a,b) => a.occ.diffDays - b.occ.diffDays);
 
     if (!withDate.length) {
-      box.innerHTML = `<div class="empty-state"><div class="empty-title">Sin fechas de renovación</div><p class="empty-body">Abre una responsabilidad (seguros, APK, impuestos…) y asígnale fecha.</p></div>`;
+      box.innerHTML = `<div class="empty-state"><div class="empty-title">${escapeHTML(t("renewEmptyTitle"))}</div><p class="empty-body">${escapeHTML(t("renewEmptyBody"))}</p></div>`;
       return;
     }
 
+    const meses = getMeses();
     box.innerHTML = withDate.map(({item, occ}) => {
       const esCelebra = item.kind === "celebra";
-      let tone = "jade", tag = `en ${occ.diffDays} días`;
+      let tone = "jade";
+      let tag = t("renewInDays", { n: occ.diffDays });
       if (esCelebra) {
         if (occ.diffDays <= 21) tone = "amber";
         if (occ.diffDays <= 3) tone = "red";
-        tag = occ.diffDays === 0 ? "hoy" : `en ${occ.diffDays} día(s)`;
+        tag = occ.diffDays === 0 ? t("renewToday") : t("renewInDays", { n: occ.diffDays });
       } else {
-        if (occ.diffDays <= 7) { tone = "red"; tag = occ.diffDays === 0 ? "hoy" : `en ${occ.diffDays} día(s)`; }
+        if (occ.diffDays <= 7) { tone = "red"; tag = occ.diffDays === 0 ? t("renewToday") : t("renewInDays", { n: occ.diffDays }); }
         else if (occ.diffDays <= 30) { tone = "amber"; }
       }
-      const fecha = `${occ.date.getDate()} de ${MESES[occ.date.getMonth()]}`;
-      const extra = esCelebra && occ.diffDays <= 21 && occ.diffDays > 0 ? " · hora de pensar el regalo" : "";
+      const fecha = t("dateOf", { d: occ.date.getDate(), m: meses[occ.date.getMonth()] });
+      const extra = esCelebra && occ.diffDays <= 21 && occ.diffDays > 0 ? t("renewGift") : "";
       return `<div class="alert ${tone} is-click" data-action="item" data-ref="${item.id}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;">
         <span>
           <strong style="display:block;color:${tone==='red'?'var(--red)':tone==='amber'?'var(--amber)':'var(--jade)'};">${esCelebra ? '🎁 ' : ''}${escapeHTML(item.name)}</strong>
-          <span style="font-size:11.5px;opacity:0.85;">${escapeHTML(AREA_LABEL[item.area]||item.area)} · ${escapeHTML(whoLabel(item.who))} · ${fecha}${extra}</span>
+          <span style="font-size:11.5px;opacity:0.85;">${escapeHTML(areaLabel(item.area))} · ${escapeHTML(whoLabel(item.who))} · ${escapeHTML(fecha)}${escapeHTML(extra)}</span>
         </span>
-        <span class="mono" style="white-space:nowrap;">${tag}</span>
+        <span class="mono" style="white-space:nowrap;">${escapeHTML(tag)}</span>
       </div>`;
     }).join("");
     box.querySelectorAll('[data-action]').forEach(el => {
@@ -3477,11 +3850,12 @@
   function renderCalendar(){
     if (!calState) calState = { year: selectedDate.getFullYear(), month: selectedDate.getMonth() };
     const { year, month } = calState;
-    document.getElementById('calTitle').textContent = `${MESES[month]} ${year}`;
+    const meses = getMeses();
+    document.getElementById('calTitle').textContent = `${meses[month]} ${year}`;
     document.getElementById('legA').textContent = state.people.a;
     document.getElementById('legB').textContent = state.people.b;
 
-    document.getElementById('calDow').innerHTML = ["L","M","X","J","V","S","D"]
+    document.getElementById('calDow').innerHTML = getDowLabels()
       .map(d => `<div class="cal-dow">${d}</div>`).join("");
 
     const firstOfMonth = new Date(year, month, 1);
@@ -3535,9 +3909,10 @@
     const title = document.getElementById('dayDetailTitle');
     const box = document.getElementById('dayDetailBox');
     const todayD = new Date(); todayD.setHours(0,0,0,0);
+    const meses = getMeses();
     title.textContent = sameDate(selectedDate, todayD)
-      ? "Hoy"
-      : `${selectedDate.getDate()} de ${MESES[selectedDate.getMonth()]}`;
+      ? t("calToday")
+      : t("dateOf", { d: selectedDate.getDate(), m: meses[selectedDate.getMonth()] });
 
     const iso = isoDate(selectedDate);
     const recurring = itemsForDow(selectedDate.getDay());
@@ -3545,7 +3920,7 @@
     const dayEvents = eventsForIso(iso);
 
     if (!recurring.length && !renewals.length && !dayEvents.length) {
-      box.innerHTML = `<div class="empty-state"><div class="empty-title">Nada este día</div><p class="empty-body">Toca ＋ Añadir para un evento o tarea, o marca días en una responsabilidad.</p><span class="empty-hint">＋ Añadir arriba</span></div>`;
+      box.innerHTML = `<div class="empty-state"><div class="empty-title">${escapeHTML(t("calEmptyTitle"))}</div><p class="empty-body">${escapeHTML(t("calEmptyBody"))}</p><span class="empty-hint">${escapeHTML(t("calEmptyHint"))}</span></div>`;
       return;
     }
 
@@ -3584,8 +3959,8 @@
     }
     if (renewals.length) {
       html += renewals.map(it => it.kind === "celebra"
-        ? `<div class="alert jade js-item-open" data-item="${it.id}" style="border-color:#8A5F74;background:rgba(224,166,194,0.08);color:#E0A6C2;cursor:pointer;">🎁 <strong>${it.name}</strong> es hoy · ${areaLabel(it.area)} · ${whoLabel(it.who)}</div>`
-        : `<div class="alert amber js-item-open" data-item="${it.id}" style="cursor:pointer;"><strong>${it.name}</strong> se renueva hoy · ${areaLabel(it.area)} · ${whoLabel(it.who)}</div>`
+        ? `<div class="alert jade js-item-open" data-item="${it.id}" style="border-color:#8A5F74;background:rgba(224,166,194,0.08);color:#E0A6C2;cursor:pointer;">🎁 <strong>${escapeHTML(it.name)}</strong> ${escapeHTML(t("renewIsToday"))} · ${escapeHTML(areaLabel(it.area))} · ${escapeHTML(whoLabel(it.who))}</div>`
+        : `<div class="alert amber js-item-open" data-item="${it.id}" style="cursor:pointer;"><strong>${escapeHTML(it.name)}</strong> ${escapeHTML(t("renewRenewsToday"))} · ${escapeHTML(areaLabel(it.area))} · ${escapeHTML(whoLabel(it.who))}</div>`
       ).join("");
     }
     box.innerHTML = html;
@@ -3613,7 +3988,16 @@
   function openNewEvent(iso){
     editingEventId = null;
     document.getElementById('eWho').innerHTML = whoOptionsHtml();
-    document.getElementById('eventModalTitle').textContent = "Nuevo evento";
+    document.getElementById('eventModalTitle').textContent = t("eventNew");
+    const ek = document.getElementById('eKind');
+    if (ek) {
+      const o0 = ek.querySelector('option[value="evento"]');
+      const o1 = ek.querySelector('option[value="tarea"]');
+      if (o0) o0.textContent = t("kindEvent");
+      if (o1) o1.textContent = t("kindTask");
+    }
+    const en = document.getElementById('eName');
+    if (en) en.placeholder = t("phEvent");
     document.getElementById('eName').value = "";
     document.getElementById('eKind').value = "evento";
     document.getElementById('eWho').value = "both";
@@ -3628,7 +4012,14 @@
     if (!ev) return;
     editingEventId = id;
     document.getElementById('eWho').innerHTML = whoOptionsHtml();
-    document.getElementById('eventModalTitle').textContent = ev.name;
+    document.getElementById('eventModalTitle').textContent = t("eventEdit");
+    const ek2 = document.getElementById('eKind');
+    if (ek2) {
+      const o0 = ek2.querySelector('option[value="evento"]');
+      const o1 = ek2.querySelector('option[value="tarea"]');
+      if (o0) o0.textContent = t("kindEvent");
+      if (o1) o1.textContent = t("kindTask");
+    }
     document.getElementById('eName').value = ev.name;
     document.getElementById('eKind').value = ev.kind || "evento";
     document.getElementById('eWho').value = ev.who || "both";
@@ -3646,7 +4037,7 @@
     document.getElementById('eventModalBg').classList.remove('open');
     renderCalendar(); saveSoon();
     if (removed) {
-      showToast("Evento eliminado", {
+      showToast(t("toastEventDel"), {
         icon: "🗑",
         undo: () => {
           state.events.push(removed);
@@ -3685,7 +4076,7 @@
     const p = d.split('-').map(Number);
     selectedDate = new Date(p[0], p[1]-1, p[2]);
     renderCalendar(); saveSoon();
-    showToast(editingEventId ? "Evento actualizado" : "Evento añadido", { icon:"📅" });
+    showToast(editingEventId ? t("toastEventUpd") : t("toastEventAdd"), { icon:"📅" });
   };
 
   document.getElementById('calPrev').onclick = () => {
