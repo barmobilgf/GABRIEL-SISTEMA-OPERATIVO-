@@ -1511,37 +1511,185 @@
   };
 
 
-  // Agenda papel sep-2026 → calendario (ids fijos para no duplicar)
-  const SEED_AGENDA_SEP2026 = [
-    { id:"ag-2026-09-22-a", date:"2026-09-22", name:"Anuschka trabaja · niños con Papá", kind:"evento", who:"a", time:"", note:"Desde agenda papel" },
-    { id:"ag-2026-09-22-b", date:"2026-09-22", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" },
-    { id:"ag-2026-09-23-a", date:"2026-09-23", name:"Anuschka trabaja · niño con Papá", kind:"evento", who:"a", time:"", note:"" },
-    { id:"ag-2026-09-23-b", date:"2026-09-23", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" },
-    { id:"ag-2026-09-24-a", date:"2026-09-24", name:"Ziggy · ole cesto", kind:"evento", who:"ext", time:"", note:"Actividad niño" },
-    { id:"ag-2026-09-24-b", date:"2026-09-24", name:"Zaila colegio (Papá)", kind:"evento", who:"b", time:"", note:"Llevar / colegio" },
-    { id:"ag-2026-09-24-c", date:"2026-09-24", name:"Recojo Zaila (Papá)", kind:"evento", who:"b", time:"", note:"" },
-    { id:"ag-2026-09-24-d", date:"2026-09-24", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" },
-    { id:"ag-2026-09-24-e", date:"2026-09-24", name:"Trabajo Gabriel", kind:"evento", who:"b", time:"", note:"" },
-    { id:"ag-2026-09-25-a", date:"2026-09-25", name:"Trabajo Gabriel", kind:"evento", who:"b", time:"15:00", note:"Turno 15:00 → 03:00" },
-    { id:"ag-2026-09-26-a", date:"2026-09-26", name:"Trabajo Gabriel", kind:"evento", who:"b", time:"15:00", note:"Turno 15:00 → 03:00" },
-    { id:"ag-2026-09-27-a", date:"2026-09-27", name:"Workshop Gabriel · 22 pax", kind:"evento", who:"b", time:"", note:"Desde agenda papel" },
-    { id:"ag-2026-09-28-a", date:"2026-09-28", name:"Anuschka libre · Gabriel libre", kind:"evento", who:"both", time:"", note:"" },
-    { id:"ag-2026-09-28-b", date:"2026-09-28", name:"Zaila colegio · llevar y recoger (Anuschka)", kind:"evento", who:"a", time:"", note:"" },
-    { id:"ag-2026-09-29-a", date:"2026-09-29", name:"Anuschka trabaja · niños con Papá", kind:"evento", who:"a", time:"", note:"" },
-    { id:"ag-2026-09-29-b", date:"2026-09-29", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" },
-    { id:"ag-2026-09-30-a", date:"2026-09-30", name:"Anuschka trabaja · niños con Papá", kind:"evento", who:"a", time:"", note:"" },
-    { id:"ag-2026-09-30-b", date:"2026-09-30", name:"Estudio y ejercicios", kind:"tarea", who:"a", time:"", note:"" }
+  // Agenda familiar real: 2026-09-21 → 2027-03-19 (sin tachados, sin seeds antiguos)
+  const SEED_AGENDA_FAMILY = [
+    { id:"fam-2026-09-21-001", date:"2026-09-21", name:"Gab · DOHFANG consultatie", kind:"evento", who:"b", time:"10:30", note:"" },
+    { id:"fam-2026-09-21-002", date:"2026-09-21", name:"Miro · school Tilà", kind:"evento", who:"a", time:"14:00", note:"" },
+    { id:"fam-2026-09-21-003", date:"2026-09-21", name:"Gab · Oostbult + Mensen Lokaal", kind:"evento", who:"b", time:"19:00", note:"" },
+    { id:"fam-2026-09-22-004", date:"2026-09-22", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-09-22-005", date:"2026-09-22", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-09-23-006", date:"2026-09-23", name:"Maarsspoort", kind:"evento", who:"a", time:"08:00", note:"08:00–20:00" },
+    { id:"fam-2026-09-24-007", date:"2026-09-24", name:"Zigg stallen met Olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-09-24-008", date:"2026-09-24", name:"BSO workshop", kind:"evento", who:"a", time:"15:30", note:"15:30–16:30" },
+    { id:"fam-2026-09-24-009", date:"2026-09-24", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-09-25-010", date:"2026-09-25", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-09-26-011", date:"2026-09-26", name:"Helene spoken · Gab werk", kind:"evento", who:"b", time:"", note:"" },
+    { id:"fam-2026-09-26-012", date:"2026-09-26", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-09-27-013", date:"2026-09-27", name:"Silas jaarg", kind:"evento", who:"a", time:"15:00", note:"" },
+    { id:"fam-2026-09-27-014", date:"2026-09-27", name:"Gab workshop", kind:"evento", who:"b", time:"14:00", note:"Personen" },
+    { id:"fam-2026-09-28-015", date:"2026-09-28", name:"Grootold gesprek", kind:"evento", who:"a", time:"17:00", note:"" },
+    { id:"fam-2026-09-28-016", date:"2026-09-28", name:"Rijleiding RAIL · Sofia les", kind:"evento", who:"a", time:"19:00", note:"" },
+    { id:"fam-2026-09-29-017", date:"2026-09-29", name:"Bomenzorgbezoek Gemeentehuis", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-09-29-018", date:"2026-09-29", name:"Lokaal 2.05 · Gab + BSO", kind:"evento", who:"b", time:"11:00", note:"11:00–12:30" },
+    { id:"fam-2026-09-29-019", date:"2026-09-29", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-09-29-020", date:"2026-09-29", name:"Mensen Lokaal", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-09-29-021", date:"2026-09-29", name:"RIJAS", kind:"evento", who:"a", time:"20:30", note:"" },
+    { id:"fam-2026-09-30-022", date:"2026-09-30", name:"Maarsspoort", kind:"evento", who:"a", time:"09:00", note:"09:00–22:00" },
+    { id:"fam-2026-10-01-023", date:"2026-10-01", name:"Zigg Olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-02-024", date:"2026-10-02", name:"BSO workshop", kind:"evento", who:"a", time:"15:30", note:"15:30–16:30" },
+    { id:"fam-2026-10-02-025", date:"2026-10-02", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-10-03-026", date:"2026-10-03", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-10-04-027", date:"2026-10-04", name:"Maarsspoort", kind:"evento", who:"a", time:"10:00", note:"10:00–19:00" },
+    { id:"fam-2026-10-06-028", date:"2026-10-06", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-06-029", date:"2026-10-06", name:"Aosta", kind:"evento", who:"a", time:"11:00", note:"" },
+    { id:"fam-2026-10-06-030", date:"2026-10-06", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-06-031", date:"2026-10-06", name:"BSO Dakem Verzekeringsplein Houten", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-06-032", date:"2026-10-06", name:"Dansen RIJAS + Choreo's", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-10-07-033", date:"2026-10-07", name:"Inloop Zaal", kind:"evento", who:"a", time:"13:15", note:"13:15–13:45" },
+    { id:"fam-2026-10-07-034", date:"2026-10-07", name:"Maarsspoort", kind:"evento", who:"a", time:"16:00", note:"16:00–22:00" },
+    { id:"fam-2026-10-08-035", date:"2026-10-08", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-08-036", date:"2026-10-08", name:"BSO workshop", kind:"evento", who:"a", time:"15:30", note:"15:30–16:30" },
+    { id:"fam-2026-10-08-037", date:"2026-10-08", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-10-09-038", date:"2026-10-09", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-10-10-039", date:"2026-10-10", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-10-12-040", date:"2026-10-12", name:"J Cole concert Cherry ♡", kind:"evento", who:"both", time:"", note:"" },
+    { id:"fam-2026-10-13-041", date:"2026-10-13", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-13-042", date:"2026-10-13", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-13-043", date:"2026-10-13", name:"Dansen", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-10-13-044", date:"2026-10-13", name:"RIJAS", kind:"evento", who:"a", time:"20:30", note:"" },
+    { id:"fam-2026-10-14-045", date:"2026-10-14", name:"Gangne regelen Villa Enna", kind:"evento", who:"a", time:"18:00", note:"18:00–21:00" },
+    { id:"fam-2026-10-15-046", date:"2026-10-15", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-15-047", date:"2026-10-15", name:"BSO workshop", kind:"evento", who:"a", time:"15:30", note:"15:30–16:30" },
+    { id:"fam-2026-10-15-048", date:"2026-10-15", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-10-16-049", date:"2026-10-16", name:"Manoir Hotel", kind:"evento", who:"a", time:"08:00", note:"08:00–13:00" },
+    { id:"fam-2026-10-16-050", date:"2026-10-16", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-10-17-051", date:"2026-10-17", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-10-18-052", date:"2026-10-18", name:"MIRAShow Villa", kind:"evento", who:"a", time:"15:30", note:"15:30–21:00 · E500" },
+    { id:"fam-2026-10-19-053", date:"2026-10-19", name:"Zula Huffman de", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-19-054", date:"2026-10-19", name:"Zigg schoon met Olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-19-055", date:"2026-10-19", name:"Gab weg met Anke", kind:"evento", who:"b", time:"", note:"" },
+    { id:"fam-2026-10-20-056", date:"2026-10-20", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-20-057", date:"2026-10-20", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-20-058", date:"2026-10-20", name:"Dansen RIJAS", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-10-21-059", date:"2026-10-21", name:"Maarsspoort", kind:"evento", who:"a", time:"16:00", note:"16:00–23:00" },
+    { id:"fam-2026-10-24-060", date:"2026-10-24", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-10-25-061", date:"2026-10-25", name:"Maarsspoort", kind:"evento", who:"a", time:"08:00", note:"08:00–20:00" },
+    { id:"fam-2026-10-26-062", date:"2026-10-26", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-26-063", date:"2026-10-26", name:"RIJAS training", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-27-064", date:"2026-10-27", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-27-065", date:"2026-10-27", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-27-066", date:"2026-10-27", name:"Dansen", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-10-29-067", date:"2026-10-29", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-10-29-068", date:"2026-10-29", name:"BSO workshop", kind:"evento", who:"a", time:"15:30", note:"15:30–16:30" },
+    { id:"fam-2026-10-29-069", date:"2026-10-29", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-10-30-070", date:"2026-10-30", name:"Huiswerkbegeleiding", kind:"tarea", who:"a", time:"12:00", note:"" },
+    { id:"fam-2026-10-30-071", date:"2026-10-30", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-10-31-072", date:"2026-10-31", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-11-02-073", date:"2026-11-02", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-03-074", date:"2026-11-03", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-03-075", date:"2026-11-03", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-03-076", date:"2026-11-03", name:"Dansen", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-11-06-077", date:"2026-11-06", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-11-07-078", date:"2026-11-07", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-11-08-079", date:"2026-11-08", name:"Maarsspoort", kind:"evento", who:"a", time:"13:00", note:"13:00–18:30" },
+    { id:"fam-2026-11-09-080", date:"2026-11-09", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-10-081", date:"2026-11-10", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-10-082", date:"2026-11-10", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-10-083", date:"2026-11-10", name:"RIJAS", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-11-11-084", date:"2026-11-11", name:"Info Fijncoaches", kind:"evento", who:"a", time:"18:30", note:"18:30–19:30" },
+    { id:"fam-2026-11-12-085", date:"2026-11-12", name:"Zula Suderweg", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-12-086", date:"2026-11-12", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-12-087", date:"2026-11-12", name:"RIJAS DAG · Opus Nova Huis", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-12-088", date:"2026-11-12", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-11-13-089", date:"2026-11-13", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-11-14-090", date:"2026-11-14", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-11-15-091", date:"2026-11-15", name:"Maarsspoort", kind:"evento", who:"a", time:"08:00", note:"08:00–20:00" },
+    { id:"fam-2026-11-16-092", date:"2026-11-16", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-16-093", date:"2026-11-16", name:"Film Workshop + Muziek", kind:"evento", who:"a", time:"20:00", note:"" },
+    { id:"fam-2026-11-16-094", date:"2026-11-16", name:"Joke concert (annulé)", kind:"evento", who:"a", time:"19:30", note:"Anulado" },
+    { id:"fam-2026-11-17-095", date:"2026-11-17", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-17-096", date:"2026-11-17", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-17-097", date:"2026-11-17", name:"Dansen", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-11-19-098", date:"2026-11-19", name:"Zigg Olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-19-099", date:"2026-11-19", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-11-20-100", date:"2026-11-20", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-11-21-101", date:"2026-11-21", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-11-22-102", date:"2026-11-22", name:"Maarsspoort", kind:"evento", who:"a", time:"08:00", note:"08:00–20:00" },
+    { id:"fam-2026-11-26-103", date:"2026-11-26", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-11-26-104", date:"2026-11-26", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-11-27-105", date:"2026-11-27", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-11-28-106", date:"2026-11-28", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-11-29-107", date:"2026-11-29", name:"Maarsspoort", kind:"evento", who:"a", time:"08:00", note:"08:00–20:00" },
+    { id:"fam-2026-11-30-108", date:"2026-11-30", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-01-109", date:"2026-12-01", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-01-110", date:"2026-12-01", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-01-111", date:"2026-12-01", name:"Dansen", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-12-03-112", date:"2026-12-03", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-03-113", date:"2026-12-03", name:"Zula Suderweg", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-03-114", date:"2026-12-03", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-12-04-115", date:"2026-12-04", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-12-05-116", date:"2026-12-05", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-12-06-117", date:"2026-12-06", name:"Maarsspoort", kind:"evento", who:"a", time:"13:00", note:"13:00–18:30" },
+    { id:"fam-2026-12-07-118", date:"2026-12-07", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-08-119", date:"2026-12-08", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-08-120", date:"2026-12-08", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-08-121", date:"2026-12-08", name:"Dansen", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-12-08-122", date:"2026-12-08", name:"Zula jarig ♡", kind:"evento", who:"a", time:"", note:"Cumpleaños Zula" },
+    { id:"fam-2026-12-10-123", date:"2026-12-10", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-10-124", date:"2026-12-10", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-12-11-125", date:"2026-12-11", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-12-17-126", date:"2026-12-17", name:"Zula Suderweg", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-17-127", date:"2026-12-17", name:"Zigg olc Calo", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-17-128", date:"2026-12-17", name:"Gab werk", kind:"evento", who:"b", time:"18:30", note:"" },
+    { id:"fam-2026-12-18-129", date:"2026-12-18", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-12-19-130", date:"2026-12-19", name:"Gab werk", kind:"evento", who:"b", time:"14:30", note:"" },
+    { id:"fam-2026-12-20-131", date:"2026-12-20", name:"Maarsspoort", kind:"evento", who:"a", time:"12:00", note:"12:00–20:00" },
+    { id:"fam-2026-12-21-132", date:"2026-12-21", name:"Zula Suderweg", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-22-133", date:"2026-12-22", name:"Ongeld Vrij Best", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-22-134", date:"2026-12-22", name:"Ongeld G-Town", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2026-12-22-135", date:"2026-12-22", name:"Dansen", kind:"evento", who:"a", time:"19:15", note:"" },
+    { id:"fam-2026-12-27-136", date:"2026-12-27", name:"Maarsspoort", kind:"evento", who:"a", time:"10:00", note:"10:00–17:00" },
+    { id:"fam-2027-01-18-137", date:"2027-01-18", name:"Chanti Spoelen", kind:"evento", who:"a", time:"13:15", note:"13:15–14:15" },
+    { id:"fam-2027-01-20-138", date:"2027-01-20", name:"Chanti Spoelen", kind:"evento", who:"a", time:"13:15", note:"13:15–14:15" },
+    { id:"fam-2027-02-03-139", date:"2027-02-03", name:"Chanti Spoelen", kind:"evento", who:"a", time:"13:15", note:"13:15–14:15" },
+    { id:"fam-2027-02-04-140", date:"2027-02-04", name:"Chanti Verkeersles", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2027-02-05-141", date:"2027-02-05", name:"Chanti Verkeersles", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2027-02-08-142", date:"2027-02-08", name:"Chanti Slootweg", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2027-02-10-143", date:"2027-02-10", name:"Chanti Spoelen", kind:"evento", who:"a", time:"13:15", note:"13:15–14:15" },
+    { id:"fam-2027-02-22-144", date:"2027-02-22", name:"Zula Vaayans Unterste", kind:"evento", who:"a", time:"", note:"" },
+    { id:"fam-2027-03-18-145", date:"2027-03-18", name:"Chanti Suderweg", kind:"evento", who:"a", time:"", note:"" },
   ];
+
   function seedAgendaFromPaper(){
+    if (!state.items) state.items = [];
     if (!state.events) state.events = [];
+    const FLAG = "familyOS_agenda_family_v1";
+    let forced = false;
+    try { forced = localStorage.getItem(FLAG) !== "1"; } catch(e){ forced = true; }
+
+    // Quitar items del seed PDF antiguo
+    state.items = state.items.filter(it => !String(it.id).startsWith("pdf-item-"));
+
+    if (forced) {
+      // Primera carga de esta agenda: borrar todos los eventos viejos y cargar la familiar
+      state.events = [];
+      SEED_AGENDA_FAMILY.forEach(e => {
+        state.events.push({ ...e, done: false });
+      });
+      try { localStorage.setItem(FLAG, "1"); } catch(e){}
+      if (state.people && (state.people.a === "Persona 1" || !state.people.a)) state.people.a = "Anuschka";
+      if (state.people && (state.people.b === "Persona 2" || !state.people.b)) state.people.b = "Gabriel";
+      return SEED_AGENDA_FAMILY.length;
+    }
+
+    // Ya sembrado: solo rellenar ids fam- que falten (sin tocar eventos nuevos del usuario)
     let added = 0;
-    SEED_AGENDA_SEP2026.forEach(e => {
+    SEED_AGENDA_FAMILY.forEach(e => {
       if (!state.events.some(x => x.id === e.id)) {
         state.events.push({ ...e, done: false });
         added++;
       }
     });
-    // Nombres de pareja si aún son genéricos
     if (state.people && (state.people.a === "Persona 1" || !state.people.a)) state.people.a = "Anuschka";
     if (state.people && (state.people.b === "Persona 2" || !state.people.b)) state.people.b = "Gabriel";
     return added;
@@ -4264,7 +4412,8 @@
   };
 
   loadLocal();
-  seedAgendaFromPaper();
+  const seeded = seedAgendaFromPaper();
+  saveLocal(); // agenda familiar sustituye eventos antiguos
   document.documentElement.lang = appLang === "nl" ? "nl" : "es";
   document.getElementById('weekNotes').value = state.notes || "";
   document.getElementById('weekNotes').addEventListener('input', (e) => {
@@ -4272,6 +4421,12 @@
     saveSoon();
   });
   renderAll();
+  if (seeded > 0) {
+    setTimeout(() => showToast(
+      (appLang === "nl" ? "Agenda geladen: " : "Agenda familiar cargada: ") + seeded + (appLang === "nl" ? " events" : " eventos"),
+      { icon: "📅", duration: 3200 }
+    ), 600);
+  }
 
   // ---------- SERVICE WORKER (PWA) ----------
   if ('serviceWorker' in navigator) {
