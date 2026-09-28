@@ -1094,28 +1094,52 @@
   <!-- REPARTO -->
   <section class="screen" id="screen-reparto">
     <div class="section-head"><h2 data-i18n="secLoad">Carga por persona</h2></div>
+    <div class="card" id="repartoOverview" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 4px;font-size:14px;">Reparto de horas</h3>
+      <p style="margin:0 0 8px;font-size:11.5px;color:var(--text-faint);line-height:1.4;">“Los dos” cuenta a medias para cada uno. Toca un segmento o una tarjeta para filtrar Áreas.</p>
+      <div class="balance-bar" id="repartoBalanceBar"></div>
+      <div class="balance-legend" id="repartoBalanceLegend" style="margin-top:8px;"></div>
+      <div class="verdict" id="repartoVerdict" style="margin-top:10px;"></div>
+    </div>
     <div id="personCards"></div>
 
+    <div class="section-head"><h2>Dónde está el desequilibrio</h2></div>
+    <div id="repartoImbalance"></div>
+
     <div class="section-head"><h2 data-i18n="secSplit">Reparto por área</h2></div>
+    <p style="margin:-4px 0 8px;font-size:11.5px;color:var(--text-faint);">Toca un área para ver las tareas y cambiar quién las lleva sin salir de Reparto.</p>
     <div class="card" id="areaSplit"></div>
   </section>
 
   <!-- DINERO -->
   <section class="screen" id="screen-dinero">
-    <div class="stat-row">
-      <div class="stat"><span class="num" id="dineroMes">€0</span><span class="lbl" data-i18n="lblMes">Gastos al mes</span></div>
-      <div class="stat"><span class="num" id="dineroAno">€0</span><span class="lbl" data-i18n="lblAno">Gastos al año</span></div>
+    <!-- Fase 1: foto del mes arriba -->
+    <div class="balance-card" id="dineroMonthOverview"></div>
+    <!-- ids legacy por si algún script los referencia -->
+    <span id="dineroMes" style="display:none;">€0</span>
+    <span id="dineroAno" style="display:none;">€0</span>
+    <div id="balanceCard" style="display:none;"></div>
+
+    <div class="section-head">
+      <h2 id="thisMonthPayTitle" data-i18n="secThisMonth">Este mes toca pagar</h2>
+      <button type="button" class="edit-inline" id="moneyPayResetMonth" style="display:none;font-size:12px;">Mes actual</button>
     </div>
+    <p style="margin:-4px 0 8px;font-size:11.5px;color:var(--text-faint);">Marca como pagado · toca el nombre para editar. El gráfico de abajo cambia el mes de esta lista.</p>
+    <div class="card" id="thisMonthPay"></div>
 
     <div class="section-head"><h2 data-i18n="secIncomes">💰 Ingresos</h2><button class="edit-inline" id="addIncomeBtn">＋ Nuevo</button></div>
     <div class="card">
       <div id="incomeStats"></div>
       <div id="incomeList"></div>
-      <div class="cal-add-row" style="margin-top:12px;">
+      <div class="cal-add-row" style="margin-top:12px;flex-wrap:wrap;">
         <input type="text" id="newIncomeFuente" placeholder="Fuente (ej. Timber)" class="cal-text-input" list="incomeFuenteList">
         <input type="number" id="newIncomeMonto" placeholder="€" step="0.01" class="cal-time-input" style="width:70px;">
+        <label style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-faint);white-space:nowrap;cursor:pointer;">
+          <input type="checkbox" id="newIncomeRecurring" style="accent-color:var(--jade);"> Cada mes
+        </label>
         <button id="newIncomeBtn">＋</button>
       </div>
+      <p style="margin:6px 0 0;font-size:11px;color:var(--text-faint);">“Cada mes” cuenta el ingreso en el balance todos los meses (sueldo, pensión…). Sin marcar = solo la fecha indicada.</p>
       <datalist id="incomeFuenteList">
         <option value="Turnos Timber">
         <option value="GCE">
@@ -1126,23 +1150,40 @@
       </datalist>
     </div>
 
-    <div class="section-head"><h2 data-i18n="secBalanceMoney">Balance</h2></div>
-    <div class="balance-card" id="balanceCard"></div>
+    <div class="section-head"><h2>＋ Gasto rápido</h2></div>
+    <div class="card">
+      <div class="cal-add-row" style="flex-wrap:wrap;gap:8px;">
+        <input type="text" id="quickExpName" placeholder="Nombre del gasto" class="cal-text-input" style="flex:1.4;">
+        <input type="number" id="quickExpMonto" placeholder="€" step="0.01" min="0" class="cal-time-input" style="width:70px;">
+        <select id="quickExpArea" class="cal-text-input" style="flex:1;min-width:110px;padding:8px 10px;"></select>
+        <select id="quickExpWho" class="cal-text-input" style="flex:0.9;min-width:90px;padding:8px 10px;"></select>
+        <select id="quickExpFreq" class="cal-text-input" style="flex:0.8;min-width:88px;padding:8px 10px;">
+          <option value="mes">Mensual</option>
+          <option value="ano">Anual</option>
+        </select>
+        <button type="button" id="quickExpBtn">＋</button>
+      </div>
+      <p style="margin:6px 0 0;font-size:11px;color:var(--text-faint);">Crea una responsabilidad de gasto en Áreas sin salir de Dinero.</p>
+    </div>
 
     <div class="card">
-      <p style="margin:0;font-size:12px;color:var(--text-faint);">Los gastos anuales (seguros, APK, impuestos) se reparten entre 12 para que veas lo que de verdad cuesta cada mes.</p>
+      <p style="margin:0;font-size:12px;color:var(--text-faint);">Los gastos anuales (seguros, APK, impuestos) se reparten entre 12 en el balance mensual. En “Este mes toca pagar” ves los que caen de golpe este mes.</p>
     </div>
 
     <div class="section-head"><h2 data-i18n="secYearChart">Cuándo cae cada gasto (vista real)</h2></div>
     <div class="card">
       <div class="year-chart" id="yearChart"></div>
-      <p style="margin:2px 0 0;font-size:11px;color:var(--text-faint);">Lo mensual se reparte en los 12 meses. Lo anual con fecha de renovación cae de golpe en su mes real; sin fecha, se prorratea.</p>
+      <p style="margin:2px 0 0;font-size:11px;color:var(--text-faint);">Lo mensual se reparte en los 12 meses. Lo anual con fecha de renovación cae de golpe en su mes real; sin fecha, se prorratea. Toca un mes del gráfico para ver el detalle arriba.</p>
     </div>
 
-    <div class="section-head"><h2 data-i18n="secThisMonth">Este mes toca pagar</h2></div>
-    <div class="card" id="thisMonthPay"></div>
+    <div class="section-head"><h2>Filtros de gastos</h2>
+      <button type="button" class="edit-inline" id="moneyFiltersClear" style="font-size:12px;">Quitar filtros</button>
+    </div>
+    <div class="card" id="moneyFiltersCard" style="margin-bottom:4px;"></div>
+    <p id="moneyFiltersHint" style="margin:4px 0 10px;font-size:11.5px;color:var(--text-faint);"></p>
 
     <div class="section-head"><h2 data-i18n="secByArea">Gasto por área</h2></div>
+    <p style="margin:-4px 0 8px;font-size:11.5px;color:var(--text-faint);">Toca un área para ver los gastos y editarlos sin salir de Dinero.</p>
     <div class="card" id="moneyByArea"></div>
 
     <div class="section-head"><h2 data-i18n="secTop10">Los diez que más pesan</h2></div>
@@ -1173,19 +1214,41 @@
 
   <!-- REVISIÓN -->
   <section class="screen" id="screen-revision">
-    <div class="section-head"><h2>Reunión familiar</h2><button class="edit-inline" id="resetCheckBtn">Empezar de nuevo</button></div>
+    <div class="section-head">
+      <h2>Reunión familiar</h2>
+      <button class="edit-inline" id="resetCheckBtn" title="Solo reinicia el orden del día">Reiniciar orden del día</button>
+    </div>
+
+    <!-- Fase 2: contexto de la semana desde el resto del app -->
+    <div class="section-head" style="margin-bottom:6px;"><h2 style="font-size:15px;">Esta semana en el sistema</h2></div>
+    <div id="revWeekBrief"></div>
+
     <div class="card">
-      <p style="margin:0 0 10px;font-size:12.5px;">30–45 minutos, una vez por semana. Marca cada punto a medida que lo hablen.</p>
+      <p style="margin:0 0 6px;font-size:12.5px;color:var(--text-faint);">30–45 min · una vez por semana. Toca cada tema cuando lo hayáis hablado. Puedes añadir o quitar temas.</p>
+      <div id="revProgressWrap" style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span id="revProgressLabel" style="font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--amber);">0 / 8 temas</span>
+          <span id="revProgressHint" style="font-size:11.5px;color:var(--text-faint);">Pendiente</span>
+        </div>
+        <div style="height:6px;background:var(--surface-2);border-radius:99px;overflow:hidden;">
+          <div id="revProgressBar" style="height:100%;width:0%;background:var(--jade);border-radius:99px;transition:width .25s ease;"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <p style="margin:0;font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text-faint);letter-spacing:.04em;">ORDEN DEL DÍA</p>
+        <button type="button" class="edit-inline" id="revAddTopicBtn" style="font-size:12px;">＋ Tema</button>
+      </div>
       <div id="checklistBox"></div>
     </div>
 
-    <div class="section-head"><h2>Acuerdos de esta semana</h2></div>
+    <div class="section-head"><h2>Acuerdos de esta reunión</h2></div>
     <div class="card">
       <textarea id="weekNotes" rows="5" placeholder="Qué decidieron, quién se encarga de qué, qué cambia la semana que viene…" style="width:100%;padding:10px 12px;background-color:var(--surface-2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:'Inter';font-size:14px;"></textarea>
-      <button class="btn-save" id="saveNotesBtn" style="width:100%;padding:11px;border:none;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;cursor:pointer;margin-top:8px;">Guardar acuerdos</button>
+      <button class="btn-save" id="saveNotesBtn" style="width:100%;padding:12px;border:none;border-radius:10px;font-family:'IBM Plex Mono',monospace;font-size:12.5px;cursor:pointer;margin-top:10px;">Cerrar reunión y guardar</button>
+      <p style="margin:8px 0 0;font-size:11.5px;color:var(--text-faint);line-height:1.4;">Guarda el acta (acuerdos + notas por tema), reinicia el orden del día y deja lista la próxima reunión.</p>
     </div>
 
-    <div class="section-head"><h2>Historial</h2></div>
+    <div class="section-head"><h2>Actas anteriores</h2></div>
     <div id="notesHistory"></div>
   </section>
 
@@ -1334,6 +1397,11 @@
     <select id="iWho"></select>
     <label>Nota (opcional)</label>
     <input type="text" id="iNote" placeholder="ej. propina promedio Timber">
+    <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;">
+      <input type="checkbox" id="iRecurring" style="accent-color:var(--jade);width:auto;">
+      <span>Ingreso cada mes (recurrente)</span>
+    </label>
+    <p style="margin:4px 0 0;font-size:11px;color:var(--text-faint);">Si está marcado, suma al balance todos los meses. Si no, solo el mes de la fecha.</p>
     <div class="modal-actions">
       <button class="btn-cancel" id="incomeDelete" style="color:var(--red);">Eliminar</button>
       <button class="btn-cancel" id="incomeCancel">Cancelar</button>
@@ -1462,6 +1530,12 @@
       (state.items||[]).forEach(it => {
         if (!it.flow) it.flow = "gasto";
       });
+      // Fase 2 revisión: orden del día editable + notas por tema
+      if (!Array.isArray(state.agendaTopics) || !state.agendaTopics.length) {
+        state.agendaTopics = CHECKLIST.slice();
+      }
+      if (!state.topicNotes || typeof state.topicNotes !== "object") state.topicNotes = {};
+      if (!state.moneyPaid || typeof state.moneyPaid !== "object") state.moneyPaid = {};
     } catch(e){}
   }
 
@@ -1507,7 +1581,10 @@
     events: [],
     checks: [],
     notes: "",
-    notesHistory: []
+    notesHistory: [],
+    agendaTopics: null,  // null → se inicializa desde CHECKLIST
+    topicNotes: {},      // { "0": "nota corta del tema 0", ... }
+    moneyPaid: {}        // { "2026-8-itemId": true } pagado en mes (0-11)
   };
 
 
@@ -1740,10 +1817,17 @@
   function registeredMonthIncomes(now){
     now = now || new Date();
     const m = now.getMonth(), y = now.getFullYear();
-    return (state.incomes||[]).filter(inc => {
+    let sum = 0;
+    (state.incomes || []).forEach(inc => {
+      const monto = Number(inc.monto) || 0;
+      if (inc.recurring) {
+        sum += monto;
+        return;
+      }
       const d = new Date(inc.date);
-      return d.getMonth() === m && d.getFullYear() === y;
-    }).reduce((s,i)=>s+(Number(i.monto)||0),0);
+      if (!isNaN(d.getTime()) && d.getMonth() === m && d.getFullYear() === y) sum += monto;
+    });
+    return sum;
   }
   function totalMonthlyIncome(now){
     return registeredMonthIncomes(now) + monthlyAreaIncomes();
@@ -2833,21 +2917,13 @@
 
   // Función auxiliar para agregar balance al resumen
   function getBalanceInfo(){
-    const now = new Date();
-    const thisMonth = now.getMonth();
-    const thisYear = now.getFullYear();
-    const thisMonthIncomes = state.incomes.filter(inc => {
-      const d = new Date(inc.date);
-      return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
-    });
-    const totalIngresos = thisMonthIncomes.reduce((s, i) => s + (Number(i.monto) || 0), 0);
-    const totalGastos = state.items.reduce((s,i) => s + monthlyCost(i), 0);
-    return totalIngresos - totalGastos;
+    return totalMonthlyIncome() - monthlyExpenses();
   }
 
   // ---------- ÁREAS ----------
   const openAreas = new Set();
   let filterWho = null; // "a" | "b" | null — filtro desde Reparto
+  const openRepartoAreas = new Set(); // áreas expandidas en pantalla Reparto (fase 2)
   function renderAreas(){
     const box = document.getElementById('areasList');
     box.innerHTML = "";
@@ -2973,66 +3049,324 @@
   }
 
   // ---------- REPARTO ----------
+  function goRepartoToWho(w){
+    if (w !== "a" && w !== "b") {
+      goToScreen("areas");
+      return;
+    }
+    filterWho = w;
+    state.items.filter(i => i.who === w || i.who === "both").forEach(i => openAreas.add(i.area));
+    goToScreen("areas");
+    renderAreas();
+    const pname = w === "a" ? state.people.a : state.people.b;
+    showToast((appLang === "nl" ? "Taken van " : "Carga de ") + pname, { icon: "👤", duration: 1800 });
+  }
+
   function renderReparto(){
-    const t = timeByPerson();
-    const box = document.getElementById('personCards');
+    const tp = timeByPerson();
+    const totalRaw = (state.items || []).reduce((s, it) => s + (Number(it.time) || 0), 0);
+    const pairSum = tp.totalA + tp.totalB; // incluye "both" a medias
+
+    // —— Vista global: barra + leyenda + veredicto ——
+    const bar = document.getElementById("repartoBalanceBar");
+    const legend = document.getElementById("repartoBalanceLegend");
+    const verdict = document.getElementById("repartoVerdict");
+    if (bar && legend && verdict) {
+      if (totalRaw <= 0) {
+        bar.innerHTML = `<div class="balance-seg seg-ext" style="width:100%;">${escapeHTML(t("balNoHours"))}</div>`;
+        legend.innerHTML = "";
+        verdict.className = "verdict";
+        verdict.textContent = t("balAddHours");
+      } else {
+        const pct = v => (v / totalRaw) * 100;
+        const segs = [
+          { v: tp.a, cls: "seg-a", txt: state.people.a, w: "a" },
+          { v: tp.both, cls: "seg-both", txt: t("balBoth"), w: "both" },
+          { v: tp.b, cls: "seg-b", txt: state.people.b, w: "b" },
+          { v: tp.ext, cls: "seg-ext", txt: t("balSegOut"), w: "ext" }
+        ].filter(s => s.v > 0);
+        bar.innerHTML = segs.map(s => {
+          const p = pct(s.v);
+          return `<div class="balance-seg ${s.cls}" data-who-seg="${s.w}" style="width:${p}%;cursor:pointer;" title="${escapeHTML(s.txt)}: ${hrs(s.v)}">${p >= 12 ? Math.round(p) + "%" : ""}</div>`;
+        }).join("");
+        bar.querySelectorAll("[data-who-seg]").forEach(seg => {
+          seg.onclick = (e) => {
+            e.stopPropagation();
+            const w = seg.dataset.whoSeg;
+            if (w === "a" || w === "b") goRepartoToWho(w);
+            else if (w === "both") {
+              filterWho = null;
+              goToScreen("areas");
+              renderAreas();
+              showToast(appLang === "nl" ? "Gedeelde taken" : "Tareas de los dos", { icon: "🤝", duration: 1600 });
+            } else {
+              goToScreen("areas");
+            }
+          };
+        });
+        legend.innerHTML = [
+          { c: "var(--jade)", n: state.people.a, v: tp.totalA, w: "a" },
+          { c: "var(--violet)", n: t("balBoth"), v: tp.both, w: "both" },
+          { c: "var(--amber)", n: state.people.b, v: tp.totalB, w: "b" },
+          { c: "var(--surface-2)", n: t("balOutHome"), v: tp.ext, w: "ext" }
+        ].filter(x => x.v > 0)
+          .map(x => `<span class="is-click" data-who-leg="${x.w}" style="cursor:pointer;"><span class="swatch" style="background:${x.c};"></span>${escapeHTML(x.n)} · ${hrs(x.v)}</span>`)
+          .join("");
+        legend.querySelectorAll("[data-who-leg]").forEach(el => {
+          el.onclick = (e) => {
+            e.stopPropagation();
+            const w = el.dataset.whoLeg;
+            if (w === "a" || w === "b") goRepartoToWho(w);
+            else goToScreen("areas");
+          };
+        });
+
+        if (pairSum <= 0 && tp.ext > 0) {
+          verdict.className = "verdict";
+          verdict.textContent = t("balAllOut");
+        } else if (pairSum <= 0) {
+          verdict.className = "verdict";
+          verdict.textContent = t("balAddHours");
+        } else {
+          const shareA = (tp.totalA / pairSum) * 100;
+          const shareB = 100 - shareA;
+          const diffH = Math.abs(tp.totalA - tp.totalB);
+          if (Math.abs(shareA - 50) <= 8) {
+            verdict.className = "verdict ok";
+            verdict.textContent = t("balOkDetail", { a: Math.round(shareA), b: Math.round(shareB) });
+          } else if (tp.totalA > tp.totalB) {
+            verdict.className = "verdict warn";
+            verdict.textContent = `${state.people.a} lleva más carga (${Math.round(shareA)}% · +${hrs(diffH)}/sem vs ${state.people.b})`;
+          } else {
+            verdict.className = "verdict warn";
+            verdict.textContent = `${state.people.b} lleva más carga (${Math.round(shareB)}% · +${hrs(diffH)}/sem vs ${state.people.a})`;
+          }
+        }
+      }
+    }
+
+    // —— Tarjetas por persona ——
+    const box = document.getElementById("personCards");
     const people = [
-      { key:"a", name:state.people.a, time:t.totalA, cls:"bar-fill" },
-      { key:"b", name:state.people.b, time:t.totalB, cls:"bar-fill amber" }
+      { key: "a", name: state.people.a, time: tp.totalA, cls: "bar-fill" },
+      { key: "b", name: state.people.b, time: tp.totalB, cls: "bar-fill amber" }
     ];
-    const maxT = Math.max(t.totalA, t.totalB, 1);
+    const maxT = Math.max(tp.totalA, tp.totalB, 1);
 
     box.innerHTML = people.map(p => {
       const own = state.items.filter(i => i.who === p.key);
       const drena = own.filter(i => i.energy === "quita").length;
-      const money = own.reduce((s,i) => s + monthlyCost(i), 0);
+      const money = own.reduce((s, i) => s + monthlyCost(i), 0);
+      const pctOfPair = pairSum > 0 ? Math.round((p.time / pairSum) * 100) : 0;
+      const other = p.key === "a" ? tp.totalB : tp.totalA;
+      const otherName = p.key === "a" ? state.people.b : state.people.a;
+      const delta = p.time - other;
+      let deltaTxt = "Igual que " + otherName;
+      let deltaColor = "var(--text-faint)";
+      if (Math.abs(delta) >= 0.15) {
+        if (delta > 0) {
+          deltaTxt = `+${hrs(delta)} vs ${otherName}`;
+          deltaColor = "var(--amber)";
+        } else {
+          deltaTxt = `${hrs(delta)} vs ${otherName}`;
+          deltaColor = "var(--jade)";
+        }
+      }
       return `<div class="card is-click" data-who="${p.key}" style="cursor:pointer;">
-        <h3>${escapeHTML(p.name)}</h3>
-        <div class="bar-wrap"><div class="${p.cls}" style="width:${(p.time/maxT)*100}%"></div></div>
-        <div class="hist-row" style="border:none;padding:4px 0 0;"><span>Horas por semana</span><span class="mono">${hrs(p.time)}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;">
+          <h3 style="margin:0;">${escapeHTML(p.name)}</h3>
+          <span class="mono" style="font-size:13px;color:var(--amber);">${pctOfPair}%</span>
+        </div>
+        <div class="bar-wrap" style="margin-top:8px;"><div class="${p.cls}" style="width:${(p.time / maxT) * 100}%"></div></div>
+        <div class="hist-row" style="border:none;padding:6px 0 0;"><span>Horas / semana</span><span class="mono">${hrs(p.time)}</span></div>
+        <div class="hist-row" style="border:none;padding:2px 0 0;"><span>Respecto al otro</span><span class="mono" style="color:${deltaColor};">${escapeHTML(deltaTxt)}</span></div>
         <div class="hist-row" style="border:none;padding:2px 0 0;"><span>Cosas a su cargo</span><span class="mono">${own.length}</span></div>
         <div class="hist-row" style="border:none;padding:2px 0 0;"><span>Gasto que gestiona</span><span class="mono">${eur(money)}/mes</span></div>
-        <div class="hist-row" style="border:none;padding:2px 0 0;"><span>Tareas que agotan</span><span class="mono" style="color:${drena>2?'var(--red)':'var(--text-dim)'};">${drena}</span></div>
+        <div class="hist-row" style="border:none;padding:2px 0 0;"><span>Tareas que agotan</span><span class="mono" style="color:${drena > 2 ? "var(--red)" : "var(--text-dim)"};">${drena}</span></div>
       </div>`;
-    }).join("") + `<p style="font-size:11.5px;color:var(--text-faint);margin:2px 0 0;">Lo marcado como “Los dos” (${hrs(t.both)}) se reparte a medias entre ambos. Toca una tarjeta para ir a Áreas.</p>`;
-    box.querySelectorAll('.card[data-who]').forEach(card => {
-      card.onclick = () => {
-        filterWho = card.dataset.who;
-        // Abrir áreas que tengan tareas de esta persona
-        state.items.filter(i => i.who === filterWho || i.who === "both").forEach(i => openAreas.add(i.area));
-        goToScreen('areas');
-        renderAreas();
-        const pname = filterWho === 'a' ? state.people.a : state.people.b;
-        showToast((appLang==="nl"?"Taken van ":"Carga de ") + pname, { icon:'👤', duration:1800 });
-      };
+    }).join("") +
+      (tp.both > 0
+        ? `<p style="font-size:11.5px;color:var(--text-faint);margin:4px 0 0;line-height:1.4;">Compartido (“Los dos”): ${hrs(tp.both)}/sem → +${hrs(tp.both / 2)} a cada uno. Toca una tarjeta para ver su carga en Áreas.</p>`
+        : `<p style="font-size:11.5px;color:var(--text-faint);margin:4px 0 0;">Toca una tarjeta para filtrar sus responsabilidades en Áreas.</p>`);
+
+    box.querySelectorAll(".card[data-who]").forEach(card => {
+      card.onclick = () => goRepartoToWho(card.dataset.who);
     });
 
-    // Reparto por área
-    const split = document.getElementById('areaSplit');
+    // —— Top desequilibrios (fase 2) ——
+    const imbBox = document.getElementById("repartoImbalance");
+    if (imbBox) {
+      const imbList = AREAS.map(area => {
+        const items = state.items.filter(i => i.area === area.key);
+        if (!items.length) return null;
+        const suma = k => items.filter(i => i.who === k).reduce((s, i) => s + (Number(i.time) || 0), 0);
+        const a = suma("a"), b = suma("b"), both = suma("both");
+        const aEff = a + both / 2, bEff = b + both / 2;
+        const tot = aEff + bEff;
+        if (tot < 0.25) return null;
+        const diff = Math.abs(aEff - bEff);
+        if (diff < 0.35) return null;
+        const heavier = aEff > bEff ? "a" : "b";
+        return {
+          key: area.key,
+          label: area.label,
+          diff,
+          heavier,
+          aEff,
+          bEff,
+          drain: items.filter(i => i.energy === "quita").length
+        };
+      }).filter(Boolean).sort((x, y) => y.diff - x.diff).slice(0, 3);
+
+      if (!imbList.length) {
+        imbBox.innerHTML = `<div class="card"><p style="margin:0;font-size:13px;color:var(--text-faint);">No hay desequilibrios fuertes por área (o aún faltan horas en las responsabilidades).</p></div>`;
+      } else {
+        imbBox.innerHTML = `<div class="card" style="padding:10px 12px;">` + imbList.map((row, idx) => {
+          const whoN = row.heavier === "a" ? state.people.a : state.people.b;
+          const drainTxt = row.drain ? ` · ${row.drain} que agotan` : "";
+          return `<div class="hist-row is-click reparto-imb-row" data-area="${row.key}" style="cursor:pointer;padding:10px 0;${idx < imbList.length - 1 ? "" : "border-bottom:none;"}">
+            <span style="min-width:0;">
+              <span style="display:block;font-size:13px;font-weight:600;color:var(--heading);">${escapeHTML(row.label)}</span>
+              <span style="display:block;font-size:11.5px;color:var(--text-faint);margin-top:2px;">${escapeHTML(whoN)} lleva +${hrs(row.diff)}${drainTxt}</span>
+            </span>
+            <span class="mono" style="color:var(--amber);font-size:12px;">›</span>
+          </div>`;
+        }).join("") + `</div>
+        <p style="margin:6px 0 4px;font-size:11px;color:var(--text-faint);">Toca para expandir esa área abajo y reasignar tareas.</p>`;
+        imbBox.querySelectorAll(".reparto-imb-row").forEach(el => {
+          el.onclick = () => {
+            const k = el.dataset.area;
+            openRepartoAreas.add(k);
+            renderReparto();
+            const target = document.querySelector(`#areaSplit [data-area-block="${k}"]`);
+            if (target) target.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          };
+        });
+      }
+    }
+
+    // —— Reparto por área: expandible + cambio rápido de quién (fase 2) ——
+    const split = document.getElementById("areaSplit");
+    const whoChip = (who, itemId) => {
+      const opts = [
+        { v: "a", lab: (state.people.a || "A").slice(0, 8) },
+        { v: "both", lab: "Ambos" },
+        { v: "b", lab: (state.people.b || "B").slice(0, 8) },
+        { v: "ext", lab: "Ext" }
+      ];
+      return `<span class="reparto-who-chips" data-item="${itemId}" style="display:inline-flex;flex-wrap:wrap;gap:4px;">` +
+        opts.map(o => {
+          const on = who === o.v;
+          const bg = on
+            ? (o.v === "a" ? "var(--jade)" : o.v === "b" ? "var(--amber)" : o.v === "both" ? "var(--violet)" : "var(--surface-2)")
+            : "transparent";
+          const col = on ? "#0C1512" : "var(--text-faint)";
+          const border = on ? "transparent" : "var(--line)";
+          return `<button type="button" class="js-reparto-who" data-item="${itemId}" data-who="${o.v}" style="font-size:10px;font-family:'IBM Plex Mono',monospace;padding:3px 7px;border-radius:99px;border:1px solid ${border};background:${bg};color:${col};cursor:pointer;">${escapeHTML(o.lab)}</button>`;
+        }).join("") + `</span>`;
+    };
+
     const rows = AREAS.map(area => {
       const items = state.items.filter(i => i.area === area.key);
       if (!items.length) return "";
-      const suma = k => items.filter(i => i.who === k).reduce((s,i) => s + (Number(i.time)||0), 0);
+      const suma = k => items.filter(i => i.who === k).reduce((s, i) => s + (Number(i.time) || 0), 0);
       const a = suma("a"), b = suma("b"), both = suma("both"), ext = suma("ext");
       const tot = a + b + both + ext;
-      if (tot <= 0) return `<div class="hist-row is-click" data-area="${area.key}" style="cursor:pointer;"><span>${escapeHTML(area.label)}</span><span class="mono">sin horas</span></div>`;
-      const seg = (v, cls) => v > 0 ? `<div class="balance-seg ${cls}" style="width:${(v/tot)*100}%"></div>` : "";
-      return `<div class="is-click" data-area="${area.key}" style="margin-bottom:12px;cursor:pointer;">
-        <div class="hist-row" style="border:none;padding:0 0 4px;"><span>${escapeHTML(area.label)}</span><span class="mono">${hrs(tot)}</span></div>
-        <div class="balance-bar" style="height:12px;margin:0;">${seg(a,"seg-a")}${seg(both,"seg-both")}${seg(b,"seg-b")}${seg(ext,"seg-ext")}</div>
+      const open = openRepartoAreas.has(area.key);
+      const aEff = a + both / 2;
+      const bEff = b + both / 2;
+      const detailParts = [];
+      if (tot > 0) {
+        if (aEff > 0.05) detailParts.push(`${escapeHTML(state.people.a)} ${hrs(aEff)}`);
+        if (bEff > 0.05) detailParts.push(`${escapeHTML(state.people.b)} ${hrs(bEff)}`);
+        if (both > 0.05) detailParts.push(`compartido ${hrs(both)}`);
+        if (ext > 0.05) detailParts.push(`ext ${hrs(ext)}`);
+      }
+      const seg = (v, cls) => v > 0 ? `<div class="balance-seg ${cls}" style="width:${(v / Math.max(tot, 0.01)) * 100}%"></div>` : "";
+      const chev = open ? "▾" : "▸";
+
+      let body = "";
+      if (open) {
+        const sorted = items.slice().sort((x, y) => (Number(y.time) || 0) - (Number(x.time) || 0));
+        body = `<div class="reparto-area-body" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--line);">` +
+          sorted.map(it => {
+            const drain = it.energy === "quita";
+            const tH = Number(it.time) || 0;
+            return `<div class="reparto-item" data-item-id="${it.id}" style="padding:10px 0;border-bottom:1px solid var(--line);${drain ? "background:rgba(232,120,106,0.06);margin:0 -4px;padding-left:8px;padding-right:8px;border-radius:8px;" : ""}">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+                <div style="min-width:0;flex:1;">
+                  <div style="font-size:13px;font-weight:600;color:var(--heading);">${escapeHTML(it.name)}${drain ? ` <span style="font-size:10px;color:var(--red);font-family:'IBM Plex Mono',monospace;">agota</span>` : ""}</div>
+                  <div style="font-size:11px;color:var(--text-faint);margin-top:2px;">${tH > 0 ? hrs(tH) + "/sem" : "sin horas"}${it.note ? " · " + escapeHTML(String(it.note).slice(0, 40)) : ""}</div>
+                </div>
+                <button type="button" class="edit-inline js-reparto-edit" data-item="${it.id}" style="font-size:11px;flex:0 0 auto;">Editar</button>
+              </div>
+              <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <span style="font-size:10px;color:var(--text-faint);font-family:'IBM Plex Mono',monospace;">Quién</span>
+                ${whoChip(it.who || "both", it.id)}
+              </div>
+            </div>`;
+          }).join("") +
+          `<div style="padding-top:8px;display:flex;gap:10px;flex-wrap:wrap;">
+            <button type="button" class="edit-inline js-reparto-goto-area" data-area="${area.key}" style="font-size:12px;">Abrir en Áreas</button>
+          </div></div>`;
+      }
+
+      return `<div data-area-block="${area.key}" style="margin-bottom:14px;">
+        <div class="is-click reparto-area-head" data-area="${area.key}" style="cursor:pointer;">
+          <div class="hist-row" style="border:none;padding:0 0 2px;">
+            <span style="font-weight:600;">${chev} ${escapeHTML(area.label)}</span>
+            <span class="mono">${tot > 0 ? hrs(tot) : "—"}</span>
+          </div>
+          <div style="font-size:11px;color:var(--text-faint);margin:0 0 6px;line-height:1.35;">${tot > 0 ? detailParts.join(" · ") : "sin horas asignadas"}</div>
+          ${tot > 0 ? `<div class="balance-bar" style="height:12px;margin:0;">${seg(a, "seg-a")}${seg(both, "seg-both")}${seg(b, "seg-b")}${seg(ext, "seg-ext")}</div>` : ""}
+        </div>
+        ${body}
       </div>`;
     }).join("");
+
     split.innerHTML = rows || `<p class="empty is-click" style="cursor:pointer;" id="areaSplitEmpty">Todavía no hay responsabilidades que repartir. Toca para ir a Áreas.</p>`;
-    split.querySelectorAll('[data-area]').forEach(el => {
+
+    split.querySelectorAll(".reparto-area-head").forEach(el => {
       el.onclick = () => {
-        openAreas.add(el.dataset.area);
-        goToScreen('areas');
-        renderAreas();
-        showToast(areaLabel(el.dataset.area), { icon:'📁', duration:1600 });
+        const k = el.dataset.area;
+        if (openRepartoAreas.has(k)) openRepartoAreas.delete(k);
+        else openRepartoAreas.add(k);
+        renderReparto();
       };
     });
-    const empty = document.getElementById('areaSplitEmpty');
-    if (empty) empty.onclick = () => goToScreen('areas');
+    split.querySelectorAll(".js-reparto-who").forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.item;
+        const who = btn.dataset.who;
+        const it = (state.items || []).find(x => String(x.id) === String(id));
+        if (!it) return;
+        it.who = who;
+        saveSoon();
+        renderReparto();
+        renderResumen();
+        showToast((appLang === "nl" ? "Toegewezen aan " : "Asignado a ") + whoLabel(who), { icon: "✓", duration: 1400 });
+      };
+    });
+    split.querySelectorAll(".js-reparto-edit").forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const id = btn.dataset.item;
+        const num = parseFloat(id);
+        openItem(isNaN(num) ? id : (state.items.find(x => String(x.id) === String(id))?.id ?? num));
+      };
+    });
+    split.querySelectorAll(".js-reparto-goto-area").forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        openAreas.add(btn.dataset.area);
+        goToScreen("areas");
+        renderAreas();
+        showToast(areaLabel(btn.dataset.area), { icon: "📁", duration: 1600 });
+      };
+    });
+    const empty = document.getElementById("areaSplitEmpty");
+    if (empty) empty.onclick = () => goToScreen("areas");
   }
 
   // ---------- DINERO ----------
@@ -3062,144 +3396,396 @@
     });
     return { totals, perMonthItems };
   }
+  // Fase 2+3 dinero: pagado, áreas expandibles, filtros
+  const openMoneyAreas = new Set();
+  let moneyPayViewMonth = null; // null = mes actual; 0-11 al filtrar desde el gráfico
+  let moneyFilters = { area: "", who: "", freq: "" }; // "" = todos
+
+  function moneyItemMatchesFilters(it){
+    if (!it) return false;
+    if (moneyFilters.area && it.area !== moneyFilters.area) return false;
+    if (moneyFilters.who && it.who !== moneyFilters.who) return false;
+    if (moneyFilters.freq === "mes" && it.freq === "ano") return false;
+    if (moneyFilters.freq === "ano" && it.freq !== "ano") return false;
+    return true;
+  }
+  function moneyFiltersActive(){
+    return !!(moneyFilters.area || moneyFilters.who || moneyFilters.freq);
+  }
+  function renderMoneyFiltersBar(){
+    const card = document.getElementById("moneyFiltersCard");
+    const hint = document.getElementById("moneyFiltersHint");
+    if (!card) return;
+    const areasWithSpend = AREAS.filter(a =>
+      (state.items || []).some(i => isItemExpense(i) && i.area === a.key && monthlyCost(i) > 0)
+    );
+    const selStyle = "flex:1;min-width:100px;padding:8px 10px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:12.5px;";
+    card.innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <label style="flex:1;min-width:120px;font-size:11px;color:var(--text-faint);display:flex;flex-direction:column;gap:4px;">Área
+          <select id="mfArea" style="${selStyle}">
+            <option value="">Todas</option>
+            ${areasWithSpend.map(a => `<option value="${a.key}"${moneyFilters.area===a.key?" selected":""}>${escapeHTML(areaLabel(a.key))}</option>`).join("")}
+          </select>
+        </label>
+        <label style="flex:1;min-width:120px;font-size:11px;color:var(--text-faint);display:flex;flex-direction:column;gap:4px;">Quién
+          <select id="mfWho" style="${selStyle}">
+            <option value="">Todos</option>
+            <option value="a"${moneyFilters.who==="a"?" selected":""}>${escapeHTML(state.people.a||"A")}</option>
+            <option value="b"${moneyFilters.who==="b"?" selected":""}>${escapeHTML(state.people.b||"B")}</option>
+            <option value="both"${moneyFilters.who==="both"?" selected":""}>Los dos</option>
+            <option value="ext"${moneyFilters.who==="ext"?" selected":""}>Externo</option>
+          </select>
+        </label>
+        <label style="flex:1;min-width:120px;font-size:11px;color:var(--text-faint);display:flex;flex-direction:column;gap:4px;">Tipo
+          <select id="mfFreq" style="${selStyle}">
+            <option value="">Todos</option>
+            <option value="mes"${moneyFilters.freq==="mes"?" selected":""}>Mensual</option>
+            <option value="ano"${moneyFilters.freq==="ano"?" selected":""}>Anual</option>
+          </select>
+        </label>
+      </div>`;
+    const onChange = () => {
+      moneyFilters.area = document.getElementById("mfArea")?.value || "";
+      moneyFilters.who = document.getElementById("mfWho")?.value || "";
+      moneyFilters.freq = document.getElementById("mfFreq")?.value || "";
+      renderDinero();
+    };
+    ["mfArea","mfWho","mfFreq"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.onchange = onChange;
+    });
+    if (hint) {
+      if (moneyFiltersActive()) {
+        const parts = [];
+        if (moneyFilters.area) parts.push(areaLabel(moneyFilters.area));
+        if (moneyFilters.who) parts.push(whoLabel(moneyFilters.who));
+        if (moneyFilters.freq === "mes") parts.push("mensual");
+        if (moneyFilters.freq === "ano") parts.push("anual");
+        hint.textContent = "Filtro activo: " + parts.join(" · ") + " — aplica a área, top 10 y “toca pagar”.";
+      } else {
+        hint.textContent = "Filtra gastos por área, persona o tipo (mensual / anual).";
+      }
+    }
+    const clearBtn = document.getElementById("moneyFiltersClear");
+    if (clearBtn) {
+      clearBtn.style.opacity = moneyFiltersActive() ? "1" : "0.45";
+      clearBtn.onclick = () => {
+        moneyFilters = { area: "", who: "", freq: "" };
+        renderDinero();
+        showToast("Filtros quitados", { icon: "✕", duration: 1400 });
+      };
+    }
+  }
+
+  function moneyPaidKey(itemId, year, month){
+    return `${year}-${month}-${itemId}`;
+  }
+  function ensureMoneyPaid(){
+    if (!state.moneyPaid || typeof state.moneyPaid !== "object") state.moneyPaid = {};
+    return state.moneyPaid;
+  }
+  function isMoneyPaid(itemId, year, month){
+    return !!ensureMoneyPaid()[moneyPaidKey(itemId, year, month)];
+  }
+  function toggleMoneyPaid(itemId, year, month){
+    const bag = ensureMoneyPaid();
+    const k = moneyPaidKey(itemId, year, month);
+    if (bag[k]) delete bag[k];
+    else bag[k] = true;
+    saveSoon();
+  }
+  function openItemFromMoney(id){
+    const it = (state.items || []).find(x => String(x.id) === String(id));
+    if (!it) {
+      showToast("No se encontró la responsabilidad", { icon: "⚠️", duration: 1600 });
+      return;
+    }
+    openItem(it.id);
+  }
+
+  function fillThisMonthPay(list, monthIndex, year){
+    const payBox = document.getElementById("thisMonthPay");
+    if (!payBox) return;
+    const y = year != null ? year : new Date().getFullYear();
+    const m = monthIndex != null ? monthIndex : new Date().getMonth();
+    if (!list.length) {
+      payBox.innerHTML = `<p class="empty">${escapeHTML(t("emptyPay"))}</p>`;
+      return;
+    }
+    const paidN = list.filter(x => isMoneyPaid(x.it.id, y, m)).length;
+    const head = `<div style="font-size:11px;color:var(--text-faint);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;">${paidN}/${list.length} marcados como pagados</div>`;
+    payBox.innerHTML = head + list.map(x => {
+      const paid = isMoneyPaid(x.it.id, y, m);
+      const id = String(x.it.id).replace(/"/g, "&quot;");
+      return `<div class="hist-row" style="align-items:flex-start;gap:10px;${paid ? "opacity:0.72;" : ""}">
+        <span class="box js-money-paid" data-id="${id}" data-y="${y}" data-m="${m}" title="${paid ? "Marcar pendiente" : "Marcar pagado"}" style="cursor:pointer;margin-top:2px;${paid ? "background:var(--jade);border-color:var(--jade);" : ""}">${paid ? "<span style='color:#0C1512;font-size:11px;'>✓</span>" : ""}</span>
+        <span class="is-click js-money-open" data-id="${id}" style="flex:1;min-width:0;cursor:pointer;">
+          <span style="${paid ? "text-decoration:line-through;color:var(--text-faint);" : ""}">${escapeHTML(x.it.name)}</span>${!x.exacto ? ' <span style="color:var(--text-faint);font-size:10px;">(prorrateado)</span>' : ''}${paid ? ' <span style="font-size:10px;color:var(--jade);font-family:\'IBM Plex Mono\',monospace;">pagado</span>' : ""}
+          <br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(areaLabel(x.it.area))} · ${escapeHTML(whoLabel(x.it.who))}</span>
+        </span>
+        <span class="mono" style="flex:0 0 auto;">${eur(x.monto)}</span>
+      </div>`;
+    }).join("");
+
+    payBox.querySelectorAll(".js-money-paid").forEach(el => {
+      el.onclick = (e) => {
+        e.stopPropagation();
+        toggleMoneyPaid(el.dataset.id, parseInt(el.dataset.y, 10), parseInt(el.dataset.m, 10));
+        renderDinero();
+        showToast(isMoneyPaid(el.dataset.id, parseInt(el.dataset.y, 10), parseInt(el.dataset.m, 10)) ? "Marcado como pagado" : "Marcado pendiente", { icon: "✓", duration: 1400 });
+      };
+    });
+    payBox.querySelectorAll(".js-money-open").forEach(el => {
+      el.onclick = () => openItemFromMoney(el.dataset.id);
+    });
+  }
+
   function renderYearSpend(){
     const { totals, perMonthItems } = spendByRealMonth();
     const maxV = Math.max(...totals, 1);
-    const nowMonth = new Date().getMonth();
+    const now = new Date();
+    const nowMonth = now.getMonth();
+    const nowYear = now.getFullYear();
     const chart = document.getElementById('yearChart');
+    const viewM = moneyPayViewMonth != null ? moneyPayViewMonth : nowMonth;
+
     chart.innerHTML = totals.map((v, i) => `
-      <div class="year-col is-click" data-month="${i}" style="cursor:pointer;" title="${MESES[i]}: ${eur(v)}">
+      <div class="year-col is-click" data-month="${i}" style="cursor:pointer;${i===viewM?"outline:1px solid var(--amber);border-radius:6px;":""}" title="${MESES[i]}: ${eur(v)}">
         <div class="year-bar${i===nowMonth?' now':''}" style="height:${Math.max((v/maxV)*100,2)}%;"></div>
         <div class="year-lbl">${MES_CORTO[i]}</div>
       </div>`).join("");
     chart.querySelectorAll('.year-col[data-month]').forEach(col => {
       col.onclick = () => {
         const mi = parseInt(col.dataset.month, 10);
-        const list = (perMonthItems[mi] || [])
-          .filter(x => x.it.freq === "ano")
-          .sort((a,b) => b.monto - a.monto);
-        const payBox = document.getElementById('thisMonthPay');
-        const mesName = (typeof getMeses === "function" ? getMeses()[mi] : MESES[mi]);
-        if (list.length) {
-          payBox.innerHTML = list.map(x => `<div class="hist-row is-click" data-action="item" data-ref="${x.it.id}"><span>${escapeHTML(x.it.name)}${!x.exacto ? ' <span style="color:var(--text-faint);font-size:10px;">(prorrateado)</span>' : ''}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(areaLabel(x.it.area))} · ${escapeHTML(whoLabel(x.it.who))}</span></span><span class="mono">${eur(x.monto)}</span></div>`).join("");
-          payBox.querySelectorAll('[data-action]').forEach(el => {
-            el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
-          });
-        } else {
-          payBox.innerHTML = `<p class="empty">${escapeHTML(t("emptyPay"))}</p>`;
-        }
-        payBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        moneyPayViewMonth = mi;
+        renderDinero();
+        document.getElementById("thisMonthPay")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        const mesName = MESES[mi] || "";
         showToast(mesName + " · " + eur(totals[mi] || 0), { icon: "📊", duration: 2000 });
       };
     });
 
-    const thisMonth = perMonthItems[nowMonth]
-      .filter(x => x.it.freq === "ano")
+    // Lista “toca pagar” del mes visto (filtro área/quién si activos; tipo anual ya implícito)
+    let thisMonth = (perMonthItems[viewM] || [])
+      .filter(x => x.it && x.it.freq === "ano" && moneyItemMatchesFilters(x.it))
       .sort((a,b) => b.monto - a.monto);
-    const payBox = document.getElementById('thisMonthPay');
-    payBox.innerHTML = thisMonth.length
-      ? thisMonth.map(x => `<div class="hist-row is-click" data-action="item" data-ref="${x.it.id}"><span>${escapeHTML(x.it.name)}${!x.exacto ? ' <span style="color:var(--text-faint);font-size:10px;">(prorrateado, sin fecha)</span>' : ''}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(areaLabel(x.it.area))} · ${escapeHTML(whoLabel(x.it.who))}</span></span><span class="mono">${eur(x.monto)}</span></div>`).join("")
-      : `<p class="empty">${escapeHTML(t("emptyPay"))}</p>`;
-    payBox.querySelectorAll('[data-action]').forEach(el => {
-      el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
-    });
+    // Si el filtro es solo "mensual", la lista anual quedará vacía a propósito
+    fillThisMonthPay(thisMonth, viewM, nowYear);
+
+    const title = document.getElementById("thisMonthPayTitle");
+    const resetBtn = document.getElementById("moneyPayResetMonth");
+    const mesLabel = (MESES[viewM] || "").replace(/^./, c => c.toUpperCase());
+    if (title) {
+      title.textContent = viewM === nowMonth
+        ? (t("secThisMonth") || "Este mes toca pagar")
+        : `Pagos de ${mesLabel}`;
+    }
+    if (resetBtn) {
+      resetBtn.style.display = moneyPayViewMonth != null && moneyPayViewMonth !== nowMonth ? "" : "none";
+      resetBtn.onclick = () => {
+        moneyPayViewMonth = null;
+        renderDinero();
+        showToast("Vista del mes actual", { icon: "📅", duration: 1400 });
+      };
+    }
   }
   
   function renderBalance(){
+    // Fase 1: cabecera del mes + veredicto (y espejo mínimo en #balanceCard oculto)
     const now = new Date();
     const thisMonth = now.getMonth();
     const thisYear = now.getFullYear();
-    
-    const thisMonthIncomes = state.incomes.filter(inc => {
-      const d = new Date(inc.date);
-      return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
-    });
-    const totalIngresos = thisMonthIncomes.reduce((s, i) => s + (Number(i.monto) || 0), 0) + monthlyAreaIncomes();
+    const mesNombre = (typeof MESES !== "undefined" ? MESES[thisMonth] : "") || "";
+
+    const totalIngresos = totalMonthlyIncome(now);
     const totalGastos = monthlyExpenses();
     const balance = totalIngresos - totalGastos;
-    
     const isPositive = balance >= 0;
-    const card = document.getElementById('balanceCard');
-    card.innerHTML = `
-      <div class="balance-row is-click" data-jump="incomes" style="cursor:pointer;">
-        <span class="label">${escapeHTML(t("balIn"))}</span>
-        <span class="amount" style="color:var(--jade);">+${eur(totalIngresos)}</span>
-      </div>
-      <div class="balance-row is-click" data-jump="expenses" style="cursor:pointer;">
-        <span class="label">${escapeHTML(t("balOut"))}</span>
-        <span class="amount" style="color:var(--red);">−${eur(totalGastos)}</span>
-      </div>
-      <div class="balance-row total ${isPositive ? 'positive' : 'negative'} is-click" data-jump="top" style="cursor:pointer;">
-        <span class="label">${escapeHTML(isPositive ? t("balOk") : t("balBad"))}</span>
-        <span class="amount">${isPositive ? '+' : '−'}${eur(Math.abs(balance))}</span>
-      </div>`;
-    card.querySelectorAll('[data-jump]').forEach(row => {
-      row.onclick = () => {
-        const j = row.dataset.jump;
-        if (j === "incomes") {
-          document.getElementById("incomeList")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          showToast(t("secIncomes"), { icon: "💰", duration: 1600 });
-        } else if (j === "expenses") {
-          document.getElementById("moneyByArea")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          showToast(t("secByArea"), { icon: "📉", duration: 1600 });
-        } else {
-          document.getElementById("moneyTop")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-          showToast(t("secTop10"), { icon: "📊", duration: 1600 });
-        }
-      };
-    });
+    const gastoAno = totalGastos * 12;
+
+    // Anuales que caen este mes (para el veredicto)
+    let annualThisMonth = 0;
+    try {
+      const { perMonthItems } = spendByRealMonth();
+      annualThisMonth = (perMonthItems[thisMonth] || []).filter(x => x.it && x.it.freq === "ano").length;
+    } catch (e) {}
+
+    let verdictClass = "verdict";
+    let verdictText = "";
+    if (totalIngresos <= 0 && totalGastos <= 0) {
+      verdictText = "Añade ingresos o gastos en Áreas para ver el balance del mes.";
+    } else if (isPositive && balance >= totalGastos * 0.15) {
+      verdictClass = "verdict ok";
+      verdictText = `Holgura ~${eur(balance)} este mes` + (annualThisMonth ? ` · ${annualThisMonth} gasto(s) anual(es) este mes` : "");
+    } else if (isPositive) {
+      verdictClass = "verdict ok";
+      verdictText = `Balance positivo · ${eur(balance)}` + (annualThisMonth ? ` · Ojo: ${annualThisMonth} anual(es) este mes` : "");
+    } else if (Math.abs(balance) < totalGastos * 0.1) {
+      verdictClass = "verdict warn";
+      verdictText = `Este mes apretado · faltan ~${eur(Math.abs(balance))}` + (annualThisMonth ? ` · ${annualThisMonth} anual(es)` : "");
+    } else {
+      verdictClass = "verdict warn";
+      verdictText = `Gastos por encima · −${eur(Math.abs(balance))}` + (annualThisMonth ? ` · ${annualThisMonth} anual(es) este mes` : "");
+    }
+
+    const overview = document.getElementById("dineroMonthOverview");
+    if (overview) {
+      overview.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px;">
+          <h3 style="margin:0;font-size:15px;">${escapeHTML(mesNombre ? mesNombre.charAt(0).toUpperCase() + mesNombre.slice(1) : "Mes")} ${thisYear}</h3>
+          <span class="mono" style="font-size:11px;color:var(--text-faint);">vista mensual</span>
+        </div>
+        <div class="balance-row is-click" data-jump="incomes" style="cursor:pointer;">
+          <span class="label">${escapeHTML(t("balIn"))}</span>
+          <span class="amount" style="color:var(--jade);">+${eur(totalIngresos)}</span>
+        </div>
+        <div class="balance-row is-click" data-jump="expenses" style="cursor:pointer;">
+          <span class="label">${escapeHTML(t("balOut"))}</span>
+          <span class="amount" style="color:var(--red);">−${eur(totalGastos)}</span>
+        </div>
+        <div class="balance-row total ${isPositive ? "positive" : "negative"} is-click" data-jump="pay" style="cursor:pointer;">
+          <span class="label">${escapeHTML(isPositive ? t("balOk") : t("balBad"))}</span>
+          <span class="amount">${isPositive ? "+" : "−"}${eur(Math.abs(balance))}</span>
+        </div>
+        <div class="hist-row is-click" data-jump="year" style="border:none;padding:8px 0 0;cursor:pointer;">
+          <span style="font-size:12px;color:var(--text-faint);">Equivalente al año (×12)</span>
+          <span class="mono" style="font-size:12px;">${eur(gastoAno)}</span>
+        </div>
+        <div class="${verdictClass}" id="dineroVerdict" style="margin-top:10px;">${escapeHTML(verdictText)}</div>`;
+
+      overview.querySelectorAll("[data-jump]").forEach(row => {
+        row.onclick = () => {
+          const j = row.dataset.jump;
+          if (j === "incomes") {
+            document.getElementById("incomeList")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            showToast(t("secIncomes"), { icon: "💰", duration: 1600 });
+          } else if (j === "expenses") {
+            document.getElementById("moneyByArea")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            showToast(t("secByArea"), { icon: "📉", duration: 1600 });
+          } else if (j === "pay") {
+            document.getElementById("thisMonthPay")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            showToast(t("secThisMonth"), { icon: "📅", duration: 1600 });
+          } else {
+            document.getElementById("yearChart")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            showToast(t("secYearChart"), { icon: "📊", duration: 1600 });
+          }
+        };
+      });
+    }
+
+    // Espejo legacy
+    const card = document.getElementById("balanceCard");
+    if (card) {
+      card.innerHTML = `
+        <div class="balance-row"><span class="label">${escapeHTML(t("balIn"))}</span><span class="amount" style="color:var(--jade);">+${eur(totalIngresos)}</span></div>
+        <div class="balance-row"><span class="label">${escapeHTML(t("balOut"))}</span><span class="amount" style="color:var(--red);">−${eur(totalGastos)}</span></div>
+        <div class="balance-row total ${isPositive ? "positive" : "negative"}"><span class="label">${escapeHTML(isPositive ? t("balOk") : t("balBad"))}</span><span class="amount">${isPositive ? "+" : "−"}${eur(Math.abs(balance))}</span></div>`;
+    }
+    const dm = document.getElementById("dineroMes");
+    const da = document.getElementById("dineroAno");
+    if (dm) dm.textContent = eur(totalGastos);
+    if (da) da.textContent = eur(gastoAno);
+
+    return { totalIngresos, totalGastos, balance, annualThisMonth };
   }
-  
+
   function renderDinero(){
+    renderMoneyFiltersBar();
     renderYearSpend();
     renderIncomes();
     renderBalance();
-    const total = monthlyExpenses();
-    document.getElementById('dineroMes').textContent = eur(total);
-    document.getElementById('dineroAno').textContent = eur(total * 12);
 
-    document.querySelectorAll("#screen-dinero .stat").forEach((el, idx) => {
-      el.classList.add("is-click");
-      el.style.cursor = "pointer";
-      el.onclick = () => {
-        const target = idx === 0 ? "moneyByArea" : "moneyTop";
-        document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        showToast(idx === 0 ? t("secByArea") : t("secTop10"), { icon: "→", duration: 1600 });
-      };
-    });
+    const expenseItems = (state.items || []).filter(i =>
+      isItemExpense(i) && monthlyCost(i) > 0 && moneyItemMatchesFilters(i)
+    );
+    const total = expenseItems.reduce((s, i) => s + monthlyCost(i), 0);
 
+    // Gasto por área expandible (fase 2) + filtros (fase 3)
     const byArea = {};
-    state.items.filter(isItemExpense).forEach(i => {
-      const m = monthlyCost(i);
-      if (m > 0) byArea[i.area] = (byArea[i.area] || 0) + m;
+    expenseItems.forEach(i => {
+      byArea[i.area] = (byArea[i.area] || 0) + monthlyCost(i);
     });
     const ordered = Object.entries(byArea).sort((a,b) => b[1]-a[1]);
     const maxV = ordered.length ? ordered[0][1] : 1;
     const mba = document.getElementById('moneyByArea');
-    mba.innerHTML = ordered.length
-      ? ordered.map(([k,v]) => `
-          <div class="is-click" data-action="area" data-ref="${k}" style="margin-bottom:11px;cursor:pointer;">
-            <div class="hist-row" style="border:none;padding:0 0 3px;"><span>${escapeHTML(areaLabel(k))}</span><span class="mono">${eur(v)} · ${Math.round((v/total)*100)}%</span></div>
-            <div class="bar-wrap"><div class="bar-fill amber" style="width:${(v/maxV)*100}%"></div></div>
-          </div>`).join("")
-      : `<p class="empty">${escapeHTML(t("emptyExpenses"))}</p>`;
-    mba.querySelectorAll('[data-action]').forEach(el => {
-      el.onclick = () => {
-        openAreas.add(el.dataset.ref);
-        goToScreen("areas");
-        renderAreas();
-        showToast("Área: " + (areaLabel(el.dataset.ref)), { icon:"📁", duration:1600 });
-      };
-    });
+    if (!ordered.length) {
+      mba.innerHTML = `<p class="empty">${moneyFiltersActive() ? "Ningún gasto con estos filtros." : escapeHTML(t("emptyExpenses"))}</p>`;
+    } else {
+      mba.innerHTML = ordered.map(([k, v]) => {
+        const open = openMoneyAreas.has(k);
+        const chev = open ? "▾" : "▸";
+        const items = expenseItems
+          .filter(i => i.area === k)
+          .sort((a, b) => monthlyCost(b) - monthlyCost(a));
+        let body = "";
+        if (open) {
+          body = `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line);">` +
+            items.map(it => {
+              const id = String(it.id).replace(/"/g, "&quot;");
+              return `<div class="hist-row" style="align-items:flex-start;gap:8px;">
+                <span class="is-click js-mba-open" data-id="${id}" style="flex:1;min-width:0;cursor:pointer;">
+                  ${escapeHTML(it.name)}<br>
+                  <span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(whoLabel(it.who))}${it.freq === "ano" ? " · anual" : " · mes"}</span>
+                </span>
+                <span class="mono" style="flex:0 0 auto;">${eur(monthlyCost(it))}</span>
+                <button type="button" class="edit-inline js-mba-edit" data-id="${id}" style="font-size:11px;flex:0 0 auto;">Editar</button>
+              </div>`;
+            }).join("") +
+            `<div style="padding-top:6px;"><button type="button" class="edit-inline js-mba-goto" data-area="${k}" style="font-size:12px;">Abrir en Áreas</button></div></div>`;
+        }
+        return `<div data-mba-area="${k}" style="margin-bottom:12px;">
+          <div class="is-click js-mba-head" data-area="${k}" style="cursor:pointer;">
+            <div class="hist-row" style="border:none;padding:0 0 3px;">
+              <span>${chev} ${escapeHTML(areaLabel(k))}</span>
+              <span class="mono">${eur(v)} · ${total > 0 ? Math.round((v / total) * 100) : 0}%</span>
+            </div>
+            <div class="bar-wrap"><div class="bar-fill amber" style="width:${(v / maxV) * 100}%"></div></div>
+          </div>
+          ${body}
+        </div>`;
+      }).join("");
 
-    const top = state.items.filter(i => isItemExpense(i) && monthlyCost(i) > 0)
+      mba.querySelectorAll(".js-mba-head").forEach(el => {
+        el.onclick = () => {
+          const k = el.dataset.area;
+          if (openMoneyAreas.has(k)) openMoneyAreas.delete(k);
+          else openMoneyAreas.add(k);
+          renderDinero();
+        };
+      });
+      mba.querySelectorAll(".js-mba-open, .js-mba-edit").forEach(el => {
+        el.onclick = (e) => {
+          e.stopPropagation();
+          openItemFromMoney(el.dataset.id);
+        };
+      });
+      mba.querySelectorAll(".js-mba-goto").forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          openAreas.add(btn.dataset.area);
+          goToScreen("areas");
+          renderAreas();
+          showToast("Área: " + areaLabel(btn.dataset.area), { icon: "📁", duration: 1600 });
+        };
+      });
+    }
+
+    const top = expenseItems
+      .slice()
       .sort((a,b) => monthlyCost(b) - monthlyCost(a)).slice(0,10);
     const mtop = document.getElementById('moneyTop');
     mtop.innerHTML = top.length
-      ? top.map(i => `<div class="hist-row is-click" data-action="item" data-ref="${i.id}"><span>${escapeHTML(i.name)}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(areaLabel(i.area))} · ${escapeHTML(whoLabel(i.who))}</span></span><span class="mono">${eur(monthlyCost(i))}${i.freq==='ano'?' <span style="color:var(--text-faint);font-size:10px;">anual</span>':''}</span></div>`).join("")
-      : `<p class="empty">${escapeHTML(t("emptyExpenses"))}</p>`;
-    mtop.querySelectorAll('[data-action]').forEach(el => {
-      el.onclick = () => runDashAction(el.dataset.action, el.dataset.ref);
+      ? top.map(i => {
+          const id = String(i.id).replace(/"/g, "&quot;");
+          return `<div class="hist-row is-click js-mtop-open" data-id="${id}" style="cursor:pointer;">
+            <span>${escapeHTML(i.name)}<br><span style="font-size:10.5px;color:var(--text-faint);">${escapeHTML(areaLabel(i.area))} · ${escapeHTML(whoLabel(i.who))}</span></span>
+            <span class="mono">${eur(monthlyCost(i))}${i.freq==='ano'?' <span style="color:var(--text-faint);font-size:10px;">anual</span>':''}</span>
+          </div>`;
+        }).join("")
+      : `<p class="empty">${moneyFiltersActive() ? "Ningún gasto con estos filtros." : escapeHTML(t("emptyExpenses"))}</p>`;
+    mtop.querySelectorAll(".js-mtop-open").forEach(el => {
+      el.onclick = () => openItemFromMoney(el.dataset.id);
     });
   }
 
@@ -3422,32 +4008,276 @@
     }
   };
 
-  // ---------- REVISIÓN ----------
+  // ---------- REVISIÓN (fase 1 + 2) ----------
+  function getAgendaTopics(){
+    if (!Array.isArray(state.agendaTopics) || !state.agendaTopics.length) {
+      state.agendaTopics = CHECKLIST.slice();
+    }
+    return state.agendaTopics;
+  }
+  function ensureTopicNotes(){
+    if (!state.topicNotes || typeof state.topicNotes !== "object") state.topicNotes = {};
+    return state.topicNotes;
+  }
+
+  /** Resumen de la semana para la reunión: calendario, reparto, dinero, metas */
+  function buildRevisionBrief(){
+    const cards = [];
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const end = new Date(today);
+    end.setDate(end.getDate() + 7);
+    const todayIso = isoDate(today);
+    const endIso = isoDate(end);
+
+    // 1) Calendario · próximos 7 días
+    const weekEv = (state.events || []).filter(e => e.date >= todayIso && e.date <= endIso)
+      .sort((a,b) => (a.date + (a.time||"")).localeCompare(b.date + (b.time||"")));
+    if (weekEv.length) {
+      const sample = weekEv.slice(0, 2).map(e => e.name).join(" · ");
+      cards.push({
+        icon: "📅",
+        title: `${weekEv.length} evento${weekEv.length === 1 ? "" : "s"} en 7 días`,
+        sub: sample + (weekEv.length > 2 ? "…" : ""),
+        action: "calendario"
+      });
+    } else {
+      cards.push({
+        icon: "📅",
+        title: "Sin eventos en 7 días",
+        sub: "Calendario despejado o por rellenar",
+        action: "calendario"
+      });
+    }
+
+    // 2) Reparto · horas a vs b
+    const sumaWho = k => (state.items || []).filter(i => i.who === k).reduce((s,i) => s + (Number(i.time)||0), 0);
+    const ha = sumaWho("a"), hb = sumaWho("b");
+    const ht = ha + hb;
+    if (ht > 0) {
+      const diff = Math.abs(ha - hb);
+      const heavier = ha >= hb ? (state.people.a || "A") : (state.people.b || "B");
+      cards.push({
+        icon: "⚖️",
+        title: diff < 1 ? "Carga de horas equilibrada" : `${heavier} lleva más carga`,
+        sub: `${state.people.a || "A"} ${hrs(ha)} · ${state.people.b || "B"} ${hrs(hb)} /sem`,
+        action: "reparto"
+      });
+    } else {
+      cards.push({
+        icon: "⚖️",
+        title: "Sin horas en responsabilidades",
+        sub: "Añade tiempos en Áreas para ver el reparto",
+        action: "areas"
+      });
+    }
+
+    // 3) Dinero · gastos vs ingresos del mes
+    let exp = 0, inc = 0;
+    try {
+      exp = monthlyExpenses() || 0;
+      inc = totalMonthlyIncome() || 0;
+    } catch(e){}
+    if (exp > 0 || inc > 0) {
+      const bal = inc - exp;
+      cards.push({
+        icon: "💰",
+        title: bal >= 0 ? `Balance mes ~ ${eur(bal)}` : `Gastos por encima ~ ${eur(Math.abs(bal))}`,
+        sub: `Ingresos ${eur(inc)} · Gastos ${eur(exp)}`,
+        action: "dinero"
+      });
+    }
+
+    // 4) Metas · progreso bajo o sin hitos
+    const goals = state.goals || [];
+    if (goals.length) {
+      const stuck = goals.filter(g => {
+        const p = Number(g.progress);
+        if (!isNaN(p) && p < 40) return true;
+        const ms = g.milestones || g.hitos || [];
+        if (Array.isArray(ms) && ms.length) {
+          const done = ms.filter(m => m.done).length;
+          return done / ms.length < 0.4;
+        }
+        return false;
+      });
+      cards.push({
+        icon: "🎯",
+        title: stuck.length ? `${stuck.length} meta${stuck.length===1?"":"s"} con poco avance` : `${goals.length} meta${goals.length===1?"":"s"} en curso`,
+        sub: stuck.length ? (stuck[0].name || stuck[0].title || "Revisar en Metas") : "Todo en marcha",
+        action: "metas"
+      });
+    }
+
+    return cards.slice(0, 4);
+  }
+
+  function renderRevisionBrief(){
+    const wrap = document.getElementById("revWeekBrief");
+    if (!wrap) return;
+    const cards = buildRevisionBrief();
+    if (!cards.length) {
+      wrap.innerHTML = `<div class="card"><p class="empty" style="margin:0;">Aún no hay datos suficientes en el sistema para el resumen semanal.</p></div>`;
+      return;
+    }
+    wrap.innerHTML = `<div class="card" style="padding:10px 12px;">` + cards.map((c, i) => `
+      <div class="hist-row is-click rev-brief-row" data-goto="${c.action}" style="cursor:pointer;padding:10px 0;${i < cards.length-1 ? "" : "border-bottom:none;"}">
+        <span style="display:flex;align-items:flex-start;gap:10px;min-width:0;">
+          <span style="font-size:16px;line-height:1.2;">${c.icon}</span>
+          <span style="min-width:0;">
+            <span style="display:block;font-size:13px;font-weight:600;color:var(--heading);">${escapeHTML(c.title)}</span>
+            <span style="display:block;font-size:11.5px;color:var(--text-faint);margin-top:2px;">${escapeHTML(c.sub)}</span>
+          </span>
+        </span>
+        <span class="mono" style="color:var(--text-faint);font-size:12px;">›</span>
+      </div>`).join("") + `</div>
+      <p style="margin:6px 0 12px;font-size:11px;color:var(--text-faint);">Toca una fila para abrir esa sección del app.</p>`;
+
+    wrap.querySelectorAll(".rev-brief-row").forEach(row => {
+      row.onclick = () => {
+        const sc = row.dataset.goto;
+        if (sc) goToScreen(sc);
+      };
+    });
+  }
+
   function renderRevision(){
+    renderRevisionBrief();
+
+    const topics = getAgendaTopics();
+    const notes = ensureTopicNotes();
     const box = document.getElementById('checklistBox');
+    const total = topics.length;
+    const doneCount = state.checks.filter(i => i >= 0 && i < total).length;
+    const pct = total ? Math.round((doneCount / total) * 100) : 0;
+
+    const progLabel = document.getElementById('revProgressLabel');
+    const progBar = document.getElementById('revProgressBar');
+    const progHint = document.getElementById('revProgressHint');
+    if (progLabel) progLabel.textContent = `${doneCount} / ${total} temas`;
+    if (progBar) progBar.style.width = pct + "%";
+    if (progHint) {
+      if (total === 0) progHint.textContent = "Sin temas";
+      else if (doneCount === 0) progHint.textContent = "Pendiente de empezar";
+      else if (doneCount < total) progHint.textContent = "En curso";
+      else progHint.textContent = "Orden del día completo";
+    }
+
     box.innerHTML = "";
-    CHECKLIST.forEach((txt, i) => {
+    topics.forEach((txt, i) => {
       const done = state.checks.includes(i);
+      const noteVal = notes[String(i)] || "";
+      const wrap = document.createElement("div");
+      wrap.style.borderBottom = "1px solid var(--line)";
+      wrap.style.paddingBottom = "8px";
+      wrap.style.marginBottom = "4px";
+
       const row = document.createElement('div');
       row.className = "check-row" + (done ? " done" : "");
-      row.innerHTML = `<span class="box"></span><span class="c-label">${txt}</span>`;
-      row.onclick = () => {
+      row.style.cursor = "pointer";
+      row.style.borderBottom = "none";
+      row.style.paddingBottom = "4px";
+      const status = done
+        ? `<span style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--jade);flex:0 0 auto;">Hablado</span>`
+        : `<span style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-faint);flex:0 0 auto;">Pendiente</span>`;
+      row.innerHTML = `<span class="box"></span><span class="c-label" style="flex:1;">${escapeHTML(txt)}</span>${status}
+        <button type="button" class="del-x js-topic-del" data-i="${i}" title="Quitar tema" style="margin-left:4px;">✕</button>`;
+      row.title = done ? "Toca para marcar como pendiente" : "Toca cuando hayáis hablado este tema";
+      row.onclick = (e) => {
+        if (e.target.closest(".js-topic-del")) return;
         if (done) state.checks = state.checks.filter(x => x !== i);
         else state.checks.push(i);
         renderRevision();
         saveSoon();
       };
-      box.appendChild(row);
+      wrap.appendChild(row);
+
+      const noteInp = document.createElement("input");
+      noteInp.type = "text";
+      noteInp.className = "rev-topic-note";
+      noteInp.placeholder = "Nota corta o acción (opcional)…";
+      noteInp.value = noteVal;
+      noteInp.dataset.i = String(i);
+      noteInp.style.cssText = "width:100%;margin:0 0 4px 28px;max-width:calc(100% - 28px);padding:7px 10px;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;color:var(--text);font-size:12.5px;font-family:Inter,sans-serif;";
+      noteInp.onclick = (e) => e.stopPropagation();
+      noteInp.oninput = () => {
+        ensureTopicNotes()[String(i)] = noteInp.value;
+        saveSoon();
+      };
+      wrap.appendChild(noteInp);
+
+      box.appendChild(wrap);
+    });
+
+    if (!topics.length) {
+      box.innerHTML = `<p class="empty" style="margin:0;">No hay temas. Usa «＋ Tema» para añadir el orden del día.</p>`;
+    }
+
+    box.querySelectorAll(".js-topic-del").forEach(btn => {
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        const i = parseInt(btn.dataset.i, 10);
+        if (!confirm("¿Quitar este tema del orden del día?")) return;
+        const topics2 = getAgendaTopics();
+        topics2.splice(i, 1);
+        // reindex checks y notes
+        state.checks = state.checks
+          .filter(x => x !== i)
+          .map(x => (x > i ? x - 1 : x));
+        const oldNotes = ensureTopicNotes();
+        const next = {};
+        Object.keys(oldNotes).forEach(k => {
+          const ki = parseInt(k, 10);
+          if (isNaN(ki) || ki === i) return;
+          next[String(ki > i ? ki - 1 : ki)] = oldNotes[k];
+        });
+        state.topicNotes = next;
+        renderRevision();
+        saveSoon();
+        showToast("Tema quitado", { icon: "✕", duration: 1400 });
+      };
     });
 
     const hist = document.getElementById('notesHistory');
     if (state.notesHistory.length) {
-      hist.innerHTML = state.notesHistory.map((n, idx) =>
-        `<div class="card is-click" data-note-idx="${idx}" style="cursor:pointer;"><h3 style="margin-bottom:4px;">${escapeHTML(n.fecha)}</h3><p style="white-space:pre-wrap;">${escapeHTML(n.texto)}</p><p style="margin:8px 0 0;font-size:11px;color:var(--amber);font-family:'IBM Plex Mono',monospace;">${appLang === "nl" ? "Tik om te hergebruiken" : "Toca para reutilizar"}</p></div>`
-      ).join("");
-      hist.querySelectorAll("[data-note-idx]").forEach(card => {
-        card.onclick = () => {
-          const i = parseInt(card.dataset.noteIdx, 10);
+      hist.innerHTML = state.notesHistory.map((n, idx) => {
+        const extract = (n.texto || "").trim().slice(0, 140);
+        const more = (n.texto || "").trim().length > 140 ? "…" : "";
+        const meta = (n.temas != null && n.total != null) ? ` · ${n.temas}/${n.total} temas` : "";
+        return `<div class="card" data-note-idx="${idx}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px;">
+            <h3 style="margin:0;font-size:14px;">Acta del ${escapeHTML(n.fecha)}</h3>
+            <span style="font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--text-faint);flex:0 0 auto;">#${idx + 1}${meta}</span>
+          </div>
+          <p style="margin:0;white-space:pre-wrap;font-size:13px;color:var(--text-faint);line-height:1.45;">${escapeHTML(extract)}${more}</p>
+          <div style="display:flex;gap:8px;margin-top:10px;">
+            <button type="button" class="edit-inline js-note-view" data-note-idx="${idx}" style="font-size:12px;">Ver</button>
+            <button type="button" class="edit-inline js-note-reuse" data-note-idx="${idx}" style="font-size:12px;">Reutilizar</button>
+          </div>
+        </div>`;
+      }).join("");
+
+      hist.querySelectorAll(".js-note-view").forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const i = parseInt(btn.dataset.noteIdx, 10);
+          const note = state.notesHistory[i];
+          if (!note) return;
+          const full = note.texto || "";
+          const short = full.length > 400 ? full.slice(0, 400) + "…" : full;
+          showToast(`Acta del ${note.fecha}`, { icon: "📄", duration: 4200 });
+          const ta = document.getElementById("weekNotes");
+          if (ta) {
+            ta.value = full;
+            ta.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          }
+          showMsg(short);
+        };
+      });
+      hist.querySelectorAll(".js-note-reuse").forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const i = parseInt(btn.dataset.noteIdx, 10);
           const note = state.notesHistory[i];
           if (!note) return;
           const ta = document.getElementById("weekNotes");
@@ -3457,37 +4287,80 @@
             ta.focus();
             ta.scrollIntoView({ behavior: "smooth", block: "nearest" });
           }
-          showToast(appLang === "nl" ? "Akkoord geladen" : "Acuerdo cargado", { icon: "📝", duration: 1800 });
+          showToast(appLang === "nl" ? "Acta hergebruikt" : "Acta cargada para editar", { icon: "📝", duration: 1800 });
           saveSoon();
         };
       });
     } else {
-      hist.innerHTML = `<div class="empty-state"><div class="empty-title">Sin historial aún</div><p class="empty-body">Cuando guardéis acuerdos de la reunión, aparecerán aquí.</p></div>`;
+      hist.innerHTML = `<div class="empty-state"><div class="empty-title">Sin actas aún</div><p class="empty-body">Al cerrar una reunión, el acta quedará guardada aquí.</p><span class="empty-hint">Cerrar reunión y guardar</span></div>`;
     }
   }
 
   document.getElementById('saveNotesBtn').onclick = () => {
-    const txt = document.getElementById('weekNotes').value.trim();
-    if (!txt) return;
+    let txt = document.getElementById('weekNotes').value.trim();
+    const topics = getAgendaTopics();
+    const notes = ensureTopicNotes();
+    const topicLines = topics.map((t, i) => {
+      const n = (notes[String(i)] || "").trim();
+      const spoken = state.checks.includes(i) ? "✓" : "·";
+      return n ? `${spoken} ${t}: ${n}` : null;
+    }).filter(Boolean);
+    if (topicLines.length) {
+      const block = "Notas por tema:\n" + topicLines.join("\n");
+      txt = txt ? (txt + "\n\n" + block) : block;
+    }
+    if (!txt) {
+      showToast("Escribe acuerdos o notas por tema antes de cerrar", { icon: "✍️", duration: 2400 });
+      document.getElementById('weekNotes')?.focus();
+      return;
+    }
     const d = new Date();
+    const meses = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    const doneN = state.checks.filter(i => i >= 0 && i < topics.length).length;
+    const totalN = topics.length;
     state.notesHistory.unshift({
-      fecha: `${d.getDate()} de ${["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"][d.getMonth()]}`,
-      texto: txt
+      fecha: `${d.getDate()} de ${meses[d.getMonth()]} ${d.getFullYear()}`,
+      texto: txt,
+      temas: doneN,
+      total: totalN
     });
     state.notesHistory = state.notesHistory.slice(0, 12);
     state.checks = [];
+    state.topicNotes = {};
     state.notes = "";
     document.getElementById('weekNotes').value = "";
     renderRevision();
     saveSoon();
-    showMsg("Acuerdos guardados");
-    showToast("Acuerdos de la semana guardados", { icon:"✓" });
+    showToast("Reunión cerrada · acta guardada", { icon: "✓", duration: 2800 });
   };
   document.getElementById('resetCheckBtn').onclick = () => {
+    if (state.checks.length === 0 && Object.keys(ensureTopicNotes()).every(k => !(ensureTopicNotes()[k]||"").trim())) {
+      showToast("El orden del día ya está vacío", { icon: "ℹ️", duration: 1600 });
+      return;
+    }
+    if (!confirm("¿Reiniciar solo el orden del día?\n\nQuita marcas «Hablado» y notas por tema. No borra las actas ni el texto de acuerdos.")) return;
     state.checks = [];
+    state.topicNotes = {};
     renderRevision();
     saveSoon();
+    showToast("Orden del día reiniciado", { icon: "↺", duration: 1800 });
   };
+  const addTopicBtn = document.getElementById("revAddTopicBtn");
+  if (addTopicBtn) {
+    addTopicBtn.onclick = () => {
+      const name = prompt("Nuevo tema del orden del día:", "");
+      if (name == null) return;
+      const t = name.trim();
+      if (!t) {
+        showToast("Escribe un nombre de tema", { icon: "✍️", duration: 1600 });
+        return;
+      }
+      getAgendaTopics().push(t);
+      renderRevision();
+      saveSoon();
+      showToast("Tema añadido", { icon: "＋", duration: 1400 });
+    };
+  }
 
   // ---------- MODAL DE RESPONSABILIDAD ----------
   function whoOptionsHtml(){
@@ -3564,29 +4437,54 @@
 
   // ---------- INGRESOS ----------
   let editingIncomeId = null;
+
+  function findIncomeById(id){
+    return (state.incomes || []).find(x => String(x.id) === String(id)) || null;
+  }
+  /** Ingresos que cuentan para el mes: recurrentes + puntuales de ese mes */
+  function incomesForMonth(now){
+    now = now || new Date();
+    const m = now.getMonth(), y = now.getFullYear();
+    return (state.incomes || []).filter(inc => {
+      if (inc.recurring) return true;
+      const d = new Date(inc.date);
+      return !isNaN(d.getTime()) && d.getMonth() === m && d.getFullYear() === y;
+    });
+  }
+  function fillQuickExpenseSelects(){
+    const areaSel = document.getElementById("quickExpArea");
+    const whoSel = document.getElementById("quickExpWho");
+    if (areaSel && !areaSel.dataset.ready) {
+      areaSel.innerHTML = AREAS.map(a =>
+        `<option value="${a.key}">${escapeHTML(areaLabel(a.key))}</option>`
+      ).join("");
+      areaSel.dataset.ready = "1";
+    }
+    if (whoSel) {
+      whoSel.innerHTML = whoOptionsHtml();
+    }
+  }
   
   function renderIncomes(){
     const box = document.getElementById('incomeList');
     const stats = document.getElementById('incomeStats');
-    if (state.incomes.length === 0) {
+    fillQuickExpenseSelects();
+    if (!state.incomes.length) {
       stats.innerHTML = `<div class="empty-state" style="margin-bottom:8px;"><div class="empty-title">${escapeHTML(t("emptyIncomes"))}</div><p class="empty-body">${escapeHTML(t("emptyIncomesBody"))}</p></div>`;
       box.innerHTML = '';
       return;
     }
-    const now = new Date();
-    const thisMonth = now.getMonth();
-    const thisYear = now.getFullYear();
-    const thisMonthIncomes = state.incomes.filter(inc => {
-      const d = new Date(inc.date);
-      return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+    const monthList = incomesForMonth();
+    const totalThisMonth = monthList.reduce((s, i) => s + (Number(i.monto) || 0), 0);
+    const byPerson = { a:0, b:0, both:0, ext:0 };
+    monthList.forEach(i => {
+      const w = i.who || "a";
+      byPerson[w] = (byPerson[w] || 0) + (Number(i.monto) || 0);
     });
-    const totalThisMonth = thisMonthIncomes.reduce((s, i) => s + (Number(i.monto) || 0), 0);
-    const byPerson = { a:0, b:0, both:0 };
-    thisMonthIncomes.forEach(i => { byPerson[i.who||'a'] += Number(i.monto) || 0; });
     
     stats.innerHTML = `
       <div class="balance-row total is-click" data-income-filter="" style="cursor:pointer;">
-        <span class="label">Este mes</span>
+        <span class="label">Este mes (incl. recurrentes)</span>
         <span class="amount" style="color:var(--jade);">+${eur(totalThisMonth)}</span>
       </div>
       <div class="balance-row is-click" data-income-filter="a" style="cursor:pointer;">
@@ -3603,20 +4501,29 @@
       </div>`;
     
     const renderIncomeList = (whoFilter) => {
-      let list = state.incomes.slice().sort((a,b) => (b.date||"").localeCompare(a.date||""));
+      let list = state.incomes.slice().sort((a,b) => {
+        if (!!b.recurring !== !!a.recurring) return (b.recurring ? 1 : 0) - (a.recurring ? 1 : 0);
+        return (b.date||"").localeCompare(a.date||"");
+      });
       if (whoFilter) list = list.filter(inc => (inc.who||"a") === whoFilter);
       box.innerHTML = list.length
-        ? list.map(inc => `
-          <div class="income-item" data-id="${inc.id}">
-            <div class="income-main">
-              <div class="income-source">${escapeHTML(inc.source)}</div>
-              <div class="income-meta">${new Date(inc.date).toLocaleDateString(appLang==="nl"?"nl-NL":"es-ES")} · ${escapeHTML(whoLabel(inc.who||"a"))}</div>
-            </div>
-            <span class="income-amount">${eur(Number(inc.monto) || 0)}</span>
-          </div>`).join("")
+        ? list.map(inc => {
+            const id = String(inc.id).replace(/"/g, "&quot;");
+            const rec = !!inc.recurring;
+            const dateTxt = rec
+              ? "Cada mes"
+              : (inc.date ? new Date(inc.date).toLocaleDateString(appLang==="nl"?"nl-NL":"es-ES") : "—");
+            return `<div class="income-item is-click" data-id="${id}" style="cursor:pointer;">
+              <div class="income-main">
+                <div class="income-source">${escapeHTML(inc.source)}${rec ? ` <span style="font-size:10px;color:var(--jade);font-family:'IBM Plex Mono',monospace;">recurrente</span>` : ""}</div>
+                <div class="income-meta">${dateTxt} · ${escapeHTML(whoLabel(inc.who||"a"))}</div>
+              </div>
+              <span class="income-amount">${eur(Number(inc.monto) || 0)}</span>
+            </div>`;
+          }).join("")
         : `<p class="empty">${escapeHTML(t("emptyIncomes"))}</p>`;
       box.querySelectorAll('.income-item').forEach(el => {
-        el.onclick = () => openIncome(parseFloat(el.dataset.id));
+        el.onclick = () => openIncome(el.dataset.id);
       });
     };
     renderIncomeList(null);
@@ -3632,9 +4539,9 @@
   }
   
   function openIncome(id){
-    editingIncomeId = id;
-    const inc = state.incomes.find(x => x.id === id);
+    const inc = findIncomeById(id);
     if (!inc) return;
+    editingIncomeId = inc.id;
     document.getElementById('iWho').innerHTML = whoOptionsHtml();
     document.getElementById('incomeModalTitle').textContent = inc.source;
     document.getElementById('iSource').value = inc.source || '';
@@ -3642,6 +4549,8 @@
     document.getElementById('iDate').value = inc.date || '';
     document.getElementById('iWho').value = inc.who || 'a';
     document.getElementById('iNote').value = inc.note || '';
+    const rec = document.getElementById('iRecurring');
+    if (rec) rec.checked = !!inc.recurring;
     document.getElementById('incomeDelete').style.display = '';
     document.getElementById('incomeModalBg').classList.add('open');
   }
@@ -3655,6 +4564,8 @@
     document.getElementById('iDate').value = new Date().toISOString().split('T')[0];
     document.getElementById('iWho').value = 'a';
     document.getElementById('iNote').value = '';
+    const rec = document.getElementById('iRecurring');
+    if (rec) rec.checked = false;
     document.getElementById('incomeDelete').style.display = 'none';
     document.getElementById('incomeModalBg').classList.add('open');
   };
@@ -3662,18 +4573,26 @@
   document.getElementById('newIncomeBtn').onclick = () => {
     const fuente = document.getElementById('newIncomeFuente').value.trim();
     const monto = parseFloat(document.getElementById('newIncomeMonto').value);
-    if (!fuente || isNaN(monto) || monto <= 0) return;
+    const recurring = !!document.getElementById('newIncomeRecurring')?.checked;
+    if (!fuente || isNaN(monto) || monto <= 0) {
+      showToast("Indica fuente e importe", { icon: "✍️", duration: 1600 });
+      return;
+    }
     state.incomes.push({
-      id: Date.now() + Math.random(),
+      id: "inc-" + Date.now(),
       date: new Date().toISOString().split('T')[0],
       source: fuente,
       monto: monto,
       who: 'a',
-      note: ''
+      note: '',
+      recurring
     });
     document.getElementById('newIncomeFuente').value = '';
     document.getElementById('newIncomeMonto').value = '';
+    const cb = document.getElementById('newIncomeRecurring');
+    if (cb) cb.checked = false;
     renderDinero(); saveSoon();
+    showToast(recurring ? "Ingreso recurrente añadido" : "Ingreso añadido", { icon: "💰", duration: 1600 });
   };
   
   document.getElementById('incomeCancel').onclick = () => document.getElementById('incomeModalBg').classList.remove('open');
@@ -3682,34 +4601,38 @@
     const s = document.getElementById('iSource').value.trim();
     const m = parseFloat(document.getElementById('iMonto').value);
     const d = document.getElementById('iDate').value;
+    const recurring = !!document.getElementById('iRecurring')?.checked;
     if (!s || isNaN(m) || m < 0 || !d) return;
     
-    if (editingIncomeId) {
-      const inc = state.incomes.find(x => x.id === editingIncomeId);
+    if (editingIncomeId != null && editingIncomeId !== "") {
+      const inc = findIncomeById(editingIncomeId);
       if (inc) {
         inc.source = s;
         inc.monto = m;
         inc.date = d;
         inc.who = document.getElementById('iWho').value;
         inc.note = document.getElementById('iNote').value.trim();
+        inc.recurring = recurring;
       }
     } else {
       state.incomes.push({
-        id: Date.now() + Math.random(),
+        id: "inc-" + Date.now(),
         date: d,
         source: s,
         monto: m,
         who: document.getElementById('iWho').value,
-        note: document.getElementById('iNote').value.trim()
+        note: document.getElementById('iNote').value.trim(),
+        recurring
       });
     }
     document.getElementById('incomeModalBg').classList.remove('open');
     renderDinero(); saveSoon();
+    showToast("Ingreso guardado", { icon: "✓", duration: 1400 });
   };
 
   document.getElementById('incomeDelete').onclick = () => {
-    const removed = state.incomes.find(x => x.id === editingIncomeId);
-    state.incomes = state.incomes.filter(x => x.id !== editingIncomeId);
+    const removed = findIncomeById(editingIncomeId);
+    state.incomes = (state.incomes || []).filter(x => String(x.id) !== String(editingIncomeId));
     document.getElementById('incomeModalBg').classList.remove('open');
     renderDinero(); saveSoon();
     if (removed) {
@@ -3722,6 +4645,42 @@
       });
     }
   };
+
+  // Gasto rápido (fase 4)
+  const quickExpBtn = document.getElementById("quickExpBtn");
+  if (quickExpBtn) {
+    quickExpBtn.onclick = () => {
+      const name = (document.getElementById("quickExpName")?.value || "").trim();
+      const money = parseFloat(document.getElementById("quickExpMonto")?.value);
+      const area = document.getElementById("quickExpArea")?.value || "casa";
+      const who = document.getElementById("quickExpWho")?.value || "both";
+      const freq = document.getElementById("quickExpFreq")?.value || "mes";
+      if (!name || isNaN(money) || money < 0) {
+        showToast("Nombre e importe del gasto", { icon: "✍️", duration: 1600 });
+        return;
+      }
+      state.items.push({
+        id: "it-" + Date.now(),
+        area,
+        name,
+        who,
+        money,
+        freq,
+        flow: "gasto",
+        time: 0,
+        energy: "neutra",
+        note: "",
+        days: []
+      });
+      document.getElementById("quickExpName").value = "";
+      document.getElementById("quickExpMonto").value = "";
+      renderDinero();
+      renderAreas();
+      renderResumen();
+      saveSoon();
+      showToast("Gasto añadido en " + areaLabel(area), { icon: "＋", duration: 1800 });
+    };
+  }
 
   // ---------- NOMBRES ----------
   document.getElementById('namesBtn').onclick = () => {
