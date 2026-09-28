@@ -1895,8 +1895,7 @@
       return;
     }
     if (action === "event") {
-      const id = parseFloat(ref);
-      const ev = (state.events || []).find(e => e.id === id);
+      const ev = findEventById(ref);
       if (!ev) return;
       goToScreen("calendario");
       if (ev.date) {
@@ -1907,7 +1906,7 @@
           renderCalendar();
         }
       }
-      openEditEvent(id);
+      openEditEvent(ev.id);
       return;
     }
     if (action === "item") {
@@ -4252,17 +4251,18 @@
     if (dayEvents.length) {
       html += dayEvents.map(ev => {
         const horaTxt = ev.time ? `<span class="mono" style="color:var(--text-faint);margin-right:6px;">${ev.time}</span>` : "";
+        const eid = String(ev.id).replace(/"/g, "&quot;");
         if (ev.kind === "tarea") {
-          return `<div class="check-row${ev.done?' done':''}" data-ev="${ev.id}">
+          return `<div class="check-row is-click${ev.done?' done':''}" data-ev="${eid}" style="cursor:pointer;">
             <span class="box js-ev-toggle"></span>
-            <span class="c-label js-ev-open" style="flex:1;">${horaTxt}${ev.name}${ev.note?` <span style="color:var(--text-faint);">· ${ev.note}</span>`:""}</span>
+            <span class="c-label js-ev-open" style="flex:1;">${horaTxt}${escapeHTML(ev.name)}${ev.note?` <span style="color:var(--text-faint);">· ${escapeHTML(ev.note)}</span>`:""}</span>
             <span class="who-chip ${whoClass(ev.who)}">${whoLabel(ev.who)}</span>
           </div>`;
         }
-        return `<div class="item-row" data-ev="${ev.id}">
+        return `<div class="item-row is-click" data-ev="${eid}" style="cursor:pointer;">
           <div class="item-main js-ev-open">
-            <div class="item-name">📌 ${horaTxt}${ev.name}</div>
-            ${ev.note ? `<div class="item-sub">${ev.note}</div>` : ""}
+            <div class="item-name">📌 ${horaTxt}${escapeHTML(ev.name)}</div>
+            ${ev.note ? `<div class="item-sub">${escapeHTML(ev.note)}</div>` : ""}
           </div>
           <span class="who-chip ${whoClass(ev.who)}">${whoLabel(ev.who)}</span>
         </div>`;
@@ -4292,17 +4292,26 @@
       el.onclick = () => openItem(parseFloat(el.dataset.item));
     });
     box.querySelectorAll('[data-ev]').forEach(row => {
-      const id = parseFloat(row.dataset.ev);
+      const id = row.dataset.ev; // string (fam-… o número como texto)
       const openEl = row.querySelector('.js-ev-open');
       if (openEl) openEl.onclick = (e) => { e.stopPropagation(); openEditEvent(id); };
+      row.onclick = (e) => {
+        if (e.target.closest('.js-ev-toggle')) return;
+        openEditEvent(id);
+      };
       const toggleEl = row.querySelector('.js-ev-toggle');
       if (toggleEl) toggleEl.onclick = (e) => { e.stopPropagation(); toggleEventDone(id); };
     });
   }
 
   // ---------- EVENTOS Y TAREAS DEL DÍA ----------
+  function findEventById(id){
+    if (id == null || id === "") return null;
+    const s = String(id);
+    return (state.events || []).find(x => String(x.id) === s) || null;
+  }
   function toggleEventDone(id){
-    const ev = state.events.find(x => x.id === id);
+    const ev = findEventById(id);
     if (!ev) return;
     ev.done = !ev.done;
     renderDayDetail();
@@ -4331,9 +4340,9 @@
     document.getElementById('eventModalBg').classList.add('open');
   }
   function openEditEvent(id){
-    const ev = state.events.find(x => x.id === id);
+    const ev = findEventById(id);
     if (!ev) return;
-    editingEventId = id;
+    editingEventId = ev.id; // conservar tipo original (string fam-… o número)
     document.getElementById('eWho').innerHTML = whoOptionsHtml();
     document.getElementById('eventModalTitle').textContent = t("eventEdit");
     const ek2 = document.getElementById('eKind');
@@ -4355,8 +4364,8 @@
   document.getElementById('dayAddBtn').onclick = () => openNewEvent(isoDate(selectedDate));
   document.getElementById('eventCancel').onclick = () => document.getElementById('eventModalBg').classList.remove('open');
   document.getElementById('eventDelete').onclick = () => {
-    const removed = state.events.find(x => x.id === editingEventId);
-    state.events = state.events.filter(x => x.id !== editingEventId);
+    const removed = findEventById(editingEventId);
+    state.events = (state.events || []).filter(x => String(x.id) !== String(editingEventId));
     document.getElementById('eventModalBg').classList.remove('open');
     renderCalendar(); saveSoon();
     if (removed) {
@@ -4373,8 +4382,8 @@
     const n = document.getElementById('eName').value.trim();
     const d = document.getElementById('eDate').value;
     if (!n || !d) return;
-    if (editingEventId) {
-      const ev = state.events.find(x => x.id === editingEventId);
+    if (editingEventId != null && editingEventId !== "") {
+      const ev = findEventById(editingEventId);
       if (ev) {
         ev.name = n;
         ev.kind = document.getElementById('eKind').value;
@@ -4385,7 +4394,7 @@
       }
     } else {
       state.events.push({
-        id: Date.now() + Math.random(),
+        id: "ev-" + Date.now(),
         name: n,
         kind: document.getElementById('eKind').value,
         who: document.getElementById('eWho').value,
@@ -4399,7 +4408,7 @@
     const p = d.split('-').map(Number);
     selectedDate = new Date(p[0], p[1]-1, p[2]);
     renderCalendar(); saveSoon();
-    showToast(editingEventId ? t("toastEventUpd") : t("toastEventAdd"), { icon:"📅" });
+    showToast(editingEventId != null && editingEventId !== "" ? t("toastEventUpd") : t("toastEventAdd"), { icon:"📅" });
   };
 
   document.getElementById('calPrev').onclick = () => {
