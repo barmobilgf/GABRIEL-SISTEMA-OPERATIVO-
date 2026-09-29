@@ -1772,6 +1772,79 @@
     return added;
   }
 
+  /** Gastos anuales familiares (listado usuario) — who: both */
+  const SEED_ANNUAL_EXPENSES = [
+    { id: "ann-basura",        area: "casa",   name: "Basura",                    money: 360,  note: "Anual" },
+    { id: "ann-aqua",          area: "casa",   name: "Agua central",              money: 250,  note: "Anual" },
+    { id: "ann-dentista",      area: "salud",  name: "Dentista",                  money: 500,  note: "Anual" },
+    { id: "ann-coche-ctrl",    area: "coche",  name: "Coche · controles / APK",   money: 1000, note: "Anual" },
+    { id: "ann-coche-imp",     area: "coche",  name: "Coche · impuesto",          money: 600,  note: "Anual" },
+    { id: "ann-colegio-zaila", area: "ninos",  name: "Colegio de Zaila",          money: 100,  note: "Anual" },
+    { id: "ann-rokanje",       area: "ocio",   name: "Casita de Rokanje",         money: 3500, note: "Anual" },
+    { id: "ann-contable",      area: "dinero", name: "Contable",                  money: 1500, note: "Anual" },
+    { id: "ann-imp-anoes",     area: "dinero", name: "Impuesto Anuschka (promedio)", money: 8000, note: "Promedio del ganancia · anual" },
+    { id: "ann-imp-gab",       area: "dinero", name: "Impuesto Gabriel (promedio)",  money: 4000, note: "Promedio · anual" },
+    { id: "ann-bday-ziggy",    area: "ninos",  name: "Cumpleaños de Ziggy",       money: 150,  note: "Anual" },
+    { id: "ann-bday-zaila",    area: "ninos",  name: "Cumpleaños de Zaila",       money: 150,  note: "Anual" },
+    { id: "ann-bday-gab",      area: "social", name: "Cumpleaños de Gabriel",     money: 150,  note: "Anual" },
+    { id: "ann-bday-anoes",    area: "social", name: "Cumpleaños de Anuschka",    money: 150,  note: "Anual" }
+  ];
+
+  function seedExpenseList(list, freq){
+    if (!state.items) state.items = [];
+    let added = 0;
+    list.forEach(e => {
+      if (state.items.some(x => String(x.id) === e.id)) return;
+      const sameName = state.items.some(x =>
+        String(x.name || "").toLowerCase() === e.name.toLowerCase() && x.freq === freq
+      );
+      if (sameName) return;
+      state.items.push({
+        id: e.id,
+        area: e.area,
+        name: e.name,
+        who: e.who || "both",
+        money: e.money,
+        freq: freq,
+        flow: "gasto",
+        time: 0,
+        energy: "neutra",
+        note: e.note || "",
+        days: []
+      });
+      added++;
+    });
+    return added;
+  }
+  function seedAnnualExpenses(){
+    return seedExpenseList(SEED_ANNUAL_EXPENSES, "ano");
+  }
+
+  /** Gastos mensuales familiares (listado usuario) */
+  const SEED_MONTHLY_EXPENSES = [
+    { id: "mes-hypotheek",     area: "dinero",        name: "Hipoteca (Hypotheek)",           money: 1300, who: "both", note: "Mensual" },
+    { id: "mes-comida",        area: "alimentacion",  name: "Comida casa y fuera",            money: 800,  who: "both", note: "Mensual" },
+    { id: "mes-ropa-ninos",    area: "ninos",         name: "Ropa niños",                     money: 200,  who: "both", note: "Mensual" },
+    { id: "mes-bday-amigos",   area: "social",        name: "Cumpleaños amigos / familia",    money: 60,   who: "both", note: "Mensual" },
+    { id: "mes-seg-coche",     area: "coche",         name: "Seguro coche",                   money: 144,  who: "both", note: "Mensual" },
+    { id: "mes-seg-medico",    area: "salud",         name: "Seguro médico",                  money: 400,  who: "both", note: "Mensual" },
+    { id: "mes-agua",          area: "casa",          name: "Agua",                           money: 50,   who: "both", note: "Mensual" },
+    { id: "mes-dazure",        area: "ocio",          name: "Dazure",                         money: 10,   who: "both", note: "Mensual" },
+    { id: "mes-banco",         area: "dinero",        name: "Cartas / comisiones banco",      money: 15,   who: "both", note: "Mensual" },
+    { id: "mes-kpn",           area: "casa",          name: "KPN internet y teléfonos",       money: 100,  who: "both", note: "Mensual" },
+    { id: "mes-energia",       area: "casa",          name: "Energía",                        money: 300,  who: "both", note: "Mensual" },
+    { id: "mes-spotify",       area: "ocio",          name: "Spotify",                        money: 18,   who: "both", note: "Mensual" },
+    { id: "mes-gasolina",      area: "coche",         name: "Gasolina coche",                 money: 200,  who: "both", note: "Mensual" },
+    { id: "mes-basura",        area: "casa",          name: "Basura (mensual)",               money: 20,   who: "both", note: "Mensual" },
+    { id: "mes-parking",       area: "coche",         name: "Parking coche",                  money: 50,   who: "both", note: "Mensual" },
+    { id: "mes-unas-a",        area: "desarrollo",    name: "Uñas Anuschka",                  money: 50,   who: "a",    note: "Mensual" },
+    { id: "mes-basket",        area: "ninos",         name: "Basketball",                     money: 25,   who: "both", note: "Mensual" },
+    { id: "mes-kinder-ziggy",  area: "ninos",         name: "Kindergarten Ziggy",             money: 250,  who: "both", note: "Mensual" }
+  ];
+  function seedMonthlyExpenses(){
+    return seedExpenseList(SEED_MONTHLY_EXPENSES, "mes");
+  }
+
   let editingId = null;
   let modalDays = [];
   const DOW_LABELS = ["D","L","M","X","J","V","S"]; // getDay(): 0=domingo...6=sábado
@@ -5381,7 +5454,9 @@
 
   loadLocal();
   const seeded = seedAgendaFromPaper();
-  saveLocal(); // agenda familiar sustituye eventos antiguos
+  const seededExp = seedAnnualExpenses();
+  const seededMes = seedMonthlyExpenses();
+  saveLocal(); // agenda + gastos anuales/mensuales
   document.documentElement.lang = appLang === "nl" ? "nl" : "es";
   document.getElementById('weekNotes').value = state.notes || "";
   document.getElementById('weekNotes').addEventListener('input', (e) => {
@@ -5394,6 +5469,18 @@
       (appLang === "nl" ? "Agenda geladen: " : "Agenda familiar cargada: ") + seeded + (appLang === "nl" ? " events" : " eventos"),
       { icon: "📅", duration: 3200 }
     ), 600);
+  }
+  if (seededExp > 0) {
+    setTimeout(() => showToast(
+      "Gastos anuales añadidos: " + seededExp,
+      { icon: "💰", duration: 2800 }
+    ), seeded > 0 ? 2800 : 700);
+  }
+  if (seededMes > 0) {
+    setTimeout(() => showToast(
+      "Gastos mensuales añadidos: " + seededMes,
+      { icon: "💶", duration: 3200 }
+    ), (seeded > 0 || seededExp > 0) ? 4000 : 700);
   }
 
   // ---------- SERVICE WORKER (PWA) ----------
