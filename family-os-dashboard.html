@@ -1021,11 +1021,26 @@
   }
   .day-chip.on{ background:rgba(200,155,92,0.16); border-color:var(--amber-dim); color:var(--amber); }
   .day-chips{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin-bottom:12px; }
-  .year-chart{ display:flex; align-items:flex-end; gap:4px; height:108px; margin:6px 0 4px; }
-  .year-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; min-width:0; }
-  .year-bar{ width:100%; border-radius:4px 4px 0 0; background:var(--jade); min-height:2px; }
-  .year-bar.now{ background:var(--amber); }
+  .year-chart{ display:flex; align-items:flex-end; gap:3px; height:128px; margin:6px 0 4px; }
+  .year-col{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; min-width:0; border-radius:6px; padding:2px 1px 0; transition:background .15s ease; }
+  .year-col.selected{ background:rgba(200,155,92,0.12); }
+  .year-amt{ font-family:'IBM Plex Mono',monospace; font-size:7.5px; color:var(--text-faint); line-height:1; margin-bottom:3px; white-space:nowrap; }
+  .year-col.selected .year-amt{ color:var(--amber); font-weight:600; }
+  .year-bar{ width:100%; border-radius:4px 4px 0 0; background:var(--jade); min-height:2px; opacity:0.85; transition:height .2s ease, background .15s ease, opacity .15s; }
+  .year-bar.now{ background:var(--amber); opacity:1; }
+  .year-bar.selected{ background:var(--amber); opacity:1; box-shadow:0 0 0 1px var(--amber-dim); }
+  .year-bar.now.selected{ background:var(--amber); }
   .year-lbl{ font-family:'IBM Plex Mono',monospace; font-size:8px; color:var(--text-faint); margin-top:4px; text-transform:uppercase; }
+  .year-col.selected .year-lbl{ color:var(--amber); font-weight:600; }
+  .year-col.is-now .year-lbl{ color:var(--heading); }
+  .money-month-nav{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .money-month-nav button{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; padding:6px 10px; border-radius:8px;
+    border:1px solid var(--line); background:var(--surface); color:var(--text); cursor:pointer;
+  }
+  .money-month-nav button:active{ transform:scale(0.97); }
+  .money-month-nav button.primary{ background:rgba(200,155,92,0.14); border-color:var(--amber-dim); color:var(--amber); }
+  .money-month-nav .nav-label{ font-size:13px; font-weight:600; color:var(--heading); min-width:7.5em; text-align:center; }
 
   /* INGRESOS Y BALANCE */
   .balance-card{ background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius-lg); padding:16px; margin-bottom:12px; box-shadow:var(--elev-1); }
@@ -1113,18 +1128,20 @@
 
   <!-- DINERO -->
   <section class="screen" id="screen-dinero">
-    <!-- Fase 1: foto del mes arriba -->
+    <!-- Navegación de mes: mueve cabecera, pagos e ingresos -->
+    <div class="money-month-nav" id="moneyMonthNav" style="margin:0 0 10px;"></div>
+    <p style="margin:-4px 0 10px;font-size:11.5px;color:var(--text-faint);">‹ › cambian el mes de toda la pantalla Dinero (balance, pagos e ingresos). Hoy = mes de hoy.</p>
+
+    <!-- Foto del mes (sigue el mes seleccionado) -->
     <div class="balance-card" id="dineroMonthOverview"></div>
-    <!-- ids legacy por si algún script los referencia -->
     <span id="dineroMes" style="display:none;">€0</span>
     <span id="dineroAno" style="display:none;">€0</span>
     <div id="balanceCard" style="display:none;"></div>
 
     <div class="section-head">
       <h2 id="thisMonthPayTitle" data-i18n="secThisMonth">Este mes toca pagar</h2>
-      <button type="button" class="edit-inline" id="moneyPayResetMonth" style="display:none;font-size:12px;">Mes actual</button>
     </div>
-    <p style="margin:-4px 0 8px;font-size:11.5px;color:var(--text-faint);">Marca como pagado · toca el nombre para editar. El gráfico de abajo cambia el mes de esta lista.</p>
+    <p style="margin:-4px 0 8px;font-size:11.5px;color:var(--text-faint);">Marca como pagado o toca el nombre para editar. La lista sigue el mes de arriba.</p>
     <div class="card" id="thisMonthPay"></div>
 
     <div class="section-head"><h2 data-i18n="secIncomes">💰 Ingresos</h2><button class="edit-inline" id="addIncomeBtn">＋ Nuevo</button></div>
@@ -1173,7 +1190,7 @@
     <div class="section-head"><h2 data-i18n="secYearChart">Cuándo cae cada gasto (vista real)</h2></div>
     <div class="card">
       <div class="year-chart" id="yearChart"></div>
-      <p style="margin:2px 0 0;font-size:11px;color:var(--text-faint);">Lo mensual se reparte en los 12 meses. Lo anual con fecha de renovación cae de golpe en su mes real; sin fecha, se prorratea. Toca un mes del gráfico para ver el detalle arriba.</p>
+      <p id="yearChartNote" style="margin:2px 0 0;font-size:11px;color:var(--text-faint);line-height:1.4;">Barras = gastos mensuales. Toca un mes o usa ‹ › arriba.</p>
     </div>
 
     <div class="section-head"><h2>Filtros de gastos</h2>
@@ -3471,8 +3488,20 @@
   }
   // Fase 2+3 dinero: pagado, áreas expandibles, filtros
   const openMoneyAreas = new Set();
-  let moneyPayViewMonth = null; // null = mes actual; 0-11 al filtrar desde el gráfico
+  let moneyPayViewMonth = null; // null = mes actual; 0-11 vista de otro mes
+  let moneyPayViewYear = null; // null = año actual; solo si se cruza de año con ‹ ›
   let moneyFilters = { area: "", who: "", freq: "" }; // "" = todos
+
+  /** Mes/año que está mirando la pantalla Dinero */
+  function getMoneyView(){
+    const now = new Date();
+    const month = moneyPayViewMonth != null ? moneyPayViewMonth : now.getMonth();
+    const year = moneyPayViewYear != null ? moneyPayViewYear : now.getFullYear();
+    const isCurrent = month === now.getMonth() && year === now.getFullYear();
+    const asDate = new Date(year, month, 15); // mitad de mes para cálculos de ingreso
+    const label = ((MESES[month] || "").replace(/^./, c => c.toUpperCase())) + " " + year;
+    return { month, year, isCurrent, asDate, label, now };
+  }
 
   function moneyItemMatchesFilters(it){
     if (!it) return false;
@@ -3614,107 +3643,242 @@
     });
   }
 
-  function renderYearSpend(){
-    const { totals, perMonthItems } = spendByRealMonth();
-    const maxV = Math.max(...totals, 1);
-    const now = new Date();
-    const nowMonth = now.getMonth();
-    const nowYear = now.getFullYear();
-    const chart = document.getElementById('yearChart');
-    const viewM = moneyPayViewMonth != null ? moneyPayViewMonth : nowMonth;
+  /** Importe corto para el gráfico: 1200 → 1.2k */
+  function eurShort(n){
+    const v = Math.abs(Number(n) || 0);
+    if (v >= 1000) {
+      const k = v / 1000;
+      return (k >= 10 ? Math.round(k) : Math.round(k * 10) / 10) + "k";
+    }
+    return String(Math.round(v));
+  }
 
-    chart.innerHTML = totals.map((v, i) => `
-      <div class="year-col is-click" data-month="${i}" style="cursor:pointer;${i===viewM?"outline:1px solid var(--amber);border-radius:6px;":""}" title="${MESES[i]}: ${eur(v)}">
-        <div class="year-bar${i===nowMonth?' now':''}" style="height:${Math.max((v/maxV)*100,2)}%;"></div>
-        <div class="year-lbl">${MES_CORTO[i]}</div>
-      </div>`).join("");
-    chart.querySelectorAll('.year-col[data-month]').forEach(col => {
-      col.onclick = () => {
-        const mi = parseInt(col.dataset.month, 10);
-        moneyPayViewMonth = mi;
-        renderDinero();
-        document.getElementById("thisMonthPay")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        const mesName = MESES[mi] || "";
-        showToast(mesName + " · " + eur(totals[mi] || 0), { icon: "📊", duration: 2000 });
-      };
+  /**
+   * Totales del gráfico: mensuales siempre + anuales con fecha de renovación en su mes.
+   * Los anuales sin fecha no aplastan las barras (se prorratean en el balance, no aquí).
+   */
+  function spendChartByMonth(){
+    const totals = new Array(12).fill(0);
+    const peaks = new Array(12).fill(0); // solo anuales de golpe
+    let proratedAnnualMonth = 0;
+    (state.items || []).forEach(it => {
+      if (isItemIncome(it)) return;
+      const m = Number(it.money) || 0;
+      if (m <= 0) return;
+      if (it.freq === "ano") {
+        if (it.renewal) {
+          const p = String(it.renewal).split("-");
+          if (p.length >= 2) {
+            const mi = parseInt(p[1], 10) - 1;
+            if (mi >= 0 && mi < 12) {
+              totals[mi] += m;
+              peaks[mi] += m;
+              return;
+            }
+          }
+        }
+        proratedAnnualMonth += m / 12;
+      } else {
+        for (let i = 0; i < 12; i++) totals[i] += m;
+      }
     });
+    return { totals, peaks, proratedAnnualMonth };
+  }
 
-    // Lista “toca pagar” del mes visto (filtro área/quién si activos; tipo anual ya implícito)
+  function setMoneyViewMonth(mi, yearOpt){
+    const now = new Date();
+    const nowM = now.getMonth();
+    const nowY = now.getFullYear();
+    if (mi == null) {
+      moneyPayViewMonth = null;
+      moneyPayViewYear = null;
+    } else {
+      let m = mi;
+      let y = yearOpt != null ? yearOpt : (moneyPayViewYear != null ? moneyPayViewYear : nowY);
+      while (m < 0) { m += 12; y -= 1; }
+      while (m > 11) { m -= 12; y += 1; }
+      if (m === nowM && y === nowY) {
+        moneyPayViewMonth = null;
+        moneyPayViewYear = null;
+      } else {
+        moneyPayViewMonth = m;
+        moneyPayViewYear = y;
+      }
+    }
+    renderDinero();
+  }
+  function shiftMoneyViewMonth(delta){
+    const v = getMoneyView();
+    setMoneyViewMonth(v.month + delta, v.year);
+  }
+
+  function renderYearSpend(){
+    const view = getMoneyView();
+    const { perMonthItems } = spendByRealMonth();
+    const { totals, peaks, proratedAnnualMonth } = spendChartByMonth();
+    // Ingresos puntuales por mes (mismo año que la vista) para el gráfico
+    const incomeByMonth = new Array(12).fill(0);
+    (state.incomes || []).forEach(inc => {
+      const monto = Number(inc.monto) || 0;
+      if (inc.recurring) {
+        for (let i = 0; i < 12; i++) incomeByMonth[i] += monto;
+        return;
+      }
+      const d = new Date(inc.date);
+      if (!isNaN(d.getTime()) && d.getFullYear() === view.year) {
+        incomeByMonth[d.getMonth()] += monto;
+      }
+    });
+    incomeByMonth.forEach((v, i) => { incomeByMonth[i] = v + monthlyAreaIncomes(); });
+
+    const maxV = Math.max(...totals, ...incomeByMonth, 1);
+    const chart = document.getElementById('yearChart');
+    const viewM = view.month;
+    const nowMonth = view.now.getMonth();
+    const nowYear = view.now.getFullYear();
+
+    // —— Navegación de mes (arriba: mueve toda la pantalla) ——
+    const nav = document.getElementById("moneyMonthNav");
+    if (nav) {
+      nav.innerHTML = `
+        <button type="button" id="moneyPayPrev" title="Mes anterior">‹</button>
+        <span class="nav-label">${escapeHTML(view.label)}${view.isCurrent ? " · hoy" : ""}</span>
+        <button type="button" id="moneyPayNext" title="Mes siguiente">›</button>
+        <button type="button" id="moneyPayToday" class="${view.isCurrent ? "" : "primary"}" ${view.isCurrent ? "disabled style=\"opacity:0.45;\"" : ""}>Hoy</button>`;
+      const prev = document.getElementById("moneyPayPrev");
+      const next = document.getElementById("moneyPayNext");
+      const today = document.getElementById("moneyPayToday");
+      if (prev) prev.onclick = () => {
+        shiftMoneyViewMonth(-1);
+        const v2 = getMoneyView();
+        showToast(v2.label, { icon: "‹", duration: 1200 });
+      };
+      if (next) next.onclick = () => {
+        shiftMoneyViewMonth(1);
+        const v2 = getMoneyView();
+        showToast(v2.label, { icon: "›", duration: 1200 });
+      };
+      if (today && !view.isCurrent) today.onclick = () => {
+        setMoneyViewMonth(null);
+        showToast("Mes actual", { icon: "📅", duration: 1400 });
+      };
+    }
+
+    // —— Gráfico: gasto (barra) + ingreso del mes (punto/número) ——
+    if (chart) {
+      chart.innerHTML = totals.map((v, i) => {
+        const h = Math.max((v / maxV) * 100, v > 0 ? 8 : 2);
+        const selected = i === viewM && view.year === nowYear || (i === viewM && view.year !== nowYear);
+        // selected: mismo índice de mes que la vista (en gráfico solo hay 12 meses del año de vista)
+        const sel = i === viewM;
+        const isNow = i === nowMonth && view.year === nowYear;
+        const peak = peaks[i] > 0;
+        const inc = incomeByMonth[i] || 0;
+        const barCls = "year-bar" + (sel ? " selected" : "") + (isNow && !sel ? " now" : "");
+        return `<div class="year-col is-click${sel ? " selected" : ""}${isNow ? " is-now" : ""}" data-month="${i}" style="cursor:pointer;" title="${MESES[i]}: gasto ${eur(v)} · ingreso ${eur(inc)}${peak ? " · anual de golpe" : ""}">
+          <div class="year-amt" style="color:${inc > 0 ? "var(--jade)" : "var(--text-faint)"};">${inc > 0 ? "+" + eurShort(inc) : "·"}</div>
+          <div class="${barCls}" style="height:${h}%;"></div>
+          <div class="year-lbl">${MES_CORTO[i]}</div>
+          <div class="year-amt" style="margin-top:2px;margin-bottom:0;">${v > 0 ? eurShort(v) : "·"}</div>
+        </div>`;
+      }).join("");
+      chart.querySelectorAll(".year-col[data-month]").forEach(col => {
+        col.onclick = () => {
+          const mi = parseInt(col.dataset.month, 10);
+          setMoneyViewMonth(mi, view.year);
+          document.getElementById("dineroMonthOverview")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          showToast(
+            (MESES[mi] || "") + " · gasto " + eur(totals[mi] || 0) + " · ingreso " + eur(incomeByMonth[mi] || 0),
+            { icon: "📊", duration: 2400 }
+          );
+        };
+      });
+    }
+
+    const chartNote = document.getElementById("yearChartNote");
+    if (chartNote) {
+      chartNote.textContent =
+        `Arriba en verde: ingresos del mes. Barra: gastos mensuales` +
+        (peaks.some(p => p > 0) ? " + anuales con fecha" : "") +
+        `. ${view.label}: gasto ${eur(totals[viewM] || 0)} · ingreso ${eur(incomeByMonth[viewM] || 0)}` +
+        (proratedAnnualMonth > 0 ? ` · +${eur(proratedAnnualMonth)}/mes anuales sin fecha en balance` : "") +
+        `.`;
+    }
+
+    // Lista pagos del mes visto
     let thisMonth = (perMonthItems[viewM] || [])
       .filter(x => x.it && x.it.freq === "ano" && moneyItemMatchesFilters(x.it))
       .sort((a,b) => b.monto - a.monto);
-    // Si el filtro es solo "mensual", la lista anual quedará vacía a propósito
-    fillThisMonthPay(thisMonth, viewM, nowYear);
+    fillThisMonthPay(thisMonth, viewM, view.year);
 
     const title = document.getElementById("thisMonthPayTitle");
-    const resetBtn = document.getElementById("moneyPayResetMonth");
-    const mesLabel = (MESES[viewM] || "").replace(/^./, c => c.toUpperCase());
     if (title) {
-      title.textContent = viewM === nowMonth
+      title.textContent = view.isCurrent
         ? (t("secThisMonth") || "Este mes toca pagar")
-        : `Pagos de ${mesLabel}`;
-    }
-    if (resetBtn) {
-      resetBtn.style.display = moneyPayViewMonth != null && moneyPayViewMonth !== nowMonth ? "" : "none";
-      resetBtn.onclick = () => {
-        moneyPayViewMonth = null;
-        renderDinero();
-        showToast("Vista del mes actual", { icon: "📅", duration: 1400 });
-      };
+        : `Pagos de ${view.label}`;
     }
   }
   
   function renderBalance(){
-    // Fase 1: cabecera del mes + veredicto (y espejo mínimo en #balanceCard oculto)
-    const now = new Date();
-    const thisMonth = now.getMonth();
-    const thisYear = now.getFullYear();
-    const mesNombre = (typeof MESES !== "undefined" ? MESES[thisMonth] : "") || "";
-
-    const totalIngresos = totalMonthlyIncome(now);
-    const totalGastos = monthlyExpenses();
+    // Cabecera del mes SELECCIONADO (no siempre el mes de hoy)
+    const view = getMoneyView();
+    const totalIngresos = totalMonthlyIncome(view.asDate);
+    // Gasto del mes en vista real (mensuales + anuales de ese mes / prorrateo)
+    let totalGastos = monthlyExpenses();
+    try {
+      const { totals } = spendByRealMonth();
+      if (totals && totals[view.month] != null) totalGastos = totals[view.month];
+    } catch (e) {}
     const balance = totalIngresos - totalGastos;
     const isPositive = balance >= 0;
-    const gastoAno = totalGastos * 12;
+    const gastoAno = monthlyExpenses() * 12;
 
-    // Anuales que caen este mes (para el veredicto)
     let annualThisMonth = 0;
     try {
       const { perMonthItems } = spendByRealMonth();
-      annualThisMonth = (perMonthItems[thisMonth] || []).filter(x => x.it && x.it.freq === "ano").length;
+      annualThisMonth = (perMonthItems[view.month] || []).filter(x => x.it && x.it.freq === "ano").length;
+    } catch (e) {}
+
+    let paidInfo = "";
+    try {
+      const { perMonthItems } = spendByRealMonth();
+      const annuals = (perMonthItems[view.month] || []).filter(x => x.it && x.it.freq === "ano");
+      const paidN = annuals.filter(x => isMoneyPaid(x.it.id, view.year, view.month)).length;
+      if (annuals.length) paidInfo = ` · ${paidN}/${annuals.length} anuales marcados pagados`;
     } catch (e) {}
 
     let verdictClass = "verdict";
     let verdictText = "";
+    const mesTxt = view.isCurrent ? "este mes" : view.label;
     if (totalIngresos <= 0 && totalGastos <= 0) {
-      verdictText = "Añade ingresos o gastos en Áreas para ver el balance del mes.";
+      verdictText = "Añade ingresos o gastos para ver el balance de " + mesTxt + ".";
     } else if (isPositive && balance >= totalGastos * 0.15) {
       verdictClass = "verdict ok";
-      verdictText = `Holgura ~${eur(balance)} este mes` + (annualThisMonth ? ` · ${annualThisMonth} gasto(s) anual(es) este mes` : "");
+      verdictText = `Holgura ~${eur(balance)} en ${mesTxt}` + (annualThisMonth ? ` · ${annualThisMonth} anual(es)` : "") + paidInfo;
     } else if (isPositive) {
       verdictClass = "verdict ok";
-      verdictText = `Balance positivo · ${eur(balance)}` + (annualThisMonth ? ` · Ojo: ${annualThisMonth} anual(es) este mes` : "");
+      verdictText = `Balance positivo · ${eur(balance)} (${mesTxt})` + (annualThisMonth ? ` · ${annualThisMonth} anual(es)` : "") + paidInfo;
     } else if (Math.abs(balance) < totalGastos * 0.1) {
       verdictClass = "verdict warn";
-      verdictText = `Este mes apretado · faltan ~${eur(Math.abs(balance))}` + (annualThisMonth ? ` · ${annualThisMonth} anual(es)` : "");
+      verdictText = `Apretado en ${mesTxt} · faltan ~${eur(Math.abs(balance))}` + paidInfo;
     } else {
       verdictClass = "verdict warn";
-      verdictText = `Gastos por encima · −${eur(Math.abs(balance))}` + (annualThisMonth ? ` · ${annualThisMonth} anual(es) este mes` : "");
+      verdictText = `Gastos por encima en ${mesTxt} · −${eur(Math.abs(balance))}` + paidInfo;
     }
 
     const overview = document.getElementById("dineroMonthOverview");
     if (overview) {
       overview.innerHTML = `
         <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px;">
-          <h3 style="margin:0;font-size:15px;">${escapeHTML(mesNombre ? mesNombre.charAt(0).toUpperCase() + mesNombre.slice(1) : "Mes")} ${thisYear}</h3>
-          <span class="mono" style="font-size:11px;color:var(--text-faint);">vista mensual</span>
+          <h3 style="margin:0;font-size:15px;">${escapeHTML(view.label)}</h3>
+          <span class="mono" style="font-size:11px;color:var(--text-faint);">${view.isCurrent ? "mes actual" : "consultando otro mes"}</span>
         </div>
         <div class="balance-row is-click" data-jump="incomes" style="cursor:pointer;">
-          <span class="label">${escapeHTML(t("balIn"))}</span>
+          <span class="label">Ingresos ${view.isCurrent ? "este mes" : ""}</span>
           <span class="amount" style="color:var(--jade);">+${eur(totalIngresos)}</span>
         </div>
         <div class="balance-row is-click" data-jump="expenses" style="cursor:pointer;">
-          <span class="label">${escapeHTML(t("balOut"))}</span>
+          <span class="label">Gastos ${view.isCurrent ? "este mes" : ""}</span>
           <span class="amount" style="color:var(--red);">−${eur(totalGastos)}</span>
         </div>
         <div class="balance-row total ${isPositive ? "positive" : "negative"} is-click" data-jump="pay" style="cursor:pointer;">
@@ -3722,7 +3886,7 @@
           <span class="amount">${isPositive ? "+" : "−"}${eur(Math.abs(balance))}</span>
         </div>
         <div class="hist-row is-click" data-jump="year" style="border:none;padding:8px 0 0;cursor:pointer;">
-          <span style="font-size:12px;color:var(--text-faint);">Equivalente al año (×12)</span>
+          <span style="font-size:12px;color:var(--text-faint);">Coste medio mensual (×12 ≈ año)</span>
           <span class="mono" style="font-size:12px;">${eur(gastoAno)}</span>
         </div>
         <div class="${verdictClass}" id="dineroVerdict" style="margin-top:10px;">${escapeHTML(verdictText)}</div>`;
@@ -3732,7 +3896,7 @@
           const j = row.dataset.jump;
           if (j === "incomes") {
             document.getElementById("incomeList")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-            showToast(t("secIncomes"), { icon: "💰", duration: 1600 });
+            showToast(t("secIncomes") + " · " + view.label, { icon: "💰", duration: 1600 });
           } else if (j === "expenses") {
             document.getElementById("moneyByArea")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
             showToast(t("secByArea"), { icon: "📉", duration: 1600 });
@@ -4524,6 +4688,12 @@
       return !isNaN(d.getTime()) && d.getMonth() === m && d.getFullYear() === y;
     });
   }
+  function moneyViewDateISO(){
+    const v = getMoneyView();
+    if (v.isCurrent) return new Date().toISOString().split("T")[0];
+    const d = new Date(v.year, v.month, Math.min(28, new Date().getDate()));
+    return d.toISOString().split("T")[0];
+  }
   function fillQuickExpenseSelects(){
     const areaSel = document.getElementById("quickExpArea");
     const whoSel = document.getElementById("quickExpWho");
@@ -4542,22 +4712,24 @@
     const box = document.getElementById('incomeList');
     const stats = document.getElementById('incomeStats');
     fillQuickExpenseSelects();
-    if (!state.incomes.length) {
-      stats.innerHTML = `<div class="empty-state" style="margin-bottom:8px;"><div class="empty-title">${escapeHTML(t("emptyIncomes"))}</div><p class="empty-body">${escapeHTML(t("emptyIncomesBody"))}</p></div>`;
-      box.innerHTML = '';
-      return;
-    }
-    const monthList = incomesForMonth();
-    const totalThisMonth = monthList.reduce((s, i) => s + (Number(i.monto) || 0), 0);
+    const view = getMoneyView();
+    const monthList = incomesForMonth(view.asDate);
+    const totalThisMonth = monthList.reduce((s, i) => s + (Number(i.monto) || 0), 0) + monthlyAreaIncomes();
     const byPerson = { a:0, b:0, both:0, ext:0 };
     monthList.forEach(i => {
       const w = i.who || "a";
       byPerson[w] = (byPerson[w] || 0) + (Number(i.monto) || 0);
     });
+
+    if (!state.incomes.length && monthlyAreaIncomes() <= 0) {
+      stats.innerHTML = `<div class="empty-state" style="margin-bottom:8px;"><div class="empty-title">${escapeHTML(t("emptyIncomes"))}</div><p class="empty-body">${escapeHTML(t("emptyIncomesBody"))}</p></div>`;
+      box.innerHTML = `<p class="empty">Nada en ${escapeHTML(view.label)}. Añade un ingreso abajo (quedará registrado en este mes).</p>`;
+      return;
+    }
     
     stats.innerHTML = `
       <div class="balance-row total is-click" data-income-filter="" style="cursor:pointer;">
-        <span class="label">Este mes (incl. recurrentes)</span>
+        <span class="label">Ingresos · ${escapeHTML(view.label)}${view.isCurrent ? "" : ""}</span>
         <span class="amount" style="color:var(--jade);">+${eur(totalThisMonth)}</span>
       </div>
       <div class="balance-row is-click" data-income-filter="a" style="cursor:pointer;">
@@ -4571,10 +4743,12 @@
       <div class="balance-row is-click" data-income-filter="both" style="cursor:pointer;">
         <span class="label">${escapeHTML(t("whoBoth"))}</span>
         <span class="amount" style="color:var(--jade);">${eur(byPerson.both)}</span>
-      </div>`;
+      </div>
+      <p style="margin:8px 0 0;font-size:11px;color:var(--text-faint);">Solo ves ingresos de ${escapeHTML(view.label)} (y los recurrentes). Cambia de mes arriba para ver otro registro.</p>`;
     
     const renderIncomeList = (whoFilter) => {
-      let list = state.incomes.slice().sort((a,b) => {
+      // Lista del mes en vista (no todo el histórico a la vez)
+      let list = monthList.slice().sort((a,b) => {
         if (!!b.recurring !== !!a.recurring) return (b.recurring ? 1 : 0) - (a.recurring ? 1 : 0);
         return (b.date||"").localeCompare(a.date||"");
       });
@@ -4594,7 +4768,7 @@
               <span class="income-amount">${eur(Number(inc.monto) || 0)}</span>
             </div>`;
           }).join("")
-        : `<p class="empty">${escapeHTML(t("emptyIncomes"))}</p>`;
+        : `<p class="empty">Sin ingresos puntuales en ${escapeHTML(view.label)}. Los recurrentes, si hay, ya cuentan en el total. Añade abajo para registrar este mes.</p>`;
       box.querySelectorAll('.income-item').forEach(el => {
         el.onclick = () => openIncome(el.dataset.id);
       });
@@ -4604,7 +4778,7 @@
       row.onclick = () => {
         const f = row.dataset.incomeFilter || null;
         renderIncomeList(f || null);
-        const label = !f ? (appLang==="nl"?"Alle inkomsten":"Todos los ingresos")
+        const label = !f ? view.label
           : f === "both" ? t("whoBoth") : whoLabel(f);
         showToast(label, { icon: "💰", duration: 1400 });
       };
@@ -4634,7 +4808,7 @@
     document.getElementById('incomeModalTitle').textContent = 'Nuevo ingreso';
     document.getElementById('iSource').value = '';
     document.getElementById('iMonto').value = '';
-    document.getElementById('iDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('iDate').value = moneyViewDateISO();
     document.getElementById('iWho').value = 'a';
     document.getElementById('iNote').value = '';
     const rec = document.getElementById('iRecurring');
@@ -4651,9 +4825,10 @@
       showToast("Indica fuente e importe", { icon: "✍️", duration: 1600 });
       return;
     }
+    const view = getMoneyView();
     state.incomes.push({
       id: "inc-" + Date.now(),
-      date: new Date().toISOString().split('T')[0],
+      date: moneyViewDateISO(),
       source: fuente,
       monto: monto,
       who: 'a',
@@ -4665,7 +4840,12 @@
     const cb = document.getElementById('newIncomeRecurring');
     if (cb) cb.checked = false;
     renderDinero(); saveSoon();
-    showToast(recurring ? "Ingreso recurrente añadido" : "Ingreso añadido", { icon: "💰", duration: 1600 });
+    showToast(
+      recurring
+        ? "Ingreso recurrente añadido"
+        : ("Ingreso de " + view.label + " añadido"),
+      { icon: "💰", duration: 1600 }
+    );
   };
   
   document.getElementById('incomeCancel').onclick = () => document.getElementById('incomeModalBg').classList.remove('open');
